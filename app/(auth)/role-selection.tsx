@@ -38,7 +38,7 @@ const roleOptions: RoleOption[] = [
   },
   {
     id: 'VENDOR',
-    title: "I'm a beauty professional",
+    title: 'I am a beauty professional',
     description: 'Grow your business and connect with new clients',
     icon: '💅',
     gradient: ['#C9A961', '#E8C78A'], // GlamGo Gold

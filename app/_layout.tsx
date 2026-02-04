@@ -59,11 +59,12 @@ export default function RootLayout() {
     if (isAuthenticated === null || !loaded) return;
 
     const inAuthGroup = segments[0] === '(auth)';
+    const inBrowse = segments[0] === 'browse';
 
-    if (!isAuthenticated && !inAuthGroup) {
-      // Redirect to role selection if not authenticated
-      router.replace('/(auth)/role-selection');
-    } else if (isAuthenticated && inAuthGroup) {
+    if (!isAuthenticated && !inAuthGroup && !inBrowse) {
+      // Redirect to browse page for unauthenticated users
+      router.replace('/browse');
+    } else if (isAuthenticated && (inAuthGroup || inBrowse)) {
       // Redirect to tabs if authenticated
       router.replace('/(tabs)');
     }
