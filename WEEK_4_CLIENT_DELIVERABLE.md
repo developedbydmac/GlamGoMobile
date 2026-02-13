@@ -255,53 +255,90 @@
 
 ## 📱 DEMO FLOW FOR CLIENT PRESENTATION
 
-### Demo Script (10-15 minutes)
+### Demo Script (15-20 minutes)
 
-**1. Browse Screen (Public View)**
+**1. Browse Screen (Public View)** - 1 minute
 - Show: 4 featured products with real Unsplash photos
 - Show: "Create Free Account" and "Sign In" buttons
 - Highlight: Professional design, lock badges on locked features
 
-**2. Account Creation Flow**
+**2. Account Creation Flow** - 2 minutes
 - Tap: "Create Free Account"
 - Show: 3 role cards (Customer, Vendor, Driver)
 - Select: Customer role
 - Fill: Sign-up form (email, password)
 - Result: Redirect to purple-themed Shop screen
 
-**3. Customer Experience**
-- Show: Shop tab with 6 beauty services
-- Show: Real photos, ratings, prices
-- Show: Search bar (UI only - explain backend pending)
+**3. Customer Experience - Phase 2 Features** - 5 minutes ✨ **NEW**
+- Show: "Loading services..." spinner (GraphQL query in action)
+- Show: Shop tab with 6 beauty services (mock data or real from DynamoDB)
+- Show: Real Unsplash photos, ratings, prices, store names
+- **Demo Search:**
+  - Type "hair" → Watch it filter to hair services only
+  - Clear (X button) → Return to full list
+  - Type "nails" → Filter to nail services
+  - Type "xyz123" → Empty state: "No services found"
+- **Demo Category Filters:**
+  - Tap "Makeup" chip → Purple highlight, filters to makeup services
+  - Tap "Massage" → Filters to massage services  
+  - Tap "All" → Return to full list
+- **Demo Combined Filtering:**
+  - Select "Hair Care" category
+  - Type "luxury" → Combined filter: hair + luxury
+  - Show results count: "1 service found"
 - Navigate: Cart tab (explain Phase 3)
 - Navigate: Orders tab (explain Phase 3)
 - Navigate: Profile tab
 - Action: Sign out → Returns to Browse
 
-**4. Vendor Account Creation**
+**4. Vendor Account Creation** - 2 minutes
 - Return to sign-up flow
 - Select: Vendor role
 - Fill: Sign-up form with business info
 - Result: Redirect to gold-themed Dashboard
 
-**5. Vendor Experience**
-- Show: Dashboard with business stats
-- Show: Products tab (explain management UI in Phase 3)
+**5. Vendor Experience** - 2 minutes
+- Show: Dashboard with business stats (Sales, Orders, Products)
+- Show: Products tab (explain: "Phase 3 will add product creation form here")
 - Show: Orders tab (explain fulfillment in Phase 3)
 - Navigate: Profile tab
 - Action: Sign out
 
-**6. Login Test**
+**6. Login Test & Role Persistence** - 2 minutes
 - Return to sign-in screen
 - Login: As customer account
-- Result: Smart routing to purple Shop tab
-- Explain: Role persistence (reopen app → still logged in)
+- Result: Smart routing to purple Shop tab (not Browse)
+- Explain: "App remembered user role from Cognito"
+- Close app completely (swipe up from app switcher)
+- Reopen app → Still logged in, Shop screen appears
+- Explain: "Role persists across app restarts"
 
-**7. Technical Deep Dive** (if time permits)
+**7. Technical Deep Dive** - 2 minutes (if time permits)
 - Show: AWS Cognito console (custom:role attribute)
 - Show: DynamoDB tables (Store, Product, OrderProduct, Order)
 - Show: GraphQL schema in AppSync
-- Explain: Owner-based authorization
+- Explain: "All browse/search features query real DynamoDB with smart fallback"
+
+---
+
+### Quick Test Flow (5 minutes) - For Internal Testing
+
+```bash
+# Start Expo
+npx expo start
+
+# On iPhone (Expo Go):
+1. Create customer account → Purple Shop tab
+2. See "Loading services..." spinner
+3. Browse 6 mock services (real Unsplash photos)
+4. Try search: "hair", "nails", "facial"
+5. Try categories: tap "Makeup", "Massage", "All"
+6. Try combined: "Hair Care" + type "luxury"
+7. Try empty state: type "xyz123"
+8. Sign out → Browse screen
+9. Login again → Purple Shop (smart routing)
+10. Close app, reopen → Still logged in
+```
 
 ---
 
