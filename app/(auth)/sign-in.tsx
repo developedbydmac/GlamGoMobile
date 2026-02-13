@@ -85,10 +85,25 @@ export default function SignInScreen() {
       console.log("=== SIGN-IN DEBUG END ===");
     } catch (error: any) {
       console.error("=== SIGN-IN ERROR START ===");
-      console.error("Error name:", error.name);
-      console.error("Error code:", error.code);
-      console.error("Error message:", error.message);
-      console.error("Full error:", error);
+      console.error("Error type:", typeof error);
+      console.error("Error name:", error?.name);
+      console.error("Error code:", error?.code);
+      console.error("Error message:", error?.message);
+      console.error("Error toString:", error?.toString());
+      
+      // Try to stringify the entire error object
+      try {
+        console.error("Full error (JSON):", JSON.stringify(error, null, 2));
+      } catch (e) {
+        console.error("Could not stringify error, using direct log:");
+        console.error("Full error:", error);
+      }
+      
+      // Check if it's an AWS Amplify error with underscoreCase
+      if (error?.__type) {
+        console.error("AWS Error Type (__type):", error.__type);
+      }
+      
       console.error("=== SIGN-IN ERROR END ===");
 
       // User-friendly error messages
