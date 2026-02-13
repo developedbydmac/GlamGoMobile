@@ -1,60 +1,70 @@
-import React, { useState } from 'react';
+import GlamGoLogo from "@/components/GlamGoLogo";
+import GradientButton from "@/components/GradientButton";
+import { Colors, Typography, Spacing, BorderRadius, Shadows } from "@/constants/DesignSystem";
+import { Ionicons } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
+import { useRouter } from "expo-router";
+import React, { useState } from "react";
 import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  SafeAreaView,
-  StatusBar,
-  Dimensions,
-  Platform,
-  ScrollView,
-} from 'react-native';
-import { useRouter } from 'expo-router';
-import { LinearGradient } from 'expo-linear-gradient';
-import GlamGoLogo from '@/components/GlamGoLogo';
+    Dimensions,
+    Platform,
+    SafeAreaView,
+    ScrollView,
+    StatusBar,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
+    useColorScheme,
+} from "react-native";
 
-const { width } = Dimensions.get('window');
-const isWeb = Platform.OS === 'web';
+const { width } = Dimensions.get("window");
+const isWeb = Platform.OS === "web";
 const isMobileWeb = isWeb && width < 768;
 
-type UserRole = 'CUSTOMER' | 'VENDOR' | 'DRIVER';
+type UserRole = "CUSTOMER" | "VENDOR" | "DRIVER";
 
 interface RoleOption {
   id: UserRole;
   title: string;
   description: string;
-  icon: string;
+  icon: keyof typeof Ionicons.glyphMap;
   gradient: [string, string];
+  features: string[];
 }
 
 const roleOptions: RoleOption[] = [
   {
-    id: 'CUSTOMER',
-    title: 'I need beauty services',
-    description: 'Book appointments and discover talented stylists near you',
-    icon: '✨',
-    gradient: ['#4A2B7C', '#6B4FA0'], // GlamGo Purple
+    id: "CUSTOMER",
+    title: "I need beauty services",
+    description: "Book appointments and discover talented stylists near you",
+    icon: "person",
+    gradient: [Colors.primary.deepPurple, Colors.primary.royalPurple],
+    features: ["Browse services", "Book appointments", "Track orders"],
   },
   {
-    id: 'VENDOR',
-    title: 'I am a beauty professional',
-    description: 'Grow your business and connect with new clients',
-    icon: '💅',
-    gradient: ['#C9A961', '#E8C78A'], // GlamGo Gold
+    id: "VENDOR",
+    title: "I am a beauty professional",
+    description: "Grow your business and connect with new clients",
+    icon: "briefcase",
+    gradient: [Colors.secondary.darkGold, Colors.secondary.champagneGold],
+    features: ["Manage products", "Handle orders", "Grow revenue"],
   },
   {
-    id: 'DRIVER',
-    title: 'I want to deliver',
-    description: 'Earn money delivering beauty products on your schedule',
-    icon: '🚗',
-    gradient: ['#4A2B7C', '#C9A961'], // Purple to Gold
+    id: "DRIVER",
+    title: "I want to deliver",
+    description: "Earn money delivering beauty products on your schedule",
+    icon: "car",
+    gradient: ["#2196F3", "#64B5F6"],
+    features: ["Flexible hours", "Track earnings", "Quick payouts"],
   },
 ];
 
 export default function RoleSelectionScreen() {
   const router = useRouter();
   const [selectedRole, setSelectedRole] = useState<UserRole | null>(null);
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === 'dark';
 
   const handleRoleSelect = (role: UserRole) => {
     setSelectedRole(role);
@@ -63,27 +73,45 @@ export default function RoleSelectionScreen() {
   const handleContinue = () => {
     if (selectedRole) {
       router.push({
-        pathname: '/(auth)/sign-up',
+        pathname: "/(auth)/sign-up",
         params: { role: selectedRole },
       });
     }
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" />
-      <ScrollView 
+    <SafeAreaView style={[styles.container, isDark && styles.containerDark]}>
+      <StatusBar barStyle={isDark ? "light-content" : "dark-content"} />
+      <ScrollView
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
       >
         <View style={[styles.content, isMobileWeb && styles.contentMobileWeb]}>
+          {/* Back Button */}
+          <TouchableOpacity
+            onPress={() => router.push('/browse')}
+            style={styles.backButton}
+          >
+            <View style={styles.backButtonContent}>
+              <Ionicons name="chevron-back" size={24} color={Colors.primary.royalPurple} />
+              <Text style={styles.backButtonText}>Back to Browse</Text>
+            </View>
+          </TouchableOpacity>
+
           {/* Logo */}
-          <GlamGoLogo size={isMobileWeb ? 'small' : 'medium'} />
+          <View style={styles.logoContainer}>
+            <GlamGoLogo size={isMobileWeb ? "small" : "medium"} />
+          </View>
 
           {/* Header */}
           <View style={styles.header}>
-            <Text style={styles.title}>Welcome to GlamGo</Text>
-            <Text style={styles.subtitle}>How would you like to use GlamGo?</Text>
+            <Text style={[styles.title, isDark && styles.titleDark]}>
+              Welcome to GlamGo
+            </Text>
+            <Text style={[styles.subtitle, isDark && styles.subtitleDark]}>
+              How would you like to use GlamGo today?
+            </Text>
           </View>
 
           {/* Role Cards */}
@@ -91,30 +119,63 @@ export default function RoleSelectionScreen() {
             {roleOptions.map((role) => (
               <TouchableOpacity
                 key={role.id}
-                activeOpacity={0.8}
+                activeOpacity={0.7}
                 onPress={() => handleRoleSelect(role.id)}
+                style={styles.roleCardWrapper}
               >
                 <View
                   style={[
                     styles.roleCard,
                     selectedRole === role.id && styles.roleCardSelected,
+                    isDark && styles.roleCardDark,
                     isMobileWeb && styles.roleCardMobileWeb,
                   ]}
                 >
-                  <View style={styles.roleCardContent}>
-                    <View style={styles.iconContainer}>
-                      <Text style={styles.icon}>{role.icon}</Text>
-                    </View>
-                    <View style={styles.roleInfo}>
-                      <Text style={styles.roleTitle}>{role.title}</Text>
-                      <Text style={styles.roleDescription}>
-                        {role.description}
-                      </Text>
+                  {/* Icon Circle with Gradient */}
+                  <LinearGradient
+                    colors={role.gradient}
+                    style={styles.iconGradient}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                  >
+                    <Ionicons
+                      name={role.icon}
+                      size={32}
+                      color={Colors.neutral.white}
+                    />
+                  </LinearGradient>
+
+                  {/* Role Info */}
+                  <View style={styles.roleInfo}>
+                    <Text style={[styles.roleTitle, isDark && styles.roleTitleDark]}>
+                      {role.title}
+                    </Text>
+                    <Text style={[styles.roleDescription, isDark && styles.roleDescriptionDark]}>
+                      {role.description}
+                    </Text>
+                    
+                    {/* Features */}
+                    <View style={styles.featuresContainer}>
+                      {role.features.map((feature, index) => (
+                        <View key={index} style={styles.featureRow}>
+                          <Ionicons
+                            name="checkmark-circle"
+                            size={16}
+                            color={selectedRole === role.id ? role.gradient[0] : Colors.neutral.mediumGrey}
+                            style={styles.featureIcon}
+                          />
+                          <Text style={[styles.featureText, isDark && styles.featureTextDark]}>
+                            {feature}
+                          </Text>
+                        </View>
+                      ))}
                     </View>
                   </View>
+
+                  {/* Selection Indicator */}
                   {selectedRole === role.id && (
-                    <View style={styles.checkmark}>
-                      <Text style={styles.checkmarkText}>✓</Text>
+                    <View style={[styles.selectedBadge, { backgroundColor: role.gradient[0] }]}>
+                      <Ionicons name="checkmark" size={20} color={Colors.neutral.white} />
                     </View>
                   )}
                 </View>
@@ -123,33 +184,22 @@ export default function RoleSelectionScreen() {
           </View>
 
           {/* Continue Button */}
-          <TouchableOpacity
-            style={[
-              styles.continueButton,
-              !selectedRole && styles.continueButtonDisabled,
-              isMobileWeb && styles.continueButtonMobileWeb,
-            ]}
-            onPress={handleContinue}
-            disabled={!selectedRole}
-            activeOpacity={0.8}
-          >
-            <Text
-              style={[
-                styles.continueButtonText,
-                !selectedRole && styles.continueButtonTextDisabled,
-              ]}
-            >
-              Let's Go
-            </Text>
-          </TouchableOpacity>
+          <View style={styles.buttonContainer}>
+            <GradientButton
+              title="Continue"
+              onPress={handleContinue}
+              disabled={!selectedRole}
+              fullWidth
+            />
+          </View>
 
           {/* Sign In Link */}
           <TouchableOpacity
-            onPress={() => router.push('/(auth)/sign-in')}
+            onPress={() => router.push("/(auth)/sign-in")}
             style={styles.signInContainer}
           >
-            <Text style={styles.signInText}>
-              Already have an account?{' '}
+            <Text style={[styles.signInText, isDark && styles.signInTextDark]}>
+              Already have an account?{" "}
               <Text style={styles.signInLink}>Sign In</Text>
             </Text>
           </TouchableOpacity>
@@ -162,178 +212,212 @@ export default function RoleSelectionScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FAF9F7', // Soft cream background for luxury feel
+    backgroundColor: Colors.neutral.softWhite,
   },
+  
+  containerDark: {
+    backgroundColor: Colors.dark.background,
+  },
+  
   scrollContent: {
     flexGrow: 1,
-    paddingBottom: 40,
+    paddingBottom: Spacing['3xl'],
   },
+  
   content: {
     flex: 1,
-    paddingHorizontal: 24,
-    paddingTop: Platform.OS === 'ios' ? 20 : 40,
+    paddingHorizontal: Spacing.lg,
+    paddingTop: Platform.OS === "ios" ? Spacing.lg : Spacing['2xl'],
   },
+  
   contentMobileWeb: {
     maxWidth: 480,
-    alignSelf: 'center',
-    width: '100%',
+    alignSelf: "center",
+    width: "100%",
   },
-  header: {
-    marginBottom: 48,
-    marginTop: 16,
+  
+  backButton: {
+    marginBottom: Spacing.md,
+    marginTop: Spacing.xs,
   },
-  title: {
-    fontSize: 34,
-    fontWeight: '700',
-    color: '#4A2B7C', // GlamGo Purple
-    marginBottom: 12,
-    textAlign: 'center',
-    letterSpacing: 0.5,
-  },
-  subtitle: {
-    fontSize: 17,
-    color: '#6B6B6B',
-    lineHeight: 24,
-    textAlign: 'center',
-    fontWeight: '400',
-    paddingHorizontal: 10,
-  },
-  rolesContainer: {
-    flex: 1,
-    gap: 20,
-  },
-  roleCard: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 20,
-    padding: 24,
-    marginBottom: 16,
-    borderWidth: 2,
-    borderColor: '#E8E8E8',
-    shadowColor: '#4A2B7C',
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.08,
-    shadowRadius: 12,
-    elevation: 5,
-  },
-  roleCardMobileWeb: {
-    padding: 20,
-  },
-  roleCardSelected: {
-    borderColor: '#4A2B7C', // GlamGo Purple
-    borderWidth: 2.5,
-    backgroundColor: '#FEFEFE',
-    shadowColor: '#4A2B7C',
-    shadowOffset: {
-      width: 0,
-      height: 6,
-    },
-    shadowOpacity: 0.15,
-    shadowRadius: 16,
-    elevation: 8,
-  },
-  roleCardContent: {
+  
+  backButtonContent: {
     flexDirection: 'row',
     alignItems: 'center',
+    gap: Spacing.xs,
   },
-  iconContainer: {
+  
+  backButtonText: {
+    fontSize: Typography.fontSize.base,
+    color: Colors.primary.royalPurple,
+    fontWeight: Typography.fontWeight.semibold,
+  },
+  
+  logoContainer: {
+    alignItems: "center",
+    marginBottom: Spacing.base,
+  },
+  
+  header: {
+    marginBottom: Spacing['3xl'],
+    marginTop: Spacing.base,
+  },
+  
+  title: {
+    fontSize: Typography.fontSize['3xl'],
+    fontWeight: Typography.fontWeight.bold,
+    color: Colors.primary.royalPurple,
+    marginBottom: Spacing.md,
+    textAlign: "center",
+    fontFamily: Typography.fontFamily,
+  },
+  
+  titleDark: {
+    color: Colors.dark.primary,
+  },
+  
+  subtitle: {
+    fontSize: Typography.fontSize.lg,
+    color: Colors.neutral.mediumGrey,
+    lineHeight: Typography.fontSize.lg * Typography.lineHeight.normal,
+    textAlign: "center",
+    fontWeight: Typography.fontWeight.normal,
+    fontFamily: Typography.fontFamily,
+  },
+  
+  subtitleDark: {
+    color: Colors.dark.textSecondary,
+  },
+  
+  rolesContainer: {
+    flex: 1,
+    marginBottom: Spacing.lg,
+  },
+  
+  roleCardWrapper: {
+    marginBottom: Spacing.base,
+  },
+  
+  roleCard: {
+    backgroundColor: Colors.neutral.white,
+    borderRadius: BorderRadius.md,
+    padding: Spacing.lg,
+    borderWidth: 1,
+    borderColor: Colors.neutral.lightGrey,
+    ...Shadows.subtle,
+  },
+  
+  roleCardDark: {
+    backgroundColor: Colors.dark.surface,
+    borderColor: Colors.dark.textSecondary,
+  },
+  
+  roleCardMobileWeb: {
+    padding: Spacing.base,
+  },
+  
+  roleCardSelected: {
+    borderColor: Colors.primary.royalPurple,
+    borderWidth: 2,
+    ...Shadows.light,
+  },
+  
+  iconGradient: {
     width: 64,
     height: 64,
-    borderRadius: 32,
-    backgroundColor: '#F8F6F3',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 16,
-    borderWidth: 1,
-    borderColor: '#E8E8E8',
+    borderRadius: BorderRadius.full,
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: Spacing.base,
+    ...Shadows.subtle,
   },
-  icon: {
-    fontSize: 28,
-  },
+  
   roleInfo: {
     flex: 1,
   },
+  
   roleTitle: {
-    fontSize: 21,
-    fontWeight: '700',
-    color: '#2C2C2C',
-    marginBottom: 6,
-    letterSpacing: 0.3,
+    fontSize: Typography.fontSize.lg,
+    fontWeight: Typography.fontWeight.semibold,
+    color: Colors.neutral.darkGrey,
+    marginBottom: Spacing.xs,
+    fontFamily: Typography.fontFamily,
   },
+  
+  roleTitleDark: {
+    color: Colors.dark.text,
+  },
+  
   roleDescription: {
-    fontSize: 15,
-    color: '#6B6B6B',
-    lineHeight: 21,
-    fontWeight: '400',
+    fontSize: Typography.fontSize.sm,
+    color: Colors.neutral.mediumGrey,
+    lineHeight: Typography.fontSize.sm * Typography.lineHeight.normal,
+    marginBottom: Spacing.md,
+    fontFamily: Typography.fontFamily,
   },
-  checkmark: {
-    position: 'absolute',
-    top: 20,
-    right: 20,
+  
+  roleDescriptionDark: {
+    color: Colors.dark.textSecondary,
+  },
+  
+  featuresContainer: {
+    gap: Spacing.xs,
+  },
+  
+  featureRow: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  
+  featureIcon: {
+    marginRight: Spacing.xs,
+  },
+  
+  featureText: {
+    fontSize: Typography.fontSize.xs,
+    color: Colors.neutral.mediumGrey,
+    fontFamily: Typography.fontFamily,
+  },
+  
+  featureTextDark: {
+    color: Colors.dark.textSecondary,
+  },
+  
+  selectedBadge: {
+    position: "absolute",
+    top: Spacing.base,
+    right: Spacing.base,
     width: 32,
     height: 32,
-    borderRadius: 16,
-    backgroundColor: '#4A2B7C', // GlamGo Purple
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 2,
-    borderColor: '#C9A961', // Gold accent border
+    borderRadius: BorderRadius.full,
+    justifyContent: "center",
+    alignItems: "center",
+    ...Shadows.subtle,
   },
-  checkmarkText: {
-    color: '#FFFFFF',
-    fontSize: 18,
-    fontWeight: 'bold',
+  
+  buttonContainer: {
+    marginTop: Spacing.xl,
+    marginBottom: Spacing.base,
   },
-  continueButton: {
-    backgroundColor: '#4A2B7C', // GlamGo Purple
-    borderRadius: 16,
-    paddingVertical: 18,
-    alignItems: 'center',
-    marginTop: 32,
-    marginBottom: 16,
-    shadowColor: '#4A2B7C',
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 6,
-  },
-  continueButtonMobileWeb: {
-    width: '100%',
-    maxWidth: 400,
-    alignSelf: 'center',
-  },
-  continueButtonDisabled: {
-    backgroundColor: '#D8D8D8',
-    shadowOpacity: 0,
-  },
-  continueButtonText: {
-    color: '#FFFFFF',
-    fontSize: 17,
-    fontWeight: '700',
-    letterSpacing: 0.8,
-    textTransform: 'uppercase',
-  },
-  continueButtonTextDisabled: {
-    color: '#A0A0A0',
-  },
+  
   signInContainer: {
-    alignItems: 'center',
-    paddingBottom: 20,
-    marginTop: 16,
+    alignItems: "center",
+    paddingVertical: Spacing.base,
+    paddingBottom: Platform.OS === "ios" ? Spacing.xl : Spacing.base, // Safe area for home indicator
   },
+  
   signInText: {
-    fontSize: 15,
-    color: '#6B6B6B',
-    fontWeight: '400',
+    fontSize: Typography.fontSize.sm,
+    color: Colors.neutral.mediumGrey,
+    fontFamily: Typography.fontFamily,
   },
+  
+  signInTextDark: {
+    color: Colors.dark.textSecondary,
+  },
+  
   signInLink: {
-    color: '#4A2B7C', // GlamGo Purple (changed from gold for better accessibility)
-    fontWeight: '700',
-    textDecorationLine: 'underline',
+    color: Colors.secondary.champagneGold,
+    fontWeight: Typography.fontWeight.semibold,
   },
 });

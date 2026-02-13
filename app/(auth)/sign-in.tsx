@@ -1,36 +1,43 @@
-import React, { useState } from 'react';
+import GlamGoLogo from "@/components/GlamGoLogo";
+import ModernInput from "@/components/ModernInput";
+import GradientButton from "@/components/GradientButton";
+import { Colors, Typography, Spacing, BorderRadius } from "@/constants/DesignSystem";
+import { Ionicons } from "@expo/vector-icons";
+import { getCurrentUser, signIn } from "aws-amplify/auth";
+import { useRouter } from "expo-router";
+import React, { useState } from "react";
 import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  SafeAreaView,
-  StatusBar,
-  TextInput,
-  ScrollView,
-  KeyboardAvoidingView,
-  Platform,
-  Alert,
-  ActivityIndicator,
-  Dimensions,
-} from 'react-native';
-import { useRouter } from 'expo-router';
-import { signIn, getCurrentUser } from 'aws-amplify/auth';
-import GlamGoLogo from '@/components/GlamGoLogo';
+    Alert,
+    Dimensions,
+    KeyboardAvoidingView,
+    Platform,
+    SafeAreaView,
+    ScrollView,
+    StatusBar,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
+    useColorScheme,
+} from "react-native";
 
-const { width } = Dimensions.get('window');
-const isWeb = Platform.OS === 'web';
+const { width } = Dimensions.get("window");
+const isWeb = Platform.OS === "web";
 const isMobileWeb = isWeb && width < 768;
 
 export default function SignInScreen() {
   const router = useRouter();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === 'dark';
 
   const showAlert = (title: string, message: string) => {
-    if (Platform.OS === 'web') {
+    if (Platform.OS === "web") {
       alert(`${title}: ${message}`);
     } else {
       Alert.alert(title, message);
@@ -39,47 +46,68 @@ export default function SignInScreen() {
 
   const handleSignIn = async () => {
     // Clear previous errors
-    setError('');
+    setError("");
 
     if (!email.trim() || !password.trim()) {
-      setError('Please enter your email and password');
+      setError("Please enter your email and password");
       return;
     }
 
     setLoading(true);
 
     try {
+      console.log("=== SIGN-IN DEBUG START ===");
+      console.log("Attempting sign-in for:", email.trim().toLowerCase());
+
       const { isSignedIn, nextStep } = await signIn({
         username: email.trim().toLowerCase(),
         password,
       });
 
-      console.log('Sign in successful:', { isSignedIn, nextStep });
+      console.log("Sign-in result:", JSON.stringify({ isSignedIn, nextStep }, null, 2));
 
       if (isSignedIn) {
         // Get user info to verify
         const user = await getCurrentUser();
-        console.log('Current user:', user);
-        
+        console.log("Current user:", user.userId);
+
         // Navigate to home without alert (smoother UX)
-        router.replace('/(tabs)');
+        router.replace("/(tabs)");
+      } else if (nextStep.signInStep === "CONFIRM_SIGN_UP") {
+        setError(
+          "Your account isn't verified yet. Please check your email for the verification code.",
+        );
       } else {
-        setError('Additional verification steps required. Please check your email.');
+        setError(
+          "Additional verification steps required. Please check your email.",
+        );
       }
+      console.log("=== SIGN-IN DEBUG END ===");
     } catch (error: any) {
-      console.error('Sign in error:', error);
-      
+      console.error("=== SIGN-IN ERROR START ===");
+      console.error("Error name:", error.name);
+      console.error("Error code:", error.code);
+      console.error("Error message:", error.message);
+      console.error("Full error:", error);
+      console.error("=== SIGN-IN ERROR END ===");
+
       // User-friendly error messages
-      let errorMessage = 'Something went wrong. Please try again.';
-      
-      if (error.name === 'UserNotFoundException' || error.name === 'NotAuthorizedException') {
-        errorMessage = "We couldn't find an account with that email and password.";
-      } else if (error.name === 'UserNotConfirmedException') {
-        errorMessage = 'Please check your email and verify your account first.';
+      let errorMessage = "Something went wrong. Please try again.";
+
+      if (error.name === "UserNotFoundException") {
+        errorMessage =
+          "We couldn't find an account with that email. Did you sign up yet?";
+      } else if (error.name === "NotAuthorizedException") {
+        errorMessage =
+          "The password you entered is incorrect. Please try again.";
+      } else if (error.name === "UserNotConfirmedException") {
+        errorMessage =
+          "Please check your email and verify your account first. Check your spam folder if you don't see it.";
+        // Optionally navigate to verification screen
       } else if (error.message) {
         errorMessage = error.message;
       }
-      
+
       setError(errorMessage);
     } finally {
       setLoading(false);
@@ -90,7 +118,7 @@ export default function SignInScreen() {
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="dark-content" />
       <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.keyboardView}
       >
         <ScrollView
@@ -98,16 +126,21 @@ export default function SignInScreen() {
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
-          <View style={[styles.content, isMobileWeb && styles.contentMobileWeb]}>
+          <View
+            style={[styles.content, isMobileWeb && styles.contentMobileWeb]}
+          >
             {/* Logo */}
-            <GlamGoLogo size={isMobileWeb ? 'small' : 'medium'} />
+            <GlamGoLogo size={isMobileWeb ? "small" : "medium"} />
 
             {/* Header */}
             <TouchableOpacity
-              onPress={() => router.back()}
+              onPress={() => router.push('/browse')}
               style={styles.backButton}
             >
-              <Text style={styles.backButtonText}>← Back</Text>
+              <View style={styles.backButtonContent}>
+                <Ionicons name="chevron-back" size={24} color={Colors.primary.royalPurple} />
+                <Text style={styles.backButtonText}>Back to Browse</Text>
+              </View>
             </TouchableOpacity>
 
             <View style={styles.header}>
@@ -124,61 +157,61 @@ export default function SignInScreen() {
 
             {/* Form */}
             <View style={styles.form}>
-              <View style={styles.inputContainer}>
-                <Text style={styles.label}>Email</Text>
-                <TextInput
-                  style={styles.input}
-                  value={email}
-                  onChangeText={(text) => {
-                    setEmail(text);
-                    setError(''); // Clear error on input
-                  }}
-                  placeholder="john@example.com"
-                  keyboardType="email-address"
-                  autoCapitalize="none"
-                  autoComplete="email"
-                  editable={!loading}
-                />
-              </View>
+              <ModernInput
+                label="Email"
+                placeholder="your@email.com"
+                value={email}
+                onChangeText={(text) => {
+                  setEmail(text);
+                  setError("");
+                }}
+                keyboardType="email-address"
+                autoCapitalize="none"
+                autoComplete="email"
+                editable={!loading}
+                leftIcon={<Ionicons name="mail" size={20} color={Colors.neutral.mediumGrey} />}
+                error={error && error.toLowerCase().includes('email') ? error : undefined}
+              />
 
-              <View style={styles.inputContainer}>
-                <Text style={styles.label}>Password</Text>
-                <TextInput
-                  style={styles.input}
-                  value={password}
-                  onChangeText={(text) => {
-                    setPassword(text);
-                    setError(''); // Clear error on input
-                  }}
-                  placeholder="••••••••"
-                  secureTextEntry
-                  autoCapitalize="none"
-                  editable={!loading}
-                />
-              </View>
+              <ModernInput
+                label="Password"
+                placeholder="Enter your password"
+                value={password}
+                onChangeText={(text) => {
+                  setPassword(text);
+                  setError("");
+                }}
+                secureTextEntry={!showPassword}
+                autoCapitalize="none"
+                editable={!loading}
+                leftIcon={<Ionicons name="lock-closed" size={20} color={Colors.neutral.mediumGrey} />}
+                rightIcon={
+                  <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+                    <Ionicons 
+                      name={showPassword ? "eye-off" : "eye"} 
+                      size={20} 
+                      color={Colors.neutral.mediumGrey} 
+                    />
+                  </TouchableOpacity>
+                }
+                error={error && error.toLowerCase().includes('password') ? error : undefined}
+              />
 
-              <TouchableOpacity
-                style={[styles.signInButton, loading && styles.signInButtonDisabled]}
+              <GradientButton
+                title="Sign In"
                 onPress={handleSignIn}
-                disabled={loading}
-                activeOpacity={0.8}
-              >
-                {loading ? (
-                  <ActivityIndicator color="#FFFFFF" />
-                ) : (
-                  <Text style={styles.signInButtonText}>Sign In</Text>
-                )}
-              </TouchableOpacity>
+                loading={loading}
+                disabled={!email.trim() || !password.trim() || loading}
+              />
             </View>
 
             {/* Sign Up Link */}
             <TouchableOpacity
-              onPress={() => router.push('/(auth)/role-selection')}
+              onPress={() => router.push("/(auth)/role-selection")}
               style={styles.signUpContainer}
             >
               <Text style={styles.signUpText}>
-                New to GlamGo?{' '}
-                <Text style={styles.signUpLink}>Sign Up</Text>
+                New to GlamGo? <Text style={styles.signUpLink}>Sign Up</Text>
               </Text>
             </TouchableOpacity>
           </View>
@@ -191,7 +224,7 @@ export default function SignInScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FAF9F7', // Soft cream background for luxury feel
+    backgroundColor: Colors.neutral.softWhite,
   },
   keyboardView: {
     flex: 1,
@@ -201,123 +234,75 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    paddingHorizontal: 24,
-    paddingTop: Platform.OS === 'ios' ? 20 : 40,
+    paddingHorizontal: Spacing.xl,
+    paddingTop: Platform.OS === "ios" ? Spacing.xl : Spacing['2xl'],
   },
   contentMobileWeb: {
     maxWidth: 480,
-    alignSelf: 'center',
-    width: '100%',
+    alignSelf: "center",
+    width: "100%",
   },
   backButton: {
-    marginBottom: 24,
-    marginTop: 8,
+    marginBottom: Spacing.xl,
+    marginTop: Spacing.xs,
+  },
+  backButtonContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.xs,
   },
   backButtonText: {
-    fontSize: 16,
-    color: '#4A2B7C', // GlamGo Purple
-    fontWeight: '600',
+    fontSize: Typography.fontSize.base,
+    color: Colors.primary.royalPurple,
+    fontWeight: Typography.fontWeight.semibold,
   },
   header: {
-    marginBottom: 48,
+    marginBottom: Spacing['3xl'],
   },
   errorContainer: {
     backgroundColor: '#FFF5F5',
     borderWidth: 1.5,
-    borderColor: '#FEB2B2',
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 24,
+    borderColor: Colors.semantic.error,
+    borderRadius: BorderRadius.md,
+    padding: Spacing.lg,
+    marginBottom: Spacing.xl,
   },
   errorText: {
-    color: '#C53030',
-    fontSize: 15,
-    lineHeight: 21,
-    fontWeight: '500',
+    color: Colors.semantic.error,
+    fontSize: Typography.fontSize.sm,
+    lineHeight: Typography.lineHeight.normal,
+    fontWeight: Typography.fontWeight.medium,
   },
   title: {
-    fontSize: 34,
-    fontWeight: '700',
-    color: '#4A2B7C', // GlamGo Purple
-    marginBottom: 12,
+    fontSize: Typography.fontSize['3xl'],
+    fontWeight: Typography.fontWeight.bold,
+    color: Colors.primary.royalPurple,
+    marginBottom: Spacing.md,
     letterSpacing: 0.3,
   },
   subtitle: {
-    fontSize: 17,
-    color: '#6B6B6B',
-    lineHeight: 24,
-    fontWeight: '400',
+    fontSize: Typography.fontSize.lg,
+    color: Colors.neutral.mediumGrey,
+    lineHeight: Typography.lineHeight.relaxed,
+    fontWeight: Typography.fontWeight.normal,
   },
   form: {
-    marginBottom: 32,
-  },
-  inputContainer: {
-    marginBottom: 24,
-  },
-  label: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: '#2C2C2C',
-    marginBottom: 10,
-    letterSpacing: 0.2,
-  },
-  input: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 14,
-    paddingHorizontal: 18,
-    paddingVertical: 16,
-    fontSize: 16,
-    color: '#2C2C2C',
-    borderWidth: 1.5,
-    borderColor: '#E8E8E8',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.04,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  signInButton: {
-    backgroundColor: '#4A2B7C', // GlamGo Purple
-    borderRadius: 16,
-    paddingVertical: 18,
-    alignItems: 'center',
-    marginTop: 12,
-    shadowColor: '#4A2B7C',
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 6,
-  },
-  signInButtonDisabled: {
-    backgroundColor: '#B8B8D8',
-    shadowOpacity: 0,
-  },
-  signInButtonText: {
-    color: '#FFFFFF',
-    fontSize: 17,
-    fontWeight: '700',
-    letterSpacing: 0.8,
-    textTransform: 'uppercase',
+    gap: Spacing.lg,
+    marginBottom: Spacing['2xl'],
   },
   signUpContainer: {
-    alignItems: 'center',
-    paddingBottom: 32,
-    marginTop: 24,
+    alignItems: "center",
+    paddingBottom: Platform.OS === 'ios' ? Spacing['3xl'] : Spacing.xl,
+    marginTop: Spacing.xl,
   },
   signUpText: {
-    fontSize: 15,
-    color: '#6B6B6B',
-    fontWeight: '400',
+    fontSize: Typography.fontSize.sm,
+    color: Colors.neutral.mediumGrey,
+    fontWeight: Typography.fontWeight.normal,
   },
   signUpLink: {
-    color: '#4A2B7C', // GlamGo Purple
-    fontWeight: '700',
-    textDecorationLine: 'underline',
+    color: Colors.primary.royalPurple,
+    fontWeight: Typography.fontWeight.bold,
+    textDecorationLine: "underline",
   },
 });
