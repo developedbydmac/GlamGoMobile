@@ -293,10 +293,6 @@ export default function CustomerShopScreen() {
             </Text>
           </View>
         )}
-              </View>
-            </TouchableOpacity>
-          ))}
-        </View>
       </ScrollView>
     </SafeAreaView>
   );
