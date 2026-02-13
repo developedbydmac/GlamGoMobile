@@ -51,15 +51,18 @@ export default function RootLayout() {
 
   const checkAuthStatus = async () => {
     try {
-      const user = await getCurrentUser();
+      // Check if user is authenticated first
+      await getCurrentUser();
+      // If we get here, user is authenticated
       const attributes = await fetchUserAttributes();
       const role = attributes['custom:role'];
-      console.log("✅ User is authenticated:", user);
+      console.log("✅ User is authenticated");
       console.log("✅ User role:", role);
       setIsAuthenticated(true);
       setUserRole(role || null);
     } catch (error) {
-      console.log("❌ User is not authenticated:", error);
+      // User is not authenticated - this is normal for logged out state
+      console.log("👤 User is not authenticated (normal for logged out state)");
       setIsAuthenticated(false);
       setUserRole(null);
     }

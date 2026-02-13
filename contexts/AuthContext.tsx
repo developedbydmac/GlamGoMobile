@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { fetchUserAttributes } from 'aws-amplify/auth';
+import { fetchUserAttributes, getCurrentUser } from 'aws-amplify/auth';
 
 type UserRole = 'CUSTOMER' | 'VENDOR' | 'DRIVER' | null;
 
@@ -19,6 +19,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const refreshUserRole = async () => {
     try {
       setIsLoading(true);
+      
+      // First check if user is authenticated
+      try {
+        await getCurrentUser();
+      } catch (authError) {
+        // User is not authenticated - this is normal, not an error
+        console.log('👤 No user authenticated (normal for logged out state)');
+        setUserRole(null);
+        setIsLoading(false);
+        return;
+      }
+      
+      // User is authenticated, fetch attributes
       const attributes = await fetchUserAttributes();
       const role = attributes['custom:role'] as UserRole;
       console.log('✅ User role fetched:', role);
