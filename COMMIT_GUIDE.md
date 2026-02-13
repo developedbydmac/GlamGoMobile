@@ -27,6 +27,7 @@ Tested: Backend deployed, email verification working, users visible in Cognito
 ## 🗂️ Files to Commit
 
 ### Modified Files
+
 ```
 amplify/auth/resource.ts
 app/(auth)/role-selection.tsx
@@ -37,6 +38,7 @@ app/+html.tsx
 ```
 
 ### New Files
+
 ```
 components/GlamGoLogo.tsx
 QUICK_START.md
@@ -49,16 +51,19 @@ COMMIT_GUIDE.md
 ## 🚀 Git Commands
 
 ### 1. Check Status
+
 ```bash
 git status
 ```
 
 ### 2. Stage All Changes
+
 ```bash
 git add .
 ```
 
 ### 3. Commit with Message
+
 ```bash
 git commit -m "feat: Implement AWS Amplify Gen 2 authentication with role-based user management
 
@@ -71,6 +76,7 @@ git commit -m "feat: Implement AWS Amplify Gen 2 authentication with role-based 
 ```
 
 ### 4. Push to Repository
+
 ```bash
 git push origin main
 ```
@@ -125,6 +131,7 @@ Lines Deleted: ~50
 ## ✅ Pre-Commit Checklist
 
 Before committing, verify:
+
 - [ ] All TypeScript files compile without errors
 - [ ] Amplify backend is deployed successfully
 - [ ] No sensitive credentials in code

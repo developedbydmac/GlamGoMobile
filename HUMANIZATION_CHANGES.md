@@ -1,11 +1,13 @@
 # GlamGo App Humanization Changes 🎨
 
 ## Overview
+
 We've updated the app's copy and messaging to feel more natural, conversational, and human—inspired by DoorDash's approachable UX. The goal was to remove the "AI-made" feel and create a warm, relatable experience.
 
 ## Key Changes
 
 ### 1. Role Selection Screen (`role-selection.tsx`)
+
 **Before → After:**
 
 - **Customer Role**
@@ -29,6 +31,7 @@ We've updated the app's copy and messaging to feel more natural, conversational,
   - After: "Let's Go"
 
 ### 2. Sign Up Screen (`sign-up.tsx`)
+
 **Before → After:**
 
 - **Header Subtitle**
@@ -48,6 +51,7 @@ We've updated the app's copy and messaging to feel more natural, conversational,
   - After: "Already a member?"
 
 ### 3. Sign In Screen (`sign-in.tsx`)
+
 **Before → After:**
 
 - **Header Subtitle**
@@ -57,10 +61,8 @@ We've updated the app's copy and messaging to feel more natural, conversational,
 - **Error Messages** (More conversational and less technical)
   - Before: "Invalid email or password. Please check your credentials."
   - After: "We couldn't find an account with that email and password."
-  
   - Before: "Please verify your email before signing in."
   - After: "Please check your email and verify your account first."
-  
   - Before: "Failed to sign in. Please try again."
   - After: "Something went wrong. Please try again."
 
@@ -69,6 +71,7 @@ We've updated the app's copy and messaging to feel more natural, conversational,
   - After: "New to GlamGo?"
 
 ### 4. Home Screen (`index.tsx`)
+
 **Before → After:**
 
 - **Welcome Message**
@@ -106,6 +109,7 @@ We've updated the app's copy and messaging to feel more natural, conversational,
 ## Impact
 
 These changes transform GlamGo from feeling like a generic template to a personalized, thoughtful experience. The app now:
+
 - Speaks directly to users in first person
 - Uses natural, conversational language
 - Provides helpful, friendly error messages

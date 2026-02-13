@@ -1,6 +1,7 @@
 # Phase 2 - Quick Start Guide 🚀
 
 ## Current Status
+
 ✅ Phase 1 Complete - Pushed to GitHub  
 🔴 Phase 2 Priority: Fix Sign-In Errors
 
@@ -9,18 +10,21 @@
 ## Quick Commands
 
 ### Start Development Server
+
 ```bash
 cd /Users/daquanmcdaniel/Documents/2026/GlamGoMobile/GlamGoMobile
 npx expo start --tunnel
 ```
 
 ### Check Git Status
+
 ```bash
 git status
 git log --oneline -5
 ```
 
 ### AWS Amplify Sandbox
+
 ```bash
 cd amplify
 npx ampx sandbox
@@ -31,11 +35,13 @@ npx ampx sandbox
 ## Known Issues to Fix
 
 ### 🔴 Sign-In Error
+
 **Error:** `[Unknown: An unknown error has occurred.]`  
 **Location:** `signInWithSRP` in AWS Amplify Auth  
 **Impact:** Users cannot sign in after registration
 
 ### Debugging Steps for Phase 2:
+
 1. Check `amplify_outputs.json` configuration
 2. Verify Cognito User Pool settings in AWS Console
 3. Review User Pool Client configuration (SRP settings)
@@ -48,6 +54,7 @@ npx ampx sandbox
 ## Testing Checklist
 
 ### What Works ✅
+
 - [x] User registration (sign-up)
 - [x] Email verification codes sent
 - [x] Email confirmation successful
@@ -58,6 +65,7 @@ npx ampx sandbox
 - [x] Cross-platform (web & mobile)
 
 ### What Needs Fixing 🔴
+
 - [ ] Sign-in authentication
 - [ ] Auto-sign-in after verification
 - [ ] Error message specificity

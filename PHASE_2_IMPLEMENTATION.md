@@ -9,6 +9,7 @@
 ## 🎯 Objectives Completed
 
 ### ✅ Data Schema Design
+
 - [x] Store model with vendor ownership and location data
 - [x] Product model with belongsTo Store relationship
 - [x] OrderProduct junction table for many-to-many relationships
@@ -17,12 +18,14 @@
 - [x] Customer read-all-products permission configured
 
 ### ✅ Frontend Components
+
 - [x] ProductCard TypeScript component created
 - [x] Create Product form screen implemented
 - [x] Store selection/creation UI built
 - [x] Premium GlamGo styling applied
 
 ### ✅ Authorization Rules
+
 - [x] Vendors can only edit their own products (owner-based)
 - [x] Customers can read all products
 - [x] Customers can only manage their own orders
@@ -33,6 +36,7 @@
 ## 📁 Files Created/Modified
 
 ### Backend Schema
+
 1. **amplify/data/resource.ts** (REWRITTEN)
    - Store model with 15+ fields
    - Product model with inventory management
@@ -42,6 +46,7 @@
    - Changed defaultAuthorizationMode to 'userPool'
 
 ### Frontend Components
+
 2. **components/ProductCard.tsx** (NEW)
    - 350+ lines of TypeScript
    - Product display with image, price, inventory
@@ -60,6 +65,7 @@
    - Success confirmation
 
 ### Documentation
+
 4. **MARKETPLACE_SCHEMA.md** (NEW)
    - Complete schema documentation
    - Authorization strategy explained
@@ -73,6 +79,7 @@
 ## 🗄️ Data Models Overview
 
 ### Store
+
 ```
 - Vendor-owned locations
 - Address, city, state, zipCode
@@ -82,6 +89,7 @@
 ```
 
 ### Product
+
 ```
 - BelongsTo Store
 - Price, inventory count
@@ -92,6 +100,7 @@
 ```
 
 ### OrderProduct (Junction)
+
 ```
 - BelongsTo Order
 - BelongsTo Product
@@ -100,6 +109,7 @@
 ```
 
 ### Order
+
 ```
 - Customer information
 - Delivery address details
@@ -115,12 +125,15 @@
 ## 🔐 Authorization Implementation
 
 ### Owner Field Pattern
+
 Every model includes an `owner` field:
+
 ```typescript
 owner: a.string(), // Amplify owner field for authorization
 ```
 
 ### Authorization Rules
+
 ```typescript
 .authorization((allow) => [
   allow.owner().identityClaim('sub'),  // Full CRUD for owner
@@ -129,6 +142,7 @@ owner: a.string(), // Amplify owner field for authorization
 ```
 
 ### How It Works
+
 1. User creates resource → `owner` field auto-populated with `user.userId`
 2. Amplify checks `owner` field on all operations
 3. Only matching user can update/delete
@@ -139,6 +153,7 @@ owner: a.string(), // Amplify owner field for authorization
 ## 🎨 ProductCard Component
 
 ### Features
+
 - **Image Display:** S3 image or placeholder
 - **Category Badge:** Top-right corner with purple background
 - **Out of Stock Overlay:** Semi-transparent with bold text
@@ -147,14 +162,16 @@ owner: a.string(), // Amplify owner field for authorization
 - **Premium Styling:** White card, soft shadows, 20px border-radius
 
 ### Props
+
 ```typescript
 interface ProductCardProps {
-  product: Schema['Product']['type'];
+  product: Schema["Product"]["type"];
   onPress?: () => void;
 }
 ```
 
 ### Usage
+
 ```tsx
 <ProductCard
   product={productData}
@@ -167,6 +184,7 @@ interface ProductCardProps {
 ## 📝 Create Product Form
 
 ### Features
+
 1. **Store Selection**
    - List user's existing stores
    - Create new store with prompt
@@ -195,6 +213,7 @@ interface ProductCardProps {
 ## 🧪 Testing Instructions
 
 ### 1. Start Amplify Sandbox
+
 ```bash
 cd amplify
 npx ampx sandbox
@@ -203,6 +222,7 @@ npx ampx sandbox
 **Expected:** Sandbox deploys without errors, creates 4 DynamoDB tables
 
 ### 2. Test Product Creation
+
 1. Open Expo app
 2. Navigate to "Create Product" tab
 3. Create a test store (if needed)
@@ -216,12 +236,14 @@ npx ampx sandbox
 6. Verify success message
 
 ### 3. Verify in Database
+
 ```typescript
 const { data } = await client.models.Product.list();
-console.log('Products:', data);
+console.log("Products:", data);
 ```
 
 ### 4. Test Authorization
+
 - Try to edit another vendor's product (should fail)
 - Try to read all products (should succeed)
 - Verify owner field matches user ID
@@ -231,6 +253,7 @@ console.log('Products:', data);
 ## 📊 Acceptance Criteria Status
 
 ✅ **All Criteria Met:**
+
 - [x] Store model with vendor ownership ✅
 - [x] Store has location (address, city, state, zip) ✅
 - [x] Store has name ✅
@@ -252,6 +275,7 @@ console.log('Products:', data);
 ## 🔄 Data Flow
 
 ### Creating a Product (Vendor)
+
 ```
 1. User authenticated → getCurrentUser()
 2. Load user's stores → client.models.Store.list()
@@ -262,6 +286,7 @@ console.log('Products:', data);
 ```
 
 ### Browsing Products (Customer)
+
 ```
 1. User authenticated → getCurrentUser()
 2. Query all products → client.models.Product.list()
@@ -271,6 +296,7 @@ console.log('Products:', data);
 ```
 
 ### Placing Order (Customer)
+
 ```
 1. Select products → add to cart
 2. Confirm order → client.models.Order.create()
@@ -284,6 +310,7 @@ console.log('Products:', data);
 ## 🚀 Deployment Status
 
 ### Current State
+
 ```
 ✅ Schema defined
 ✅ Components created
@@ -293,6 +320,7 @@ console.log('Products:', data);
 ```
 
 ### Next Steps
+
 1. ✅ Verify sandbox deployment completes
 2. ✅ Test product creation in Expo app
 3. ✅ Verify authorization rules work
@@ -305,23 +333,27 @@ console.log('Products:', data);
 ## 💡 Technical Highlights
 
 ### 1. Owner-Based Authorization
+
 - Simple and effective
 - Uses Cognito `sub` as owner ID
 - Automatic enforcement by Amplify
 - No custom Lambda needed
 
 ### 2. Denormalization
+
 - `vendorId` copied to Product for easy filtering
 - `priceAtPurchase` in OrderProduct for price history
 - Trade-off: storage vs query performance
 
 ### 3. Junction Table Pattern
+
 - OrderProduct links Orders and Products
 - Enables many-to-many relationship
 - Stores quantity and price snapshot
 - Customer ownership for privacy
 
 ### 4. Status Enum
+
 - Type-safe order states
 - Enforced by schema
 - Easy to extend (add RETURNED, REFUNDED, etc.)
@@ -332,15 +364,19 @@ console.log('Products:', data);
 ## 🐛 Potential Issues & Solutions
 
 ### Issue: Owner field not populated
+
 **Solution:** Always set `owner: user.userId` in create operations
 
 ### Issue: Can't read other vendors' products
+
 **Solution:** Check `allow.authenticated().to(['read'])` is in authorization
 
 ### Issue: Schema deployment fails
+
 **Solution:** Check for TypeScript errors in resource.ts
 
 ### Issue: Product creation returns error
+
 **Solution:** Verify all required fields are provided (name, price, inventoryCount, category, storeId, vendorId, owner)
 
 ---
@@ -348,6 +384,7 @@ console.log('Products:', data);
 ## 📈 Metrics
 
 **Code Statistics:**
+
 - Lines of Schema: 150+
 - Lines of ProductCard: 350+
 - Lines of CreateProduct: 400+
@@ -357,13 +394,14 @@ console.log('Products:', data);
 **Models Created:** 4 (Store, Product, OrderProduct, Order)  
 **Components Created:** 2 (ProductCard, CreateProduct)  
 **Authorization Rules:** 4 sets of rules  
-**Relationships:** 5 relationships defined  
+**Relationships:** 5 relationships defined
 
 ---
 
 ## 🎓 Learning Outcomes
 
 ### Amplify Gen 2 Data
+
 - Owner-based authorization with `allow.owner()`
 - Identity claim mapping
 - Relationship definitions (hasMany, belongsTo)
@@ -371,6 +409,7 @@ console.log('Products:', data);
 - Default values and required fields
 
 ### React Native Patterns
+
 - Form validation
 - Loading states
 - Success/error handling
@@ -378,6 +417,7 @@ console.log('Products:', data);
 - Alert prompts
 
 ### TypeScript
+
 - Schema type generation
 - Component prop typing
 - Async/await patterns
@@ -388,6 +428,7 @@ console.log('Products:', data);
 ## ✨ Summary
 
 Phase 2 successfully implements a **production-ready marketplace schema** for GlamGo with:
+
 - ✅ Complete data models
 - ✅ Secure authorization
 - ✅ Beautiful UI components

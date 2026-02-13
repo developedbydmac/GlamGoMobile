@@ -9,6 +9,7 @@
 ## 📋 Overview
 
 This document describes the GlamGo marketplace data schema built with AWS Amplify Gen 2. The schema supports a three-sided marketplace where:
+
 - **Vendors** own stores and sell beauty products/services
 - **Customers** browse products and place orders
 - **Drivers** deliver orders to customers
@@ -22,6 +23,7 @@ This document describes the GlamGo marketplace data schema built with AWS Amplif
 **Purpose:** Represents vendor-owned beauty service locations
 
 **Fields:**
+
 - `name` (String, required) - Store name
 - `description` (String) - Store description
 - `address` (String, required) - Street address
@@ -32,19 +34,23 @@ This document describes the GlamGo marketplace data schema built with AWS Amplif
 - `imageKey` (String) - S3 key for store image
 
 **Owner Fields:**
+
 - `owner` (String) - Amplify owner field for authorization
 - `vendorId` (String, required) - Cognito user ID
 - `vendorName` (String, required) - Vendor display name
 - `vendorEmail` (String, required) - Vendor email
 
 **Business Fields:**
+
 - `isActive` (Boolean, default: true) - Store operational status
 - `rating` (Float, default: 0) - Average rating
 
 **Relationships:**
+
 - `products` - hasMany Product
 
 **Authorization:**
+
 - Vendors can only manage their own stores (owner-based)
 - All authenticated users can read stores
 
@@ -55,6 +61,7 @@ This document describes the GlamGo marketplace data schema built with AWS Amplif
 **Purpose:** Beauty products and services offered by stores
 
 **Fields:**
+
 - `name` (String, required) - Product name
 - `description` (String) - Product description
 - `price` (Float, required) - Product price in USD
@@ -64,14 +71,17 @@ This document describes the GlamGo marketplace data schema built with AWS Amplif
 - `imageKey` (String) - S3 key for product image
 
 **Relationships:**
+
 - `storeId` (ID, required) - belongsTo Store
 - `orderProducts` - hasMany OrderProduct
 
 **Owner Fields:**
+
 - `owner` (String) - Amplify owner field for authorization
 - `vendorId` (String, required) - Vendor who owns this product
 
 **Authorization:**
+
 - Vendors can only manage their own products (owner-based)
 - All authenticated users can read products
 
@@ -82,16 +92,19 @@ This document describes the GlamGo marketplace data schema built with AWS Amplif
 **Purpose:** Many-to-many relationship between Orders and Products
 
 **Fields:**
+
 - `orderId` (ID, required) - belongsTo Order
 - `productId` (ID, required) - belongsTo Product
 - `quantity` (Integer, required, default: 1) - Quantity ordered
 - `priceAtPurchase` (Float, required) - Price snapshot at purchase time
 
 **Owner Fields:**
+
 - `owner` (String) - Amplify owner field for authorization
 - `customerId` (String, required) - Customer who ordered
 
 **Authorization:**
+
 - Customers can only manage their own order items (owner-based)
 - All authenticated users can read order items
 
@@ -103,11 +116,13 @@ This document describes the GlamGo marketplace data schema built with AWS Amplif
 
 **Fields:**
 **Customer Information:**
+
 - `customerId` (String, required) - Cognito user ID
 - `customerName` (String, required)
 - `customerEmail` (String, required)
 
 **Delivery Information:**
+
 - `deliveryAddress` (String, required)
 - `deliveryCity` (String, required)
 - `deliveryState` (String, required)
@@ -115,26 +130,32 @@ This document describes the GlamGo marketplace data schema built with AWS Amplif
 - `deliveryPhoneNumber` (String)
 
 **Order Details:**
+
 - `status` (Enum, required) - PENDING, CONFIRMED, PICKED_UP, DELIVERED, CANCELLED
 - `totalAmount` (Float, required, default: 0) - Total order amount
 - `notes` (String) - Special instructions
 
 **Driver Assignment:**
+
 - `driverId` (String) - Assigned driver ID
 - `driverName` (String) - Driver display name
 
 **Timestamps:**
+
 - `confirmedAt` (DateTime)
 - `pickedUpAt` (DateTime)
 - `deliveredAt` (DateTime)
 
 **Owner Fields:**
+
 - `owner` (String) - Amplify owner field for authorization
 
 **Relationships:**
+
 - `orderProducts` - hasMany OrderProduct
 
 **Authorization:**
+
 - Customers can manage their own orders (owner-based)
 - All authenticated users can read orders
 - Drivers need custom Lambda logic for update permissions
@@ -155,6 +176,7 @@ The schema uses AWS Amplify's **owner-based authorization** pattern:
 ```
 
 **How it works:**
+
 1. The `owner` field is automatically populated with the user's Cognito `sub` (user ID)
 2. Only the owner can create, update, or delete their records
 3. All authenticated users can read records
@@ -162,16 +184,19 @@ The schema uses AWS Amplify's **owner-based authorization** pattern:
 ### Role-Based Access Control
 
 **Vendors (custom:role = VENDOR):**
+
 - Can create/update/delete their own Stores and Products
 - Can read all Products (to browse marketplace)
 - Can read Orders containing their products
 
 **Customers (custom:role = CUSTOMER):**
+
 - Can read all Stores and Products
 - Can create/update/delete their own Orders
 - Can read their own OrderProducts
 
 **Drivers (custom:role = DRIVER):**
+
 - Can read all Orders
 - Need Lambda function for updating order status
 
@@ -295,6 +320,7 @@ Use the **Create Product** screen in the app:
 2. Navigate to your API
 3. Open the Queries section
 4. Run:
+
 ```graphql
 query ListProducts {
   listProducts {
@@ -321,10 +347,12 @@ query ListProducts {
 **Purpose:** Display product information in a card format
 
 **Props:**
+
 - `product` (Schema['Product']['type']) - Product data
 - `onPress` (() => void, optional) - Tap handler
 
 **Features:**
+
 - Product image (with placeholder if none)
 - Category badge
 - Out of stock overlay
@@ -333,13 +361,14 @@ query ListProducts {
 - Premium card styling
 
 **Usage:**
+
 ```tsx
-import ProductCard from '@/components/ProductCard';
+import ProductCard from "@/components/ProductCard";
 
 <ProductCard
   product={product}
-  onPress={() => console.log('Tapped:', product.name)}
-/>
+  onPress={() => console.log("Tapped:", product.name)}
+/>;
 ```
 
 ---
@@ -354,6 +383,7 @@ npx ampx sandbox
 ```
 
 **Expected Output:**
+
 ```
 ✅ Successfully deployed to sandbox
 ✅ DynamoDB tables created
@@ -442,9 +472,7 @@ const { data: orderProducts } = await client.models.OrderProduct.list({
 
 // Fetch product details
 const products = await Promise.all(
-  orderProducts.map(op => 
-    client.models.Product.get({ id: op.productId })
-  )
+  orderProducts.map((op) => client.models.Product.get({ id: op.productId })),
 );
 ```
 
@@ -463,6 +491,7 @@ const products = await Promise.all(
 ## 🎯 Acceptance Criteria
 
 ✅ **Criteria Met:**
+
 - [x] Store model with vendor ownership
 - [x] Product model with belongsTo Store relationship
 - [x] Order model with hasMany Products (via OrderProduct)

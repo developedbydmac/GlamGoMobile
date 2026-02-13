@@ -3,6 +3,7 @@
 ## ✅ What We've Built
 
 ### 1. **Backend (AWS Amplify Gen 2)**
+
 - ✅ Email-based authentication
 - ✅ Custom user attribute: `custom:role` (String, mutable)
 - ✅ Three user groups defined: `CUSTOMER`, `VENDOR`, `DRIVER`
@@ -10,22 +11,19 @@
 - ✅ Email verification flow
 
 ### 2. **Frontend (React Native + Expo)**
+
 - ✅ **Role Selection Screen** - High-fidelity UI with:
   - Beautiful role cards with icons and descriptions
   - Visual selection feedback
   - Smooth navigation
-  
 - ✅ **Sign Up Screen** - Professional form with:
   - Full name, email, password fields
   - Role indicator showing selected role
   - Real-time validation
   - Two-step verification (sign-up → email code)
   - Auto sign-in after verification
-  
 - ✅ **Sign In Screen** - Clean login form
-  
 - ✅ **Protected Routes** - Authentication-based navigation
-  
 - ✅ **User Profile Display** - Shows:
   - Email
   - Name
@@ -34,6 +32,7 @@
   - Sign-out button
 
 ### 3. **Bonus: Lambda Trigger (Optional)**
+
 - ✅ Post-confirmation trigger files created
 - ✅ Auto-assigns users to groups based on their role
 - 📝 Setup instructions in `LAMBDA_SETUP.md`
@@ -41,6 +40,7 @@
 ## 📁 Files Created/Modified
 
 ### Backend Files:
+
 ```
 amplify/auth/resource.ts                     ✅ Updated with custom attributes & groups
 amplify/functions/post-confirmation/         ✅ Lambda trigger (optional)
@@ -50,6 +50,7 @@ amplify/functions/post-confirmation/         ✅ Lambda trigger (optional)
 ```
 
 ### Frontend Files:
+
 ```
 app/
 ├── _layout.tsx                              ✅ Amplify config & auth routing
@@ -63,6 +64,7 @@ app/
 ```
 
 ### Documentation:
+
 ```
 AUTH_README.md                               ✅ Detailed implementation guide
 QUICK_START.md                               ✅ Quick testing instructions
@@ -71,13 +73,16 @@ LAMBDA_SETUP.md                              ✅ Lambda trigger setup guide
 
 ## 🚀 Current Status
 
-### Deployment: 
+### Deployment:
+
 The Amplify sandbox is currently **deploying** your updated backend with:
+
 - Custom `custom:role` attribute
 - User groups (CUSTOMER, VENDOR, DRIVER)
 - Updated authentication configuration
 
 ### Next Steps:
+
 1. ⏳ Wait for deployment to complete (you'll see "✅ Deployment succeeded!")
 2. 📱 Start the Expo app: `npm start`
 3. ✅ Test the complete flow (see `QUICK_START.md`)
@@ -85,32 +90,35 @@ The Amplify sandbox is currently **deploying** your updated backend with:
 
 ## 🎯 Acceptance Criteria - COMPLETED
 
-| Criteria | Status |
-|----------|--------|
-| User can sign up on phone | ✅ |
-| User can choose a role during sign-up | ✅ |
-| Role is stored in Cognito | ✅ |
-| `custom:role` attribute is set | ✅ |
-| User visible in AWS Cognito Console with role | ✅ |
-| High-fidelity UI design | ✅ |
-| Uses @aws-amplify/ui-react-native | ✅ |
-| Email verification flow | ✅ |
+| Criteria                                      | Status |
+| --------------------------------------------- | ------ |
+| User can sign up on phone                     | ✅     |
+| User can choose a role during sign-up         | ✅     |
+| Role is stored in Cognito                     | ✅     |
+| `custom:role` attribute is set                | ✅     |
+| User visible in AWS Cognito Console with role | ✅     |
+| High-fidelity UI design                       | ✅     |
+| Uses @aws-amplify/ui-react-native             | ✅     |
+| Email verification flow                       | ✅     |
 
 ## 📱 Testing Quick Reference
 
 ### Sign Up Flow:
+
 1. Open app → Select role (Customer/Vendor/Driver)
 2. Fill form → Submit
 3. Enter email verification code
 4. Redirected to home with profile info
 
 ### Verify in AWS Console:
+
 1. Go to: https://console.aws.amazon.com/cognito/
 2. Find user pool: `amplify-glamgomobile-*`
 3. Click Users → Select user
 4. Check Attributes tab → See `custom:role`
 
 ### Test Credentials Format:
+
 ```
 Email: test@example.com (use real email)
 Password: Test@1234 (meets all requirements)
@@ -118,7 +126,7 @@ Password: Test@1234 (meets all requirements)
 
 ## 🔧 Key Technical Decisions
 
-1. **Custom Attribute vs Groups**: 
+1. **Custom Attribute vs Groups**:
    - Storing role as `custom:role` attribute allows us to capture it during sign-up
    - Groups require post-confirmation Lambda or manual assignment
    - We provide both options (attribute immediately, Lambda for groups)
@@ -148,12 +156,15 @@ Password: Test@1234 (meets all requirements)
 ## 🐛 Known Issues & Solutions
 
 ### Issue: "Multiple sandbox instances detected"
+
 **Solution**: Only run one `npx ampx sandbox` at a time
 
 ### Issue: Password validation errors
+
 **Solution**: Use format like `Test@1234` (8+ chars, upper, lower, number, symbol)
 
 ### Issue: Verification code not received
+
 **Solution**: Check spam folder, use real email address
 
 ## 🎓 Learning Resources
@@ -187,6 +198,7 @@ Password: Test@1234 (meets all requirements)
 ## 🎊 Congratulations!
 
 You now have a fully functional authentication system with:
+
 - ✅ Role-based user management
 - ✅ Email verification
 - ✅ Beautiful, high-fidelity UI
@@ -194,7 +206,8 @@ You now have a fully functional authentication system with:
 - ✅ Protected routes
 - ✅ Ready for AWS Console verification
 
-**Ready to test?** 
+**Ready to test?**
+
 1. Wait for deployment to finish
 2. Run `npm start`
 3. Follow `QUICK_START.md`
@@ -202,6 +215,7 @@ You now have a fully functional authentication system with:
 ---
 
 **Questions or Issues?**
+
 - Check the troubleshooting sections in the docs
 - Review AWS Amplify Gen 2 documentation
 - Check CloudWatch logs for backend issues

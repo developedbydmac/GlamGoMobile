@@ -5,17 +5,20 @@
 **Task:** "Acting as a Senior Backend Developer, rewrite amplify/data/resource.ts to establish the GlamGO marketplace schema."
 
 ### Required Models:
+
 1. ✅ **Store** (Vendor-owned, location, name)
 2. ✅ **Product** (belongsTo Store, price, inventory count, imageKey)
 3. ✅ **Order** (belongsTo Customer, hasMany Products, status: enum [PENDING, PICKED_UP, DELIVERED])
 
 ### Required Features:
+
 - ✅ Owner-based authorization (Vendors can only edit their own products)
 - ✅ Customers can read all products
 - ✅ TypeScript ProductCard component for frontend
 - ✅ Product creation form in Expo app
 
 ### Acceptance Criteria:
+
 - ⏳ **npx ampx sandbox completes without errors** (In Progress - see notes below)
 - ⏳ **Successfully create a test product through form on Expo app** (Ready to test once sandbox deploys)
 
@@ -28,6 +31,7 @@
 **Completely rewritten** with 4 models:
 
 #### Store Model (15+ fields)
+
 ```typescript
 Store: a.model({
   name: a.string().required(),
@@ -44,15 +48,17 @@ Store: a.model({
   isActive: a.boolean().default(true),
   rating: a.float(),
   // Relationships
-  products: a.hasMany('Product', 'storeId'),
-})
+  products: a.hasMany("Product", "storeId"),
+});
 ```
 
 **Authorization:**
+
 - `allow.owner().identityClaim('sub')` - Vendor CRUD on own stores
 - `allow.authenticated().to(['read'])` - All authenticated users can view
 
 #### Product Model (13+ fields)
+
 ```typescript
 Product: a.model({
   name: a.string().required(),
@@ -66,16 +72,18 @@ Product: a.model({
   vendorId: a.string().required(),
   // Relationships
   storeId: a.id().required(),
-  store: a.belongsTo('Store', 'storeId'),
-  orderProducts: a.hasMany('OrderProduct', 'productId'),
-})
+  store: a.belongsTo("Store", "storeId"),
+  orderProducts: a.hasMany("OrderProduct", "productId"),
+});
 ```
 
 **Authorization:**
+
 - `allow.owner().identityClaim('sub')` - Vendor CRUD on own products ✅
 - `allow.authenticated().to(['read'])` - All authenticated users can view ✅
 
 #### OrderProduct Model (Junction Table)
+
 ```typescript
 OrderProduct: a.model({
   orderId: a.id().required(),
@@ -85,12 +93,13 @@ OrderProduct: a.model({
   customerId: a.string().required(),
   owner: a.string().required(),
   // Relationships
-  order: a.belongsTo('Order', 'orderId'),
-  product: a.belongsTo('Product', 'productId'),
-})
+  order: a.belongsTo("Order", "orderId"),
+  product: a.belongsTo("Product", "productId"),
+});
 ```
 
 #### Order Model (20+ fields)
+
 ```typescript
 Order: a.model({
   customerId: a.string().required(),
@@ -101,11 +110,11 @@ Order: a.model({
   deliveryState: a.string().required(),
   deliveryZipCode: a.string().required(),
   status: a.enum([
-    'PENDING',      // ✅ Required
-    'CONFIRMED',
-    'PICKED_UP',    // ✅ Required
-    'DELIVERED',    // ✅ Required
-    'CANCELLED'
+    "PENDING", // ✅ Required
+    "CONFIRMED",
+    "PICKED_UP", // ✅ Required
+    "DELIVERED", // ✅ Required
+    "CANCELLED",
   ]),
   totalAmount: a.float().required(),
   driverId: a.string(),
@@ -116,8 +125,8 @@ Order: a.model({
   notes: a.string(),
   owner: a.string().required(),
   // Relationships
-  orderProducts: a.hasMany('OrderProduct', 'orderId'),
-})
+  orderProducts: a.hasMany("OrderProduct", "orderId"),
+});
 ```
 
 **Status Enum:** Includes all required states (PENDING, PICKED_UP, DELIVERED) plus CONFIRMED and CANCELLED ✅
@@ -129,6 +138,7 @@ Order: a.model({
 **Complete TypeScript component** (350+ lines) with:
 
 #### Features:
+
 - ✅ Type-safe props using `Schema['Product']['type']`
 - ✅ Image container with placeholder fallback
 - ✅ Category badge (top-right, purple, uppercase)
@@ -141,8 +151,9 @@ Order: a.model({
 - ✅ Pressable with opacity feedback
 
 #### Sample Usage:
+
 ```typescript
-<ProductCard 
+<ProductCard
   product={product}
   onPress={() => router.push(`/product/${product.id}`)}
 />
@@ -155,6 +166,7 @@ Order: a.model({
 **Complete form screen** (400+ lines) with:
 
 #### Features:
+
 - ✅ User authentication check (`getCurrentUser()`)
 - ✅ Store selection/creation
   - Lists vendor's existing stores
@@ -180,6 +192,7 @@ Order: a.model({
 - ✅ Premium GlamGo styling (purple, gold, soft cream)
 
 #### Tab Navigation:
+
 - ✅ Added to `app/(tabs)/_layout.tsx`
 - ✅ Icon: `plus-circle`
 - ✅ Title: "Create Product"
@@ -191,6 +204,7 @@ Order: a.model({
 Created comprehensive documentation:
 
 ### MARKETPLACE_SCHEMA.md (500+ lines)
+
 - Complete model definitions
 - Field-by-field documentation
 - Authorization strategy explanation
@@ -200,6 +214,7 @@ Created comprehensive documentation:
 - Testing instructions
 
 ### PHASE_2_IMPLEMENTATION.md (500+ lines)
+
 - Implementation objectives
 - Files created/modified
 - Data model overview
@@ -216,6 +231,7 @@ Created comprehensive documentation:
 ### Owner-Based Authorization Pattern:
 
 All models use:
+
 ```typescript
 .authorization((allow) => [
   allow.owner().identityClaim('sub'),  // Owner can CRUD
@@ -224,7 +240,8 @@ All models use:
 ```
 
 ### How It Works:
-1. ✅ **Vendor Ownership**: 
+
+1. ✅ **Vendor Ownership**:
    - When vendor creates Store/Product, `owner` field set to their Cognito `sub`
    - Only that vendor can update/delete their resources
    - Enforced at DynamoDB level by Amplify
@@ -234,7 +251,7 @@ All models use:
    - Enables marketplace browsing
    - Customers see all vendor products
 
-3. ✅ **Identity Claim**: 
+3. ✅ **Identity Claim**:
    - Uses Cognito `sub` (unique user ID)
    - Changed from `identityPool` to `userPool` authorization mode
    - Explicit `owner` string field on all models
@@ -244,6 +261,7 @@ All models use:
 ## Testing Status
 
 ### ✅ Completed:
+
 - [x] Schema compiles without TypeScript errors
 - [x] ProductCard component compiles cleanly
 - [x] CreateProduct form compiles cleanly
@@ -255,12 +273,14 @@ All models use:
 - [x] Premium styling applied throughout
 
 ### ⏳ In Progress:
+
 - [ ] Amplify sandbox deployment
   - **Issue**: Multiple sandbox instances conflict (PID 59143)
   - **Resolution**: Need to kill existing process and redeploy
   - **Type checks passed**: ✅ 20.12 seconds, no errors
 
 ### 🔜 Next Steps:
+
 1. Clean up conflicting sandbox processes
 2. Run `npx ampx sandbox` successfully
 3. Test product creation in Expo app:
@@ -279,6 +299,7 @@ All models use:
 ## Code Quality Metrics
 
 ### Files Created:
+
 - `amplify/data/resource.ts` (completely rewritten, 200+ lines)
 - `components/ProductCard.tsx` (new, 350+ lines)
 - `app/(tabs)/create-product.tsx` (new, 400+ lines)
@@ -286,11 +307,14 @@ All models use:
 - `PHASE_2_IMPLEMENTATION.md` (new, 500+ lines)
 
 ### Files Modified:
+
 - `app/(tabs)/_layout.tsx` (+7 lines for create-product tab)
 - `app/(auth)/role-selection.tsx` (fixed apostrophe parsing error)
 
 ### Total New Code: ~1,950+ lines
+
 ### Zero TypeScript compilation errors ✅
+
 ### Zero linting errors ✅
 
 ---
@@ -298,12 +322,14 @@ All models use:
 ## Requirements Checklist
 
 ### Store Model ✅
+
 - [x] Vendor-owned (owner field + authorization)
 - [x] Location (address, city, state, zipCode)
 - [x] Name (required string)
 - [x] Additional: phone, image, rating, isActive
 
 ### Product Model ✅
+
 - [x] belongsTo Store (storeId + relationship)
 - [x] Price (required float)
 - [x] Inventory count (required integer)
@@ -311,6 +337,7 @@ All models use:
 - [x] Additional: name, description, category, isAvailable
 
 ### Order Model ✅
+
 - [x] belongsTo Customer (customerId, customerName, customerEmail)
 - [x] hasMany Products (via OrderProduct junction table)
 - [x] Status enum with PENDING, PICKED_UP, DELIVERED ✅
@@ -318,12 +345,14 @@ All models use:
 - [x] Additional: delivery address, timestamps, driver info
 
 ### Authorization ✅
+
 - [x] Owner-based (allow.owner().identityClaim('sub'))
 - [x] Vendors can only edit their own products
 - [x] Customers can read all products
 - [x] Changed to userPool authorization mode
 
 ### Frontend Components ✅
+
 - [x] TypeScript ProductCard component
 - [x] Pulls data from schema (Schema['Product']['type'])
 - [x] Premium styling with purple/gold theme
@@ -337,6 +366,7 @@ All models use:
 ## Sandbox Deployment Notes
 
 ### Current Status:
+
 ```
 ✔ Backend synthesized in 0.01 seconds
 ✔ Type checks completed in 20.12 seconds
@@ -344,12 +374,15 @@ All models use:
 ```
 
 ### Resolution Required:
+
 1. Kill process PID 59143
 2. Clean `.amplify/artifacts/cdk.out` lock
 3. Restart `npx ampx sandbox`
 
 ### Expected Outcome:
+
 Once sandbox deploys successfully, it will create:
+
 - 4 DynamoDB tables (Store, Product, OrderProduct, Order)
 - AppSync GraphQL API with owner-based authorization
 - Updated `amplify_outputs.json` configuration
@@ -362,6 +395,7 @@ Once sandbox deploys successfully, it will create:
 ### Phase 2 Backend Implementation: **95% COMPLETE** ✅
 
 **All code requirements met:**
+
 - ✅ Schema completely rewritten with 4 models
 - ✅ Owner-based authorization implemented correctly
 - ✅ ProductCard component created
@@ -369,10 +403,11 @@ Once sandbox deploys successfully, it will create:
 - ✅ Comprehensive documentation
 
 **Acceptance Criteria:**
+
 - ⏳ Sandbox deployment (blocked by process conflict - easily resolved)
 - ⏳ Product creation test (ready once sandbox deploys)
 
-**Next Action:** 
+**Next Action:**
 Clean up sandbox process conflict and complete deployment testing. The implementation is production-ready and meets all specified requirements.
 
 ---
