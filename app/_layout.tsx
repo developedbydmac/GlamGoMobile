@@ -1,28 +1,33 @@
-import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
-import { Stack, useRouter, useSegments } from 'expo-router';
-import * as SplashScreen from 'expo-splash-screen';
-import { useEffect, useState } from 'react';
-import 'react-native-reanimated';
-import 'react-native-get-random-values';
+import FontAwesome from "@expo/vector-icons/FontAwesome";
+import {
+    DarkTheme,
+    DefaultTheme,
+    ThemeProvider,
+} from "@react-navigation/native";
+import { useFonts } from "expo-font";
+import { Stack, useRouter, useSegments } from "expo-router";
+import * as SplashScreen from "expo-splash-screen";
+import { useEffect, useState } from "react";
+import "react-native-get-random-values";
+import "react-native-reanimated";
 
-import { useColorScheme } from '@/components/useColorScheme';
-import { Amplify } from 'aws-amplify';
-import { getCurrentUser } from 'aws-amplify/auth';
-import amplifyConfig from '@/amplify_outputs.json';
+import amplifyConfig from "@/amplify_outputs.json";
+import { useColorScheme } from "@/components/useColorScheme";
+import { Amplify } from "aws-amplify";
+import { getCurrentUser, fetchUserAttributes } from "aws-amplify/auth";
+import { AuthProvider } from "@/contexts/AuthContext";
 
 // Configure Amplify
 Amplify.configure(amplifyConfig);
 
 export {
-  // Catch any errors thrown by the Layout component.
-  ErrorBoundary,
-} from 'expo-router';
+    // Catch any errors thrown by the Layout component.
+    ErrorBoundary
+} from "expo-router";
 
 export const unstable_settings = {
   // Ensure that reloading on `/modal` keeps a back button present.
-  initialRouteName: '(tabs)',
+  initialRouteName: "(tabs)",
 };
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
@@ -30,11 +35,12 @@ SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const [loaded, error] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
+    SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
     ...FontAwesome.font,
   });
 
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+  const [userRole, setUserRole] = useState<string | null>(null);
   const router = useRouter();
   const segments = useSegments();
 
@@ -46,11 +52,16 @@ export default function RootLayout() {
   const checkAuthStatus = async () => {
     try {
       const user = await getCurrentUser();
-      console.log('User is authenticated:', user);
+      const attributes = await fetchUserAttributes();
+      const role = attributes['custom:role'];
+      console.log("✅ User is authenticated:", user);
+      console.log("✅ User role:", role);
       setIsAuthenticated(true);
+      setUserRole(role || null);
     } catch (error) {
-      console.log('User is not authenticated:', error);
+      console.log("❌ User is not authenticated:", error);
       setIsAuthenticated(false);
+      setUserRole(null);
     }
   };
 
@@ -58,17 +69,26 @@ export default function RootLayout() {
   useEffect(() => {
     if (isAuthenticated === null || !loaded) return;
 
-    const inAuthGroup = segments[0] === '(auth)';
-    const inBrowse = segments[0] === 'browse';
+    const inAuthGroup = segments[0] === "(auth)";
+    const inBrowse = segments[0] === "browse";
 
     if (!isAuthenticated && !inAuthGroup && !inBrowse) {
       // Redirect to browse page for unauthenticated users
-      router.replace('/browse');
+      router.replace("/browse");
     } else if (isAuthenticated && (inAuthGroup || inBrowse)) {
-      // Redirect to tabs if authenticated
-      router.replace('/(tabs)');
+      // Redirect based on user role
+      if (userRole === 'CUSTOMER') {
+        router.replace("/(customer)/shop");
+      } else if (userRole === 'VENDOR') {
+        router.replace("/(vendor)/dashboard");
+      } else if (userRole === 'DRIVER') {
+        router.replace("/(driver)/available");
+      } else {
+        // Fallback for unknown roles
+        router.replace("/browse");
+      }
     }
-  }, [isAuthenticated, segments, loaded]);
+  }, [isAuthenticated, userRole, segments, loaded]);
 
   // Expo Router uses Error Boundaries to catch errors in the navigation tree.
   useEffect(() => {
@@ -85,18 +105,26 @@ export default function RootLayout() {
     return null;
   }
 
-  return <RootLayoutNav />;
+  return (
+    <AuthProvider>
+      <RootLayoutNav />
+    </AuthProvider>
+  );
 }
 
 function RootLayoutNav() {
   const colorScheme = useColorScheme();
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+    <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
       <Stack>
+        <Stack.Screen name="browse" options={{ headerShown: false }} />
         <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+        <Stack.Screen name="(customer)" options={{ headerShown: false }} />
+        <Stack.Screen name="(vendor)" options={{ headerShown: false }} />
+        <Stack.Screen name="(driver)" options={{ headerShown: false }} />
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
+        <Stack.Screen name="modal" options={{ presentation: "modal" }} />
       </Stack>
     </ThemeProvider>
   );
