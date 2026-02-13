@@ -1,4 +1,4 @@
-import { ScrollViewStyleReset } from 'expo-router/html';
+import { ScrollViewStyleReset } from "expo-router/html";
 
 // This file is web-only and used to configure the root HTML for every
 // web page during static rendering.
@@ -10,9 +10,15 @@ export default function Root({ children }: { children: React.ReactNode }) {
       <head>
         <meta charSet="utf-8" />
         <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, shrink-to-fit=no" />
+        <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, shrink-to-fit=no"
+        />
         <meta name="theme-color" content="#4A2B7C" />
-        <meta name="description" content="GlamGo - From Roots to Doorstep. Book beauty services at your convenience." />
+        <meta
+          name="description"
+          content="GlamGo - From Roots to Doorstep. Book beauty services at your convenience."
+        />
         <title>GlamGo Mobile</title>
 
         {/* 

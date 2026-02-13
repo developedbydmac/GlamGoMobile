@@ -1,28 +1,28 @@
-import React, { useState, useEffect } from 'react';
+import type { Schema } from "@/amplify/data/resource";
+import { getCurrentUser } from "aws-amplify/auth";
+import { generateClient } from "aws-amplify/data";
+import { router } from "expo-router";
+import { StatusBar } from "expo-status-bar";
+import React, { useEffect, useState } from "react";
 import {
-  View,
-  Text,
-  StyleSheet,
-  TextInput,
-  TouchableOpacity,
-  ScrollView,
-  Alert,
-  Platform,
-  ActivityIndicator,
-  KeyboardAvoidingView,
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { StatusBar } from 'expo-status-bar';
-import { router } from 'expo-router';
-import { generateClient } from 'aws-amplify/data';
-import { getCurrentUser } from 'aws-amplify/auth';
-import type { Schema } from '@/amplify/data/resource';
+    ActivityIndicator,
+    Alert,
+    KeyboardAvoidingView,
+    Platform,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const client = generateClient<Schema>();
 
 /**
  * CreateProduct Screen
- * 
+ *
  * Allows vendors to create new products for their store.
  * This is a test form to verify the Amplify Data schema is working correctly.
  */
@@ -30,23 +30,23 @@ export default function CreateProductScreen() {
   const [loading, setLoading] = useState(false);
   const [userInfo, setUserInfo] = useState<any>(null);
   const [stores, setStores] = useState<any[]>([]);
-  const [selectedStoreId, setSelectedStoreId] = useState<string>('');
+  const [selectedStoreId, setSelectedStoreId] = useState<string>("");
 
   // Form fields
-  const [name, setName] = useState('');
-  const [description, setDescription] = useState('');
-  const [price, setPrice] = useState('');
-  const [inventoryCount, setInventoryCount] = useState('');
-  const [category, setCategory] = useState('Hair Care');
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
+  const [price, setPrice] = useState("");
+  const [inventoryCount, setInventoryCount] = useState("");
+  const [category, setCategory] = useState("Hair Care");
 
   const categories = [
-    'Hair Care',
-    'Nails',
-    'Skin Care',
-    'Makeup',
-    'Spa Services',
-    'Beauty Tools',
-    'Other',
+    "Hair Care",
+    "Nails",
+    "Skin Care",
+    "Makeup",
+    "Spa Services",
+    "Beauty Tools",
+    "Other",
   ];
 
   useEffect(() => {
@@ -70,78 +70,74 @@ export default function CreateProductScreen() {
         setSelectedStoreId(userStores[0].id);
       }
     } catch (error) {
-      console.error('Error loading user info:', error);
-      Alert.alert('Error', 'Failed to load user information');
+      console.error("Error loading user info:", error);
+      Alert.alert("Error", "Failed to load user information");
     }
   };
 
   const handleCreateStore = async () => {
     if (!userInfo) {
-      Alert.alert('Error', 'User information not loaded');
+      Alert.alert("Error", "User information not loaded");
       return;
     }
 
-    Alert.prompt(
-      'Create Store',
-      'Enter store name:',
-      async (storeName) => {
-        if (!storeName) return;
+    Alert.prompt("Create Store", "Enter store name:", async (storeName) => {
+      if (!storeName) return;
 
-        try {
-          setLoading(true);
-          const { data: newStore } = await client.models.Store.create({
-            name: storeName,
-            description: 'A beautiful beauty store',
-            address: '123 Main St',
-            city: 'Los Angeles',
-            state: 'CA',
-            zipCode: '90001',
-            phoneNumber: '(555) 123-4567',
-            owner: userInfo.userId,
-            vendorId: userInfo.userId,
-            vendorName: userInfo.username || 'Vendor',
-            vendorEmail: userInfo.userId + '@glamgo.com',
-          });
+      try {
+        setLoading(true);
+        const { data: newStore } = await client.models.Store.create({
+          name: storeName,
+          description: "A beautiful beauty store",
+          address: "123 Main St",
+          city: "Los Angeles",
+          state: "CA",
+          zipCode: "90001",
+          phoneNumber: "(555) 123-4567",
+          owner: userInfo.userId,
+          vendorId: userInfo.userId,
+          vendorName: userInfo.username || "Vendor",
+          vendorEmail: userInfo.userId + "@glamgo.com",
+        });
 
-          if (newStore) {
-            setStores([...stores, newStore]);
-            setSelectedStoreId(newStore.id);
-            Alert.alert('Success', 'Store created successfully!');
-          }
-        } catch (error: any) {
-          console.error('Error creating store:', error);
-          Alert.alert('Error', error.message || 'Failed to create store');
-        } finally {
-          setLoading(false);
+        if (newStore) {
+          setStores([...stores, newStore]);
+          setSelectedStoreId(newStore.id);
+          Alert.alert("Success", "Store created successfully!");
         }
+      } catch (error: any) {
+        console.error("Error creating store:", error);
+        Alert.alert("Error", error.message || "Failed to create store");
+      } finally {
+        setLoading(false);
       }
-    );
+    });
   };
 
   const handleCreateProduct = async () => {
     // Validation
     if (!name.trim()) {
-      Alert.alert('Error', 'Please enter a product name');
+      Alert.alert("Error", "Please enter a product name");
       return;
     }
 
     if (!price || isNaN(parseFloat(price))) {
-      Alert.alert('Error', 'Please enter a valid price');
+      Alert.alert("Error", "Please enter a valid price");
       return;
     }
 
     if (!inventoryCount || isNaN(parseInt(inventoryCount))) {
-      Alert.alert('Error', 'Please enter a valid inventory count');
+      Alert.alert("Error", "Please enter a valid inventory count");
       return;
     }
 
     if (!selectedStoreId) {
-      Alert.alert('Error', 'Please select a store or create one first');
+      Alert.alert("Error", "Please select a store or create one first");
       return;
     }
 
     if (!userInfo) {
-      Alert.alert('Error', 'User information not loaded');
+      Alert.alert("Error", "User information not loaded");
       return;
     }
 
@@ -161,35 +157,35 @@ export default function CreateProductScreen() {
       });
 
       if (errors) {
-        console.error('Product creation errors:', errors);
-        Alert.alert('Error', errors[0]?.message || 'Failed to create product');
+        console.error("Product creation errors:", errors);
+        Alert.alert("Error", errors[0]?.message || "Failed to create product");
         return;
       }
 
       if (newProduct) {
         Alert.alert(
-          'Success! ✨',
+          "Success! ✨",
           `Product "${newProduct.name}" created successfully!`,
           [
             {
-              text: 'Create Another',
+              text: "Create Another",
               onPress: () => {
-                setName('');
-                setDescription('');
-                setPrice('');
-                setInventoryCount('');
+                setName("");
+                setDescription("");
+                setPrice("");
+                setInventoryCount("");
               },
             },
             {
-              text: 'View Products',
-              onPress: () => router.push('/(tabs)'),
+              text: "View Products",
+              onPress: () => router.push("/(tabs)"),
             },
-          ]
+          ],
         );
       }
     } catch (error: any) {
-      console.error('Error creating product:', error);
-      Alert.alert('Error', error.message || 'Failed to create product');
+      console.error("Error creating product:", error);
+      Alert.alert("Error", error.message || "Failed to create product");
     } finally {
       setLoading(false);
     }
@@ -199,7 +195,7 @@ export default function CreateProductScreen() {
     <SafeAreaView style={styles.container}>
       <StatusBar style="dark" />
       <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.keyboardView}
       >
         <ScrollView
@@ -210,12 +206,17 @@ export default function CreateProductScreen() {
           <View style={styles.content}>
             {/* Header */}
             <View style={styles.header}>
-              <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+              <TouchableOpacity
+                onPress={() => router.back()}
+                style={styles.backButton}
+              >
                 <Text style={styles.backButtonText}>← Back</Text>
               </TouchableOpacity>
-              
+
               <Text style={styles.title}>Create Product</Text>
-              <Text style={styles.subtitle}>Add a new product to your store</Text>
+              <Text style={styles.subtitle}>
+                Add a new product to your store
+              </Text>
             </View>
 
             {/* Store Selection */}
@@ -243,7 +244,8 @@ export default function CreateProductScreen() {
                       key={store.id}
                       style={[
                         styles.storeCard,
-                        selectedStoreId === store.id && styles.storeCardSelected,
+                        selectedStoreId === store.id &&
+                          styles.storeCardSelected,
                       ]}
                       onPress={() => setSelectedStoreId(store.id)}
                     >
@@ -351,7 +353,10 @@ export default function CreateProductScreen() {
 
               {/* Create Button */}
               <TouchableOpacity
-                style={[styles.createButton, loading && styles.createButtonDisabled]}
+                style={[
+                  styles.createButton,
+                  loading && styles.createButtonDisabled,
+                ]}
                 onPress={handleCreateProduct}
                 disabled={loading || !selectedStoreId}
                 activeOpacity={0.8}
@@ -373,7 +378,7 @@ export default function CreateProductScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FAF9F7',
+    backgroundColor: "#FAF9F7",
   },
   keyboardView: {
     flex: 1,
@@ -384,8 +389,8 @@ const styles = StyleSheet.create({
   },
   content: {
     maxWidth: 480,
-    width: '100%',
-    alignSelf: 'center',
+    width: "100%",
+    alignSelf: "center",
   },
   header: {
     marginBottom: 32,
@@ -395,19 +400,19 @@ const styles = StyleSheet.create({
   },
   backButtonText: {
     fontSize: 16,
-    color: '#4A2B7C',
-    fontWeight: '600',
+    color: "#4A2B7C",
+    fontWeight: "600",
   },
   title: {
     fontSize: 34,
-    fontWeight: '700',
-    color: '#4A2B7C',
+    fontWeight: "700",
+    color: "#4A2B7C",
     marginBottom: 8,
     letterSpacing: 0.3,
   },
   subtitle: {
     fontSize: 17,
-    color: '#6B6B6B',
+    color: "#6B6B6B",
     lineHeight: 24,
   },
   section: {
@@ -415,75 +420,75 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 18,
-    fontWeight: '700',
-    color: '#2C2C2C',
+    fontWeight: "700",
+    color: "#2C2C2C",
     marginBottom: 16,
     letterSpacing: 0.2,
   },
   noStoreContainer: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: "#FFFFFF",
     padding: 24,
     borderRadius: 16,
-    alignItems: 'center',
+    alignItems: "center",
     borderWidth: 1.5,
-    borderColor: '#E8E8E8',
+    borderColor: "#E8E8E8",
   },
   noStoreText: {
     fontSize: 15,
-    color: '#6B6B6B',
+    color: "#6B6B6B",
     marginBottom: 16,
-    textAlign: 'center',
+    textAlign: "center",
   },
   createStoreButton: {
-    backgroundColor: '#4A2B7C',
+    backgroundColor: "#4A2B7C",
     paddingHorizontal: 24,
     paddingVertical: 12,
     borderRadius: 12,
   },
   createStoreButtonText: {
-    color: '#FFFFFF',
+    color: "#FFFFFF",
     fontSize: 15,
-    fontWeight: '700',
-    textTransform: 'uppercase',
+    fontWeight: "700",
+    textTransform: "uppercase",
     letterSpacing: 0.5,
   },
   storeList: {
     gap: 12,
   },
   storeCard: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: "#FFFFFF",
     padding: 16,
     borderRadius: 16,
     borderWidth: 2,
-    borderColor: '#E8E8E8',
+    borderColor: "#E8E8E8",
   },
   storeCardSelected: {
-    borderColor: '#4A2B7C',
-    backgroundColor: '#F5F3FF',
+    borderColor: "#4A2B7C",
+    backgroundColor: "#F5F3FF",
   },
   storeName: {
     fontSize: 16,
-    fontWeight: '700',
-    color: '#2C2C2C',
+    fontWeight: "700",
+    color: "#2C2C2C",
     marginBottom: 4,
   },
   storeAddress: {
     fontSize: 14,
-    color: '#6B6B6B',
+    color: "#6B6B6B",
   },
   addStoreButton: {
-    backgroundColor: '#F5F5F5',
+    backgroundColor: "#F5F5F5",
     padding: 16,
     borderRadius: 16,
     borderWidth: 2,
-    borderColor: '#E8E8E8',
-    borderStyle: 'dashed',
-    alignItems: 'center',
+    borderColor: "#E8E8E8",
+    borderStyle: "dashed",
+    alignItems: "center",
   },
   addStoreText: {
     fontSize: 15,
-    color: '#4A2B7C',
-    fontWeight: '600',
+    color: "#4A2B7C",
+    fontWeight: "600",
   },
   form: {
     gap: 24,
@@ -493,21 +498,21 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 15,
-    fontWeight: '600',
-    color: '#2C2C2C',
+    fontWeight: "600",
+    color: "#2C2C2C",
     letterSpacing: 0.2,
   },
   input: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: "#FFFFFF",
     borderWidth: 1.5,
-    borderColor: '#E8E8E8',
+    borderColor: "#E8E8E8",
     borderRadius: 14,
     padding: 16,
     fontSize: 16,
-    color: '#2C2C2C',
+    color: "#2C2C2C",
     ...Platform.select({
       ios: {
-        shadowColor: '#4A2B7C',
+        shadowColor: "#4A2B7C",
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.04,
         shadowRadius: 4,
@@ -525,35 +530,35 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   categoryChip: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: "#FFFFFF",
     paddingHorizontal: 16,
     paddingVertical: 10,
     borderRadius: 20,
     marginRight: 8,
     borderWidth: 1.5,
-    borderColor: '#E8E8E8',
+    borderColor: "#E8E8E8",
   },
   categoryChipSelected: {
-    backgroundColor: '#4A2B7C',
-    borderColor: '#4A2B7C',
+    backgroundColor: "#4A2B7C",
+    borderColor: "#4A2B7C",
   },
   categoryChipText: {
     fontSize: 14,
-    fontWeight: '600',
-    color: '#2C2C2C',
+    fontWeight: "600",
+    color: "#2C2C2C",
   },
   categoryChipTextSelected: {
-    color: '#FFFFFF',
+    color: "#FFFFFF",
   },
   createButton: {
-    backgroundColor: '#4A2B7C',
+    backgroundColor: "#4A2B7C",
     padding: 18,
     borderRadius: 16,
-    alignItems: 'center',
+    alignItems: "center",
     marginTop: 8,
     ...Platform.select({
       ios: {
-        shadowColor: '#4A2B7C',
+        shadowColor: "#4A2B7C",
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.3,
         shadowRadius: 8,
@@ -562,7 +567,7 @@ const styles = StyleSheet.create({
         elevation: 6,
       },
       web: {
-        boxShadow: '0 4px 8px rgba(74, 43, 124, 0.3)',
+        boxShadow: "0 4px 8px rgba(74, 43, 124, 0.3)",
       },
     }),
   },
@@ -570,9 +575,9 @@ const styles = StyleSheet.create({
     opacity: 0.5,
   },
   createButtonText: {
-    color: '#FFFFFF',
+    color: "#FFFFFF",
     fontSize: 17,
-    fontWeight: '700',
+    fontWeight: "700",
     letterSpacing: 0.8,
   },
 });
