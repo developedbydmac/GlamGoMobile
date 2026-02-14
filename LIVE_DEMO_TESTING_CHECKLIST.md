@@ -3,24 +3,29 @@
 ## Pre-Demo Setup (5 minutes before)
 
 ### 1. Start Development Server
+
 ```bash
 cd /Users/daquanmcdaniel/Documents/2026/GlamGoMobile/GlamGoMobile
 npx expo start
 ```
 
 ### 2. Verify Expo Running
+
 - ✅ QR code displayed in terminal
 - ✅ Metro bundler started
 - ✅ No red error messages
 
 ### 3. Connect iPhone
+
 - ✅ Open Expo Go app on iPhone
 - ✅ Scan QR code from terminal
 - ✅ App loads successfully
 - ✅ No JavaScript errors in Expo Go
 
 ### 4. Clear Previous Test Data (Optional)
+
 If you want fresh demo accounts:
+
 - Delete old test accounts from AWS Cognito (or use different emails)
 - Clear app data in Expo Go (shake phone → "Clear app data")
 
@@ -29,7 +34,9 @@ If you want fresh demo accounts:
 ## 📱 FULL DEMO FLOW (15-20 minutes)
 
 ### Step 1: Browse Screen (Public View) - 1 minute
+
 **What to Show:**
+
 - [ ] App opens to Browse screen
 - [ ] 4 featured products visible with real Unsplash photos
 - [ ] Lock badges on each product (semi-transparent overlay)
@@ -43,7 +50,9 @@ If you want fresh demo accounts:
 ---
 
 ### Step 2: Account Creation Flow - 2 minutes
+
 **What to Do:**
+
 - [ ] Tap "Create Free Account" button
 - [ ] Role selection screen appears with 3 cards
 - [ ] Point out: Customer (purple), Vendor (gold), Driver (blue)
@@ -51,11 +60,13 @@ If you want fresh demo accounts:
 - [ ] Sign-up form loads
 
 **What to Fill:**
+
 - [ ] Email: `demo.customer@glamgo.com` (or any test email)
 - [ ] Password: `Test1234!` (meets requirements: 8+ chars, uppercase, number, special)
 - [ ] Tap "Create Account"
 
 **Expected Result:**
+
 - [ ] Loading indicator appears
 - [ ] Redirect to purple-themed Shop screen
 - [ ] Purple tab bar at bottom (Shop, Cart, Orders, Profile)
@@ -69,6 +80,7 @@ If you want fresh demo accounts:
 ### Step 3: Customer Experience - Phase 2 Features - 5 minutes ✨
 
 #### 3A. Loading State (5 seconds)
+
 - [ ] "Loading services..." spinner visible
 - [ ] Purple ActivityIndicator appears
 - [ ] Text: "Loading services..."
@@ -77,6 +89,7 @@ If you want fresh demo accounts:
 "The app is now querying AWS DynamoDB via GraphQL. Since we haven't added products yet, it'll fall back to demo services with real photos."
 
 #### 3B. Browse Services (30 seconds)
+
 - [ ] 6 beauty services display in 2-column grid
 - [ ] Each service has:
   - [ ] Real Unsplash photo (400x300px)
@@ -91,7 +104,9 @@ If you want fresh demo accounts:
 "Here's the Shop with 6 beauty services. Each has a professional photo from Unsplash, store information, pricing, and ratings. This is demo data, but in production, vendors will create these products."
 
 #### 3C. Search Functionality (1 minute)
+
 **Test 1: Search for "hair"**
+
 - [ ] Tap search bar
 - [ ] Keyboard appears
 - [ ] Type "hair"
@@ -103,6 +118,7 @@ If you want fresh demo accounts:
 "Watch as I type 'hair' - the results filter instantly. This is real-time search across service names, store names, and categories."
 
 **Test 2: Clear and search "nails"**
+
 - [ ] Tap X button to clear
 - [ ] All 6 services return
 - [ ] Type "nails"
@@ -110,6 +126,7 @@ If you want fresh demo accounts:
 - [ ] Results count: "1 service found"
 
 **Test 3: Empty state**
+
 - [ ] Clear search
 - [ ] Type "xyz123"
 - [ ] Empty state appears:
@@ -121,7 +138,9 @@ If you want fresh demo accounts:
 "If no results match, users see a helpful empty state guiding them to adjust their search. This is professional error handling."
 
 #### 3D. Category Filtering (1 minute)
+
 **Test 1: Filter by Makeup**
+
 - [ ] Scroll category chips horizontally
 - [ ] Tap "Makeup" chip
 - [ ] Chip gets purple background (active state)
@@ -129,12 +148,14 @@ If you want fresh demo accounts:
 - [ ] Results count: "1 service found"
 
 **Test 2: Filter by Massage**
+
 - [ ] Tap "Massage" chip
 - [ ] Makeup chip becomes inactive (white background)
 - [ ] Massage chip becomes active (purple)
 - [ ] Results filter to "Massage Therapy"
 
 **Test 3: Return to all**
+
 - [ ] Tap "All" chip
 - [ ] All 6 services return
 - [ ] Results count: "6 services found"
@@ -143,7 +164,9 @@ If you want fresh demo accounts:
 "The category filters provide instant filtering. Notice the purple highlight on the active category and how the results update immediately."
 
 #### 3E. Combined Filtering (1 minute)
+
 **Test: Hair Care + "luxury"**
+
 - [ ] Tap "Hair Care" category chip (purple highlight)
 - [ ] Results filter to hair services only
 - [ ] Tap search bar
@@ -152,6 +175,7 @@ If you want fresh demo accounts:
 - [ ] Results count: "1 service found"
 
 **Test: Massage + "spa"**
+
 - [ ] Clear search
 - [ ] Tap "Massage" category
 - [ ] Type "spa"
@@ -162,7 +186,9 @@ If you want fresh demo accounts:
 "This is where it gets powerful - category filters and search work together. I've selected Hair Care and typed 'luxury', so only luxury hair services appear. This is production-ready filtering."
 
 #### 3F. Navigation Through Tabs (30 seconds)
+
 **Cart Tab:**
+
 - [ ] Tap Cart tab in bottom nav
 - [ ] Empty cart screen appears
 - [ ] Cart icon (48px) visible
@@ -173,6 +199,7 @@ If you want fresh demo accounts:
 "The cart is a placeholder for Phase 3. The UI is complete, we just need to add the business logic."
 
 **Orders Tab:**
+
 - [ ] Tap Orders tab
 - [ ] Empty orders screen
 - [ ] Receipt icon visible
@@ -182,6 +209,7 @@ If you want fresh demo accounts:
 "Same with orders - the screen exists, ready for Phase 3 implementation."
 
 **Profile Tab:**
+
 - [ ] Tap Profile tab
 - [ ] Profile screen with menu items:
   - [ ] Edit Profile
@@ -194,6 +222,7 @@ If you want fresh demo accounts:
 "The profile has a settings menu. Notice the Sign Out button at the bottom - let's test the authentication flow."
 
 #### 3G. Sign Out (10 seconds)
+
 - [ ] Scroll to bottom of Profile
 - [ ] Tap "Sign Out" red button
 - [ ] User returns to Browse screen (public view)
@@ -206,18 +235,22 @@ If you want fresh demo accounts:
 ---
 
 ### Step 4: Vendor Account Creation - 2 minutes
+
 **What to Do:**
+
 - [ ] Tap "Create Free Account" again
 - [ ] Role selection screen appears
 - [ ] Tap "Vendor" card (gold theme)
 - [ ] Sign-up form loads
 
 **What to Fill:**
+
 - [ ] Email: `demo.vendor@glamgo.com` (different from customer)
 - [ ] Password: `Test1234!`
 - [ ] Tap "Create Account"
 
 **Expected Result:**
+
 - [ ] Redirect to gold-themed Dashboard
 - [ ] Gold tab bar (Dashboard, Products, Orders, Profile)
 - [ ] "Welcome" header
@@ -231,6 +264,7 @@ If you want fresh demo accounts:
 ### Step 5: Vendor Experience - 2 minutes
 
 #### 5A. Dashboard Tab
+
 - [ ] 3 stat cards visible:
   - [ ] Today's Sales: $0
   - [ ] Active Orders: 0
@@ -241,6 +275,7 @@ If you want fresh demo accounts:
 "The dashboard shows key business metrics. In Phase 3, we'll connect these to real order data."
 
 #### 5B. Products Tab
+
 - [ ] Tap Products tab
 - [ ] Empty products screen
 - [ ] Pricetags icon
@@ -251,6 +286,7 @@ If you want fresh demo accounts:
 "This is where vendors will create products. Phase 3's top priority is building the product creation form - that's how we'll populate the marketplace."
 
 #### 5C. Orders Tab
+
 - [ ] Tap Orders tab
 - [ ] Empty orders screen
 - [ ] Clipboard icon
@@ -260,6 +296,7 @@ If you want fresh demo accounts:
 "Order management for vendors - they'll accept, prepare, and fulfill orders here in Phase 4."
 
 #### 5D. Profile & Sign Out
+
 - [ ] Tap Profile tab
 - [ ] Menu shows vendor-specific items:
   - [ ] Store Details
@@ -275,6 +312,7 @@ If you want fresh demo accounts:
 ### Step 6: Login Test & Role Persistence - 2 minutes
 
 #### 6A. Login as Customer
+
 - [ ] Tap "Sign In" button
 - [ ] Sign-in form appears
 - [ ] Enter customer email: `demo.customer@glamgo.com`
@@ -282,6 +320,7 @@ If you want fresh demo accounts:
 - [ ] Tap "Sign In"
 
 **Expected Result:**
+
 - [ ] Loading indicator
 - [ ] **Redirect directly to Shop tab** (not Browse)
 - [ ] Purple theme
@@ -291,12 +330,15 @@ If you want fresh demo accounts:
 "Notice the app didn't go to Browse first - it detected the customer role from Cognito and routed directly to Shop. This is smart role-based navigation."
 
 #### 6B. Role Persistence Test
+
 **Test 1: Search still works after login**
+
 - [ ] Type in search bar (still functional)
 - [ ] Filters work correctly
 - [ ] State is preserved
 
 **Test 2: Close and reopen app**
+
 - [ ] Swipe up from bottom of iPhone (app switcher)
 - [ ] Swipe up on GlamGo to close completely
 - [ ] Tap Expo Go again
@@ -315,7 +357,9 @@ If you want fresh demo accounts:
 **If time permits, show:**
 
 #### AWS Console (on Mac/laptop)
+
 **Cognito:**
+
 - [ ] Open AWS Console → Cognito
 - [ ] Show User Pool: us-east-1_ZMKLKcE8r
 - [ ] Click "Users" tab
@@ -323,11 +367,13 @@ If you want fresh demo accounts:
 - [ ] Show custom attributes: `custom:role = CUSTOMER`
 
 **DynamoDB:**
+
 - [ ] Open AWS Console → DynamoDB
 - [ ] Show 4 tables: Store, Product, OrderProduct, Order
 - [ ] Click Product table → Items (empty or with test data)
 
 **AppSync:**
+
 - [ ] Open AWS Console → AppSync
 - [ ] Show GraphQL endpoint
 - [ ] Open Queries tab
@@ -353,6 +399,7 @@ If you want fresh demo accounts:
 ## ✅ POST-DEMO CHECKLIST
 
 ### Verify All Features Worked:
+
 - [ ] Browse screen loaded correctly
 - [ ] Customer account creation succeeded
 - [ ] Shop showed 6 services with photos
@@ -374,38 +421,49 @@ If you want fresh demo accounts:
 - [ ] Role persisted after app close/reopen
 
 ### Common Issues & Fixes:
+
 **Issue: App stuck on splash screen**
+
 - Fix: Close Expo Go, restart `npx expo start`, rescan QR code
 
 **Issue: "Network request failed"**
+
 - Fix: Check AWS Amplify configuration, ensure amplify_outputs.json exists
 
 **Issue: Search doesn't filter**
+
 - Fix: Verify shop.tsx has latest code with GraphQL integration
 
 **Issue: Empty state doesn't appear**
+
 - Fix: Type a search term with no matches (e.g., "xyz123")
 
 **Issue: Role doesn't persist**
-- Fix: Verify AuthContext is wrapped around app in _layout.tsx
+
+- Fix: Verify AuthContext is wrapped around app in \_layout.tsx
 
 ---
 
 ## 🎤 KEY TALKING POINTS DURING DEMO
 
 ### Opening (Before Demo):
+
 "Today I'm demonstrating Phases 1 and 2 - both 100% complete. You'll see working authentication with three user roles, and a fully functional marketplace browse experience with real-time search and category filtering."
 
 ### During Customer Shop Demo:
+
 "This is production-ready code. The search queries AWS DynamoDB via GraphQL, with intelligent fallback to demo data if the database is empty. Everything you're seeing - the filtering, the search, the loading states - is connected to real backend infrastructure."
 
 ### During Vendor Demo:
+
 "Vendors get a business-focused interface. The next sprint priority is building the product creation form here in the Products tab. That's how we'll populate the marketplace with real services."
 
 ### During Login/Persistence Demo:
+
 "The app uses AWS Cognito for authentication. Your role is stored as a custom attribute and persists across devices and app restarts. This is enterprise-grade security."
 
 ### Closing:
+
 "Phase 1 and 2 are complete - that's 11 out of 11 contract requirements. We're ahead of schedule. Phase 3 will add the shopping cart, product creation for vendors, and checkout flow. Estimated 15-20 hours for full Phase 3 completion."
 
 ---
@@ -413,15 +471,18 @@ If you want fresh demo accounts:
 ## 📊 SUCCESS METRICS TO HIGHLIGHT
 
 ### Speed:
+
 - ✅ Phase 1 & 2 delivered in **1 sprint** (expected 2 sprints)
 - ✅ Ahead of schedule by 1 week
 
 ### Completeness:
+
 - ✅ 11/11 contract requirements met (100%)
 - ✅ Phase 1: 6/6 authentication features (100%)
 - ✅ Phase 2: 5/5 marketplace features (100%)
 
 ### Quality:
+
 - ✅ 50,000+ lines of production-ready code
 - ✅ Real AWS infrastructure (not mock/local)
 - ✅ Professional UI matching industry standards
@@ -429,6 +490,7 @@ If you want fresh demo accounts:
 - ✅ TypeScript strict types, no console errors
 
 ### Architecture:
+
 - ✅ Role-based navigation (3 user experiences)
 - ✅ GraphQL + DynamoDB backend
 - ✅ Smart fallback (works with empty database)

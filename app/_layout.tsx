@@ -13,9 +13,9 @@ import "react-native-reanimated";
 
 import amplifyConfig from "@/amplify_outputs.json";
 import { useColorScheme } from "@/components/useColorScheme";
-import { Amplify } from "aws-amplify";
-import { getCurrentUser, fetchUserAttributes } from "aws-amplify/auth";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { Amplify } from "aws-amplify";
+import { fetchUserAttributes, getCurrentUser } from "aws-amplify/auth";
 
 // Configure Amplify
 Amplify.configure(amplifyConfig);
@@ -55,7 +55,7 @@ export default function RootLayout() {
       await getCurrentUser();
       // If we get here, user is authenticated
       const attributes = await fetchUserAttributes();
-      const role = attributes['custom:role'];
+      const role = attributes["custom:role"];
       console.log("✅ User is authenticated");
       console.log("✅ User role:", role);
       setIsAuthenticated(true);
@@ -80,11 +80,11 @@ export default function RootLayout() {
       router.replace("/browse");
     } else if (isAuthenticated && (inAuthGroup || inBrowse)) {
       // Redirect based on user role
-      if (userRole === 'CUSTOMER') {
+      if (userRole === "CUSTOMER") {
         router.replace("/(customer)/shop");
-      } else if (userRole === 'VENDOR') {
+      } else if (userRole === "VENDOR") {
         router.replace("/(vendor)/dashboard");
-      } else if (userRole === 'DRIVER') {
+      } else if (userRole === "DRIVER") {
         router.replace("/(driver)/available");
       } else {
         // Fallback for unknown roles

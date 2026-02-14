@@ -11,17 +11,20 @@
 ## ✨ Phase 2 Features Implemented
 
 ### 1. GraphQL Backend Integration
+
 **File:** `app/(customer)/shop.tsx`
 
 **What Was Added:**
+
 ```typescript
-import { generateClient } from 'aws-amplify/data';
-import type { Schema } from '@/amplify/data/resource';
+import { generateClient } from "aws-amplify/data";
+import type { Schema } from "@/amplify/data/resource";
 
 const client = generateClient<Schema>();
 ```
 
 **Functionality:**
+
 - ✅ Real DynamoDB queries via `client.models.Product.list()`
 - ✅ Filter for available products only: `isAvailable: { eq: true }`
 - ✅ Store lookup for each product: `client.models.Store.get()`
@@ -32,15 +35,17 @@ const client = generateClient<Schema>();
 ---
 
 ### 2. Real-Time Search
+
 **Feature:** Live search as you type
 
 **Implementation:**
+
 ```typescript
 const [searchQuery, setSearchQuery] = useState('');
 
 // Search filters by:
 - Service name (e.g., "hair", "facial")
-- Store name (e.g., "salon", "spa")  
+- Store name (e.g., "salon", "spa")
 - Category (e.g., "makeup", "nails")
 
 // Case-insensitive matching
@@ -54,6 +59,7 @@ filtered = filtered.filter(
 ```
 
 **UI Elements:**
+
 - ✅ TextInput with real keyboard input
 - ✅ Search icon (left side)
 - ✅ Clear button (X icon) appears when typing
@@ -62,9 +68,11 @@ filtered = filtered.filter(
 ---
 
 ### 3. Category Filtering
+
 **Feature:** 7 category filter chips
 
 **Categories:**
+
 1. All (default)
 2. Hair Care
 3. Nails
@@ -74,18 +82,20 @@ filtered = filtered.filter(
 7. Lashes
 
 **Implementation:**
+
 ```typescript
-const [selectedCategory, setSelectedCategory] = useState('All');
+const [selectedCategory, setSelectedCategory] = useState("All");
 
 // Active filtering logic
-if (selectedCategory !== 'All') {
+if (selectedCategory !== "All") {
   filtered = filtered.filter(
-    (service) => service.category === selectedCategory
+    (service) => service.category === selectedCategory,
   );
 }
 ```
 
 **UI Elements:**
+
 - ✅ Horizontal scroll of chips
 - ✅ Active state: Purple background + white text
 - ✅ Inactive state: White background + grey text
@@ -94,26 +104,31 @@ if (selectedCategory !== 'All') {
 ---
 
 ### 4. Combined Filtering
+
 **Feature:** Search + Category work together
 
 **Example Flows:**
+
 - Select "Hair Care" → Only hair services
 - Type "luxury" → Filter within hair services
 - Clear search → Return to hair services only
 - Select "All" → Show all services again
 
 **Results Count:**
+
 - ✅ "6 services found" below filters
 - ✅ Updates live as you filter
 
 ---
 
 ### 5. Empty States
+
 **Feature:** Helpful messages when no results
 
 **Two Empty States:**
 
 1. **No Products in Database:**
+
    ```
    Loading services... (spinner)
    ↓
@@ -133,18 +148,21 @@ if (selectedCategory !== 'All') {
 ## 📊 Technical Achievements
 
 ### Code Changes
+
 - **Lines Added:** ~300 lines in shop.tsx
 - **New Features:** GraphQL client, search state, filter state, loading state
 - **New Functions:** `fetchProducts()`, `getMockImageForCategory()`, `filterServices()`
 - **New Styles:** 10+ new StyleSheet entries (search input, category chips, loading, empty state)
 
 ### Architecture Improvements
+
 - ✅ **useState Hooks:** searchQuery, selectedCategory, services, filteredServices, loading, useMockData
 - ✅ **useEffect Hooks:** Fetch on mount, filter on search/category change
 - ✅ **Async/Await:** Proper error handling for GraphQL queries
 - ✅ **Type Safety:** TypeScript with Schema types from aws-amplify/data
 
 ### Performance Optimizations
+
 - ✅ **Loading Indicators:** Users see spinner while fetching data
 - ✅ **Smart Fallback:** Mock data prevents empty screen
 - ✅ **Efficient Filtering:** Client-side filtering (no re-fetch on search)
@@ -155,6 +173,7 @@ if (selectedCategory !== 'All') {
 ## 📱 User Experience Enhancements
 
 ### Before (Mock Data Only)
+
 - ❌ Static 6 services always visible
 - ❌ Search bar was placeholder text only
 - ❌ No category filters
@@ -162,6 +181,7 @@ if (selectedCategory !== 'All') {
 - ❌ Not connected to database
 
 ### After (Full Functionality)
+
 - ✅ **Dynamic data** from DynamoDB or mock fallback
 - ✅ **Working search** with live results
 - ✅ **7 category filters** with instant updates
@@ -176,23 +196,25 @@ if (selectedCategory !== 'All') {
 ## 🎯 Contract Requirements: 100% Complete
 
 ### Phase 1 (Authentication) - 6/6 ✅
-| Requirement | Status |
-|------------|--------|
+
+| Requirement             | Status      |
+| ----------------------- | ----------- |
 | Create customer account | ✅ Complete |
-| Create vendor account | ✅ Complete |
-| Login | ✅ Complete |
-| Logout | ✅ Complete |
-| Role persistence | ✅ Complete |
-| Auth state management | ✅ Complete |
+| Create vendor account   | ✅ Complete |
+| Login                   | ✅ Complete |
+| Logout                  | ✅ Complete |
+| Role persistence        | ✅ Complete |
+| Auth state management   | ✅ Complete |
 
 ### Phase 2 (Marketplace Foundation) - 5/5 ✅
-| Requirement | Status |
-|------------|--------|
-| Browse products | ✅ Complete (GraphQL + mock fallback) |
-| Browse by category | ✅ Complete (7 filter chips) |
-| Search functionality | ✅ Complete (real-time multi-field) |
-| DynamoDB schema | ✅ Complete (4 models) |
-| GraphQL API | ✅ Complete (AppSync endpoint) |
+
+| Requirement          | Status                                |
+| -------------------- | ------------------------------------- |
+| Browse products      | ✅ Complete (GraphQL + mock fallback) |
+| Browse by category   | ✅ Complete (7 filter chips)          |
+| Search functionality | ✅ Complete (real-time multi-field)   |
+| DynamoDB schema      | ✅ Complete (4 models)                |
+| GraphQL API          | ✅ Complete (AppSync endpoint)        |
 
 **Total: 11/11 Requirements (100%) ✅**
 
@@ -201,6 +223,7 @@ if (selectedCategory !== 'All') {
 ## 🚀 What This Means for Client
 
 ### Immediate Benefits
+
 1. **Fully Functional Demo:** Browse, search, and filter all work with real backend
 2. **Production-Ready Core:** Authentication + marketplace foundation complete
 3. **Ahead of Schedule:** Phase 2 delivered in same sprint as Phase 1
@@ -208,6 +231,7 @@ if (selectedCategory !== 'All') {
 5. **Professional UX:** Loading states, empty states, error handling all implemented
 
 ### What Client Can Demo
+
 ✅ **Create account** (Customer, Vendor, or Driver)  
 ✅ **Login** with role-based routing  
 ✅ **Browse services** (real data or mock)  
@@ -216,13 +240,14 @@ if (selectedCategory !== 'All') {
 ✅ **Combine filters** (category + search together)  
 ✅ **See results count** ("6 services found")  
 ✅ **Clear search** (X button)  
-✅ **Logout** and return to public view  
+✅ **Logout** and return to public view
 
 ### What's Next (Phase 3)
+
 ⏳ **Vendor Product Creation** (5-6 hours) - Top priority  
 ⏳ **Shopping Cart** (4-5 hours)  
 ⏳ **Product Detail Screen** (3-4 hours)  
-⏳ **Checkout Flow** (4-5 hours)  
+⏳ **Checkout Flow** (4-5 hours)
 
 **Estimated Phase 3 Total:** 15-20 hours
 
@@ -231,6 +256,7 @@ if (selectedCategory !== 'All') {
 ## 💻 Testing Instructions
 
 ### Test GraphQL Integration
+
 ```bash
 # 1. Start Expo
 cd /Users/daquanmcdaniel/Documents/2026/GlamGoMobile/GlamGoMobile
@@ -261,6 +287,7 @@ npx expo start
 ```
 
 ### Test with Real Data (Future)
+
 ```bash
 # When vendors create products in Phase 3:
 1. Vendor login
@@ -275,6 +302,7 @@ npx expo start
 ## 📸 New Screenshots to Capture
 
 **Before Client Presentation:**
+
 1. **Search in action** - Type "hair" and show results
 2. **Category filter active** - "Makeup" chip highlighted in purple
 3. **Combined filter** - Category + search together
@@ -287,10 +315,12 @@ npx expo start
 ## 🎊 Success Metrics
 
 ### Development Speed
+
 - ✅ Phase 2 completed in **same session** as planned Week 5 delivery
 - ✅ **Ahead of schedule** by 1 week
 
 ### Code Quality
+
 - ✅ TypeScript strict types
 - ✅ Proper error handling
 - ✅ Loading states
@@ -299,6 +329,7 @@ npx expo start
 - ✅ No console errors
 
 ### Feature Completeness
+
 - ✅ All Phase 2 requirements met (5/5)
 - ✅ Search works (multi-field)
 - ✅ Filtering works (7 categories)
@@ -307,6 +338,7 @@ npx expo start
 - ✅ Fallback logic implemented
 
 ### User Experience
+
 - ✅ Professional design maintained
 - ✅ Smooth interactions (no lag)
 - ✅ Clear feedback (loading, empty states)
@@ -320,6 +352,7 @@ npx expo start
 ### File: `app/(customer)/shop.tsx`
 
 **Before:**
+
 - Mock services hardcoded in array
 - Search bar was placeholder text only
 - No category filters
@@ -327,6 +360,7 @@ npx expo start
 - 204 lines
 
 **After:**
+
 - GraphQL client with `generateClient<Schema>()`
 - Real Product.list() queries
 - Store.get() lookups for store names
@@ -390,38 +424,45 @@ git log --oneline -3
 ## 🎤 Updated Client Presentation Script
 
 ### Opening (1 minute)
+
 "Today I'll demonstrate **Phase 1 AND Phase 2** completion for GlamGo Mobile. We've delivered **100% of authentication requirements** (6/6) and **100% of marketplace foundation** (5/5) - both phases complete ahead of schedule."
 
 ### Phase 2 Demo (5 minutes)
 
 **1. Show Browse (1 min)**
+
 - Login as Customer
 - "Here's the Shop with 6 beauty services"
 - "Notice the loading spinner - it's querying DynamoDB in real-time"
 - "Since the Product table is empty, it falls back to mock data"
 
 **2. Show Search (1 min)**
+
 - Type "hair" → "Watch it filter to only hair services"
 - Type "nails" → "Now only nail services"
 - Clear search → "Returns to full list"
 
 **3. Show Categories (1 min)**
+
 - Tap "Makeup" chip → "Filters to makeup services instantly"
 - Tap "Massage" → "Now massage services"
 - Tap "All" → "Returns to full list"
 
 **4. Show Combined (1 min)**
+
 - Select "Hair Care" category
 - Type "luxury" → "Combined filtering: hair category + luxury search"
 - Clear and select different category
 - "This is the power of real-time filtering"
 
 **5. Show Empty State (1 min)**
+
 - Type "xyz123" → "No services found"
 - "Helpful message guides user to adjust filters"
 - "Professional error handling throughout"
 
 ### Closing (1 minute)
+
 "Phase 1 & 2 are **100% complete**. The app now has working authentication, role-based navigation, browse, search, and category filtering - all connected to AWS DynamoDB. Next sprint: **Phase 3** - vendor product creation, shopping cart, and checkout."
 
 ---
@@ -429,6 +470,7 @@ git log --oneline -3
 ## 🏆 Final Status
 
 ### Phases Completed: 2/7 (Phase 1 & 2)
+
 - ✅ Phase 1: Authentication (100%)
 - ✅ Phase 2: Marketplace Foundation (100%)
 - ⏳ Phase 3: Shopping Flow (0% - starting Week 5)
@@ -438,6 +480,7 @@ git log --oneline -3
 - ⏳ Phase 7: Payments (0%)
 
 ### Overall Project Progress: 28.6% Complete
+
 - 2 phases complete / 7 total phases = 28.6%
 - Ahead of schedule by 1 week
 - All delivered features production-ready

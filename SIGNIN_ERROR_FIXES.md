@@ -5,21 +5,24 @@
 ## Issues Encountered:
 
 ### 1. **"User needs to be authenticated" Error** ❌
+
 **Screenshot Evidence**: Log showing `Failed to fetch user role: [UserUnAuthenticatedException]`
 
-**Root Cause**: 
+**Root Cause**:
+
 - `AuthContext.tsx` was calling `fetchUserAttributes()` on app load
 - No check if user was actually authenticated first
 - This caused error for logged-out users (which is normal state)
 
 **Fix Applied**:
+
 ```typescript
 // Added getCurrentUser() check before fetching attributes
 try {
   await getCurrentUser(); // ✅ Check auth first
 } catch (authError) {
   // User not authenticated - normal, not an error
-  console.log('👤 No user authenticated (normal for logged out state)');
+  console.log("👤 No user authenticated (normal for logged out state)");
   setUserRole(null);
   return;
 }
@@ -31,17 +34,21 @@ try {
 ---
 
 ### 2. **Sign-In "Unknown Error"** ❌
+
 **Screenshot Evidence**: Multiple console errors showing:
+
 - Error name: "Unknown"
-- Error code: undefined  
+- Error code: undefined
 - Error message: "An unknown error has occurred"
 
 **Root Cause**:
+
 - `_layout.tsx` was duplicating auth checks
 - Error logging was too aggressive
 - No graceful handling of logged-out state
 
 **Fix Applied**:
+
 ```typescript
 // Changed error logging from ❌ to 👤 for normal logged-out state
 console.log("👤 User is not authenticated (normal for logged out state)");
@@ -53,9 +60,11 @@ console.log("👤 User is not authenticated (normal for logged out state)");
 ---
 
 ### 3. **Products Locked on Browse Screen** ✅ **BY DESIGN**
+
 **Screenshot Evidence**: Lock icon overlays on products
 
 **Explanation**:
+
 - This is **intentional** behavior to encourage sign-ups
 - Browse screen is public view (unauthenticated users)
 - Products show lock badge + redirect to role-selection on tap
@@ -68,11 +77,13 @@ console.log("👤 User is not authenticated (normal for logged out state)");
 ## Testing Instructions:
 
 ### Before Fix:
+
 1. Open app → See "User needs to be authenticated" error
 2. Try to sign in → Get "Unknown error"
 3. Console flooded with red errors
 
 ### After Fix:
+
 1. Open app → Clean console, no errors
 2. Browse screen loads without authentication errors
 3. Sign in works correctly
@@ -83,6 +94,7 @@ console.log("👤 User is not authenticated (normal for logged out state)");
 ## Verification Steps:
 
 ### Test 1: App Opens Cleanly
+
 ```bash
 # Start Expo
 npx expo start --tunnel
@@ -93,17 +105,20 @@ npx expo start --tunnel
 ```
 
 ### Test 2: Sign-In Works
+
 1. Navigate to Sign In
 2. Enter email: `test@test.com`
 3. Enter password: `Test1234!`
 4. Tap "Sign In"
 
-**Expected**: 
+**Expected**:
+
 - ✅ Loading indicator
 - ✅ Redirect to appropriate role screen
 - ❌ NO "Unknown error"
 
 ### Test 3: Browse Screen Locks (Intentional)
+
 1. Open app (logged out)
 2. See browse screen with products
 3. Products have lock badges ✅ **CORRECT**
@@ -125,7 +140,7 @@ npx expo start --tunnel
 # Fix 1: JSX Syntax
 a136797 - fix: Remove duplicate JSX closing tags in shop.tsx
 
-# Fix 2: Auth State Handling  
+# Fix 2: Auth State Handling
 [PENDING] - fix: Handle unauthenticated state gracefully in AuthContext and _layout
 ```
 
@@ -136,6 +151,7 @@ a136797 - fix: Remove duplicate JSX closing tags in shop.tsx
 ### If Sign-In Still Fails:
 
 **Check Amplify Configuration**:
+
 ```bash
 # Verify amplify_outputs.json exists
 ls amplify_outputs.json
@@ -146,16 +162,18 @@ grep "user_pool_id" amplify_outputs.json
 ```
 
 **Check Network**:
+
 - Ensure Mac and iPhone on same WiFi (or use `--tunnel`)
 - Check AWS Console → Cognito → User Pool is active
 - Verify no firewall blocking AWS endpoints
 
 **Clear Expo Cache**:
+
 ```bash
 # On Mac
 npx expo start -c
 
-# On iPhone  
+# On iPhone
 # Shake phone → "Clear app data" in Expo Go
 ```
 
@@ -167,6 +185,6 @@ npx expo start -c
 ✅ **Fixed**: Sign-in "Unknown error" handling  
 ✅ **Explained**: Browse screen lock badges (intentional UX)  
 ✅ **Fixed**: Duplicate JSX closing tags  
-✅ **Verified**: AuthContext gracefully handles logged-out state  
+✅ **Verified**: AuthContext gracefully handles logged-out state
 
 **Status**: Ready for testing! 🚀

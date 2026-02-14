@@ -3,11 +3,13 @@
 ## Current Status: Sign-In Still Failing
 
 ### Error Location:
+
 - **File**: `app/(auth)/sign-in.tsx`
 - **Line**: 92
 - **Function**: `handleSignIn`
 
 ### What We've Fixed So Far:
+
 1. ✅ AuthContext no longer throws "User needs to be authenticated" error
 2. ✅ Improved error handling for logged-out state
 3. ✅ Added better error logging with JSON stringification
@@ -44,6 +46,7 @@ aws cognito-idp list-users \
 ```
 
 **Look for**:
+
 - Does the user email you're trying to log in with exist?
 - What is the UserStatus? (Should be "CONFIRMED")
 - Does the user have the `custom:role` attribute?
@@ -73,24 +76,29 @@ Instead of signing in, try creating a brand new account:
 #### Step 5: Common Issues & Solutions
 
 **Issue: "Network request failed"**
+
 - **Check**: Is your Mac connected to internet?
 - **Check**: Is AWS Region correct? (should be us-east-1)
 - **Fix**: Try restarting Expo with tunnel: `npx expo start --tunnel`
 
 **Issue: "User does not exist"**
+
 - **Check**: Did you create the account first?
 - **Fix**: Go to AWS Console → Cognito → Users and verify the email exists
 
 **Issue: "User is not confirmed"**
+
 - **Check**: Did you verify the email?
 - **Fix**: Check your email for the verification code
 - **Alternative**: Manually confirm user in AWS Console
 
 **Issue: "InvalidParameterException"**
+
 - **Check**: Is the password correct format? (8+ chars, uppercase, number, special)
 - **Fix**: Try password: `Test1234!`
 
 **Issue: "NotAuthorizedException"**
+
 - **Check**: Wrong password
 - **Fix**: Reset password or use correct one
 

@@ -1,7 +1,12 @@
 import GlamGoLogo from "@/components/GlamGoLogo";
-import ModernInput from "@/components/ModernInput";
 import GradientButton from "@/components/GradientButton";
-import { Colors, Typography, Spacing, BorderRadius } from "@/constants/DesignSystem";
+import ModernInput from "@/components/ModernInput";
+import {
+    BorderRadius,
+    Colors,
+    Spacing,
+    Typography,
+} from "@/constants/DesignSystem";
 import { Ionicons } from "@expo/vector-icons";
 import { getCurrentUser, signIn } from "aws-amplify/auth";
 import { useRouter } from "expo-router";
@@ -16,10 +21,9 @@ import {
     StatusBar,
     StyleSheet,
     Text,
-    TextInput,
     TouchableOpacity,
     View,
-    useColorScheme,
+    useColorScheme
 } from "react-native";
 
 const { width } = Dimensions.get("window");
@@ -34,7 +38,7 @@ export default function SignInScreen() {
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const colorScheme = useColorScheme();
-  const isDark = colorScheme === 'dark';
+  const isDark = colorScheme === "dark";
 
   const showAlert = (title: string, message: string) => {
     if (Platform.OS === "web") {
@@ -64,7 +68,10 @@ export default function SignInScreen() {
         password,
       });
 
-      console.log("Sign-in result:", JSON.stringify({ isSignedIn, nextStep }, null, 2));
+      console.log(
+        "Sign-in result:",
+        JSON.stringify({ isSignedIn, nextStep }, null, 2),
+      );
 
       if (isSignedIn) {
         // Get user info to verify
@@ -90,7 +97,7 @@ export default function SignInScreen() {
       console.error("Error code:", error?.code);
       console.error("Error message:", error?.message);
       console.error("Error toString:", error?.toString());
-      
+
       // Try to stringify the entire error object
       try {
         console.error("Full error (JSON):", JSON.stringify(error, null, 2));
@@ -98,12 +105,12 @@ export default function SignInScreen() {
         console.error("Could not stringify error, using direct log:");
         console.error("Full error:", error);
       }
-      
+
       // Check if it's an AWS Amplify error with underscoreCase
       if (error?.__type) {
         console.error("AWS Error Type (__type):", error.__type);
       }
-      
+
       console.error("=== SIGN-IN ERROR END ===");
 
       // User-friendly error messages
@@ -149,11 +156,15 @@ export default function SignInScreen() {
 
             {/* Header */}
             <TouchableOpacity
-              onPress={() => router.push('/browse')}
+              onPress={() => router.push("/browse")}
               style={styles.backButton}
             >
               <View style={styles.backButtonContent}>
-                <Ionicons name="chevron-back" size={24} color={Colors.primary.royalPurple} />
+                <Ionicons
+                  name="chevron-back"
+                  size={24}
+                  color={Colors.primary.royalPurple}
+                />
                 <Text style={styles.backButtonText}>Back to Browse</Text>
               </View>
             </TouchableOpacity>
@@ -184,8 +195,18 @@ export default function SignInScreen() {
                 autoCapitalize="none"
                 autoComplete="email"
                 editable={!loading}
-                leftIcon={<Ionicons name="mail" size={20} color={Colors.neutral.mediumGrey} />}
-                error={error && error.toLowerCase().includes('email') ? error : undefined}
+                leftIcon={
+                  <Ionicons
+                    name="mail"
+                    size={20}
+                    color={Colors.neutral.mediumGrey}
+                  />
+                }
+                error={
+                  error && error.toLowerCase().includes("email")
+                    ? error
+                    : undefined
+                }
               />
 
               <ModernInput
@@ -199,17 +220,29 @@ export default function SignInScreen() {
                 secureTextEntry={!showPassword}
                 autoCapitalize="none"
                 editable={!loading}
-                leftIcon={<Ionicons name="lock-closed" size={20} color={Colors.neutral.mediumGrey} />}
+                leftIcon={
+                  <Ionicons
+                    name="lock-closed"
+                    size={20}
+                    color={Colors.neutral.mediumGrey}
+                  />
+                }
                 rightIcon={
-                  <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-                    <Ionicons 
-                      name={showPassword ? "eye-off" : "eye"} 
-                      size={20} 
-                      color={Colors.neutral.mediumGrey} 
+                  <TouchableOpacity
+                    onPress={() => setShowPassword(!showPassword)}
+                  >
+                    <Ionicons
+                      name={showPassword ? "eye-off" : "eye"}
+                      size={20}
+                      color={Colors.neutral.mediumGrey}
                     />
                   </TouchableOpacity>
                 }
-                error={error && error.toLowerCase().includes('password') ? error : undefined}
+                error={
+                  error && error.toLowerCase().includes("password")
+                    ? error
+                    : undefined
+                }
               />
 
               <GradientButton
@@ -250,7 +283,7 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     paddingHorizontal: Spacing.xl,
-    paddingTop: Platform.OS === "ios" ? Spacing.xl : Spacing['2xl'],
+    paddingTop: Platform.OS === "ios" ? Spacing.xl : Spacing["2xl"],
   },
   contentMobileWeb: {
     maxWidth: 480,
@@ -262,8 +295,8 @@ const styles = StyleSheet.create({
     marginTop: Spacing.xs,
   },
   backButtonContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: Spacing.xs,
   },
   backButtonText: {
@@ -272,10 +305,10 @@ const styles = StyleSheet.create({
     fontWeight: Typography.fontWeight.semibold,
   },
   header: {
-    marginBottom: Spacing['3xl'],
+    marginBottom: Spacing["3xl"],
   },
   errorContainer: {
-    backgroundColor: '#FFF5F5',
+    backgroundColor: "#FFF5F5",
     borderWidth: 1.5,
     borderColor: Colors.semantic.error,
     borderRadius: BorderRadius.md,
@@ -289,7 +322,7 @@ const styles = StyleSheet.create({
     fontWeight: Typography.fontWeight.medium,
   },
   title: {
-    fontSize: Typography.fontSize['3xl'],
+    fontSize: Typography.fontSize["3xl"],
     fontWeight: Typography.fontWeight.bold,
     color: Colors.primary.royalPurple,
     marginBottom: Spacing.md,
@@ -303,11 +336,11 @@ const styles = StyleSheet.create({
   },
   form: {
     gap: Spacing.lg,
-    marginBottom: Spacing['2xl'],
+    marginBottom: Spacing["2xl"],
   },
   signUpContainer: {
     alignItems: "center",
-    paddingBottom: Platform.OS === 'ios' ? Spacing['3xl'] : Spacing.xl,
+    paddingBottom: Platform.OS === "ios" ? Spacing["3xl"] : Spacing.xl,
     marginTop: Spacing.xl,
   },
   signUpText: {

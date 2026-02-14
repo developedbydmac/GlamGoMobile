@@ -4,6 +4,7 @@ import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import React, { useState } from "react";
 import {
+    Image,
     Platform,
     ScrollView,
     StyleSheet,
@@ -11,7 +12,6 @@ import {
     TextInput,
     TouchableOpacity,
     View,
-    Image,
 } from "react-native";
 
 /**
@@ -20,6 +20,9 @@ import {
  * Allows users to browse the marketplace before signing up.
  * Shows featured products, categories, and a gentle CTA to join.
  */
+
+// DEMO MODE: Set to true to bypass authentication for demos
+const DEMO_MODE = false;
 
 const categories = [
   {
@@ -74,7 +77,8 @@ const mockProducts = [
     category: "Hair Care",
     storeName: "Glam Studio",
     rating: 4.8,
-    image: "https://images.unsplash.com/photo-1562322140-8baeececf3df?w=400&h=300&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1562322140-8baeececf3df?w=400&h=300&fit=crop",
   },
   {
     id: "2",
@@ -83,7 +87,8 @@ const mockProducts = [
     category: "Nails",
     storeName: "Polished Nails",
     rating: 4.9,
-    image: "https://images.unsplash.com/photo-1604654894610-df63bc536371?w=400&h=300&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1604654894610-df63bc536371?w=400&h=300&fit=crop",
   },
   {
     id: "3",
@@ -92,7 +97,8 @@ const mockProducts = [
     category: "Skin Care",
     storeName: "Glow Skincare",
     rating: 4.7,
-    image: "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=400&h=300&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=400&h=300&fit=crop",
   },
   {
     id: "4",
@@ -101,7 +107,8 @@ const mockProducts = [
     category: "Makeup",
     storeName: "Glamour Studio",
     rating: 4.9,
-    image: "https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?w=400&h=300&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?w=400&h=300&fit=crop",
   },
 ];
 
@@ -109,6 +116,19 @@ export default function BrowseScreen() {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+
+  // Filter products based on search and category
+  const filteredProducts = mockProducts.filter((product) => {
+    const matchesSearch = product.name
+      .toLowerCase()
+      .includes(searchQuery.toLowerCase()) ||
+      product.storeName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      product.category.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    const matchesCategory = !selectedCategory || product.category.toLowerCase().includes(selectedCategory.toLowerCase());
+    
+    return matchesSearch && matchesCategory;
+  });
 
   return (
     <View style={styles.container}>
@@ -179,7 +199,12 @@ export default function BrowseScreen() {
                   selectedCategory === category.id &&
                     styles.categoryCardSelected,
                 ]}
-                onPress={() => setSelectedCategory(category.id)}
+                onPress={() => {
+                  // Toggle category selection - click again to deselect
+                  setSelectedCategory(
+                    selectedCategory === category.id ? null : category.id
+                  );
+                }}
               >
                 <View style={styles.categoryIconContainer}>
                   {category.iconType === "FontAwesome" ? (
@@ -217,19 +242,35 @@ export default function BrowseScreen() {
         {/* Featured Products */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Featured Products</Text>
+            <Text style={styles.sectionTitle}>
+              {searchQuery || selectedCategory ? "Search Results" : "Featured Products"}
+            </Text>
             <Text style={styles.viewAll}>View All →</Text>
           </View>
 
-          {mockProducts.map((product) => (
-            <TouchableOpacity
-              key={product.id}
-              style={styles.productCard}
-              onPress={() => {
-                // Show sign-up prompt
-                router.push("/(auth)/role-selection");
-              }}
-            >
+          {filteredProducts.length === 0 ? (
+            <View style={styles.emptyState}>
+              <Text style={styles.emptyStateText}>No products found</Text>
+              <Text style={styles.emptyStateSubtext}>
+                Try adjusting your search or browse all products
+              </Text>
+            </View>
+          ) : (
+            filteredProducts.map((product) => (
+              <TouchableOpacity
+                key={product.id}
+                style={styles.productCard}
+                onPress={() => {
+                  console.log("🎯 Product clicked:", product.id, product.name);
+                  console.log("🚀 Navigating to: /product-detail?id=" + product.id);
+                  try {
+                    router.push(`/product-detail?id=${product.id}`);
+                    console.log("✅ Navigation called successfully");
+                  } catch (error) {
+                    console.error("❌ Navigation error:", error);
+                  }
+                }}
+              >
               <Image
                 source={{ uri: product.image }}
                 style={styles.productImage}
@@ -246,11 +287,9 @@ export default function BrowseScreen() {
                   ${product.price.toFixed(2)}
                 </Text>
               </View>
-              <View style={styles.lockBadge}>
-                <FontAwesome name="lock" size={20} color="#FFF" />
-              </View>
             </TouchableOpacity>
-          ))}
+          ))
+          )}
         </View>
 
         {/* CTA to Join */}
@@ -261,20 +300,77 @@ export default function BrowseScreen() {
               Join GlamGo to book services, shop products, or grow your beauty
               business
             </Text>
-            <TouchableOpacity
-              style={styles.ctaButton}
-              onPress={() => router.push("/(auth)/role-selection")}
-            >
-              <Text style={styles.ctaButtonText}>Create Free Account</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.ctaSecondary}
-              onPress={() => router.push("/(auth)/sign-in")}
-            >
-              <Text style={styles.ctaSecondaryText}>
-                Already have an account? Sign in
-              </Text>
-            </TouchableOpacity>
+            {/* DEMO MODE: Show all 3 role demo buttons */}
+            {DEMO_MODE ? (
+              <>
+                <TouchableOpacity
+                  style={[
+                    styles.ctaButton,
+                    { backgroundColor: "#FF6B6B", marginBottom: 12 },
+                  ]}
+                  onPress={() => {
+                    console.log(
+                      "🧪 TEST button clicked - navigating to product-detail",
+                    );
+                    router.push("/product-detail?id=1");
+                  }}
+                >
+                  <Text style={styles.ctaButtonText}>
+                    🧪 TEST Product Detail Page
+                  </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={[
+                    styles.ctaButton,
+                    { backgroundColor: "#9b59b6", marginBottom: 12 },
+                  ]}
+                  onPress={() => router.push("/(customer)/shop")}
+                >
+                  <Text style={styles.ctaButtonText}>
+                    🎬 Demo Customer Experience
+                  </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={[
+                    styles.ctaButton,
+                    { backgroundColor: "#C9A961", marginBottom: 12 },
+                  ]}
+                  onPress={() => router.push("/(vendor)/dashboard")}
+                >
+                  <Text style={styles.ctaButtonText}>
+                    🎬 Demo Vendor Dashboard
+                  </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={[styles.ctaButton, { backgroundColor: "#4A90E2" }]}
+                  onPress={() => router.push("/(driver)/available")}
+                >
+                  <Text style={styles.ctaButtonText}>
+                    🎬 Demo Driver Portal
+                  </Text>
+                </TouchableOpacity>
+              </>
+            ) : (
+              <>
+                <TouchableOpacity
+                  style={styles.ctaButton}
+                  onPress={() => router.push("/(auth)/role-selection")}
+                >
+                  <Text style={styles.ctaButtonText}>Create Free Account</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.ctaSecondary}
+                  onPress={() => router.push("/(auth)/sign-in")}
+                >
+                  <Text style={styles.ctaSecondaryText}>
+                    Already have an account? Sign in
+                  </Text>
+                </TouchableOpacity>
+              </>
+            )}
           </View>
         </View>
 
@@ -444,7 +540,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     borderWidth: 1.5,
     borderColor: "#E8E8E8",
-    position: 'relative',
+    position: "relative",
     ...Platform.select({
       ios: {
         shadowColor: "#4A2B7C",
@@ -498,10 +594,10 @@ const styles = StyleSheet.create({
     color: "#4A2B7C",
   },
   lockBadge: {
-    position: 'absolute',
+    position: "absolute",
     top: 8,
     right: 8,
-    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    backgroundColor: "rgba(0, 0, 0, 0.6)",
     borderRadius: 20,
     width: 36,
     height: 36,
@@ -562,9 +658,25 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
   },
   ctaSecondaryText: {
-    fontSize: 15,
-    fontWeight: "600",
+    fontSize: 16,
     color: "rgba(255, 255, 255, 0.9)",
-    textDecorationLine: "underline",
+    fontWeight: "600",
+  },
+  // Empty state styles
+  emptyState: {
+    padding: 40,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  emptyStateText: {
+    fontSize: 18,
+    fontWeight: "600",
+    color: "#666",
+    marginBottom: 8,
+  },
+  emptyStateSubtext: {
+    fontSize: 14,
+    color: "#999",
+    textAlign: "center",
   },
 });
