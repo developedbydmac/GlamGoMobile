@@ -22,8 +22,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 const mockProductDetails: any = {
   "1": {
     id: "1",
-    name: "Luxury Hair Styling",
-    storeName: "Elegant Salon & Spa",
+    name: "Premium Hair Styling",
+    storeName: "Glam Studio",
     price: 85,
     rating: 4.8,
     reviews: 124,
@@ -38,8 +38,8 @@ const mockProductDetails: any = {
   },
   "2": {
     id: "2",
-    name: "Premium Manicure",
-    storeName: "Polished Nails Studio",
+    name: "Luxury Manicure",
+    storeName: "Polished Nails",
     price: 45,
     rating: 4.9,
     reviews: 203,
@@ -55,7 +55,7 @@ const mockProductDetails: any = {
   "3": {
     id: "3",
     name: "Facial Treatment",
-    storeName: "Glow Skincare Bar",
+    storeName: "Glow Skincare",
     price: 120,
     rating: 4.7,
     reviews: 89,
@@ -70,8 +70,8 @@ const mockProductDetails: any = {
   },
   "4": {
     id: "4",
-    name: "Makeup Application",
-    storeName: "Glamour Beauty Studio",
+    name: "Makeup Session",
+    storeName: "Glamour Studio",
     price: 95,
     rating: 4.9,
     reviews: 156,
@@ -320,7 +320,7 @@ const styles = StyleSheet.create({
     color: Colors.neutral.mediumGrey,
   },
   categoryBadge: {
-    backgroundColor: Colors.primary.lavenderBlush,
+    backgroundColor: "#F3E8FF",
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.xs,
     borderRadius: BorderRadius.full,
@@ -422,7 +422,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "flex-start",
     gap: Spacing.md,
-    backgroundColor: Colors.primary.lavenderBlush,
+    backgroundColor: "#F3E8FF",
     padding: Spacing.lg,
     borderRadius: BorderRadius.lg,
     marginTop: Spacing.lg,

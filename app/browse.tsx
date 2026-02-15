@@ -1,6 +1,7 @@
+import { Colors } from "@/constants/DesignSystem";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
-import { useRouter } from "expo-router";
+import { Link, useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import React, { useState } from "react";
 import {
@@ -22,7 +23,7 @@ import {
  */
 
 // DEMO MODE: Set to true to bypass authentication for demos
-const DEMO_MODE = false;
+const DEMO_MODE = true;
 
 const categories = [
   {
@@ -119,14 +120,15 @@ export default function BrowseScreen() {
 
   // Filter products based on search and category
   const filteredProducts = mockProducts.filter((product) => {
-    const matchesSearch = product.name
-      .toLowerCase()
-      .includes(searchQuery.toLowerCase()) ||
+    const matchesSearch =
+      product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       product.storeName.toLowerCase().includes(searchQuery.toLowerCase()) ||
       product.category.toLowerCase().includes(searchQuery.toLowerCase());
-    
-    const matchesCategory = !selectedCategory || product.category.toLowerCase().includes(selectedCategory.toLowerCase());
-    
+
+    const matchesCategory =
+      !selectedCategory ||
+      product.category.toLowerCase().includes(selectedCategory.toLowerCase());
+
     return matchesSearch && matchesCategory;
   });
 
@@ -202,7 +204,7 @@ export default function BrowseScreen() {
                 onPress={() => {
                   // Toggle category selection - click again to deselect
                   setSelectedCategory(
-                    selectedCategory === category.id ? null : category.id
+                    selectedCategory === category.id ? null : category.id,
                   );
                 }}
               >
@@ -243,7 +245,9 @@ export default function BrowseScreen() {
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>
-              {searchQuery || selectedCategory ? "Search Results" : "Featured Products"}
+              {searchQuery || selectedCategory
+                ? "Search Results"
+                : "Featured Products"}
             </Text>
             <Text style={styles.viewAll}>View All →</Text>
           </View>
@@ -257,38 +261,52 @@ export default function BrowseScreen() {
             </View>
           ) : (
             filteredProducts.map((product) => (
-              <TouchableOpacity
+              <Link
                 key={product.id}
-                style={styles.productCard}
-                onPress={() => {
-                  console.log("🎯 Product clicked:", product.id, product.name);
-                  console.log("🚀 Navigating to: /product-detail?id=" + product.id);
-                  try {
-                    router.push(`/product-detail?id=${product.id}`);
-                    console.log("✅ Navigation called successfully");
-                  } catch (error) {
-                    console.error("❌ Navigation error:", error);
-                  }
-                }}
+                href={`/product-detail?id=${product.id}`}
+                asChild
               >
-              <Image
-                source={{ uri: product.image }}
-                style={styles.productImage}
-                resizeMode="cover"
-              />
-              <View style={styles.productInfo}>
-                <Text style={styles.productName}>{product.name}</Text>
-                <Text style={styles.storeName}>{product.storeName}</Text>
-                <View style={styles.ratingContainer}>
-                  <FontAwesome name="star" size={14} color="#FFB800" />
-                  <Text style={styles.ratingText}>{product.rating}</Text>
-                </View>
-                <Text style={styles.productPrice}>
-                  ${product.price.toFixed(2)}
-                </Text>
-              </View>
-            </TouchableOpacity>
-          ))
+                <TouchableOpacity
+                  style={styles.productCard}
+                  activeOpacity={0.7}
+                  onPress={() => {
+                    console.log(
+                      "🎯 Product clicked:",
+                      product.id,
+                      product.name,
+                    );
+                  }}
+                >
+                  <Image
+                    source={{ uri: product.image }}
+                    style={styles.productImage}
+                    resizeMode="cover"
+                  />
+                  <View style={styles.productInfo}>
+                    <Text style={styles.productName} numberOfLines={2}>
+                      {product.name}
+                    </Text>
+                    <Text style={styles.storeName} numberOfLines={1}>
+                      {product.storeName}
+                    </Text>
+                    <View style={styles.ratingContainer}>
+                      <FontAwesome name="star" size={14} color="#FFB800" />
+                      <Text style={styles.ratingText}>{product.rating}</Text>
+                    </View>
+                    <Text style={styles.productPrice}>
+                      ${product.price.toFixed(2)}
+                    </Text>
+                  </View>
+                  <View style={styles.productArrow}>
+                    <FontAwesome
+                      name="chevron-right"
+                      size={16}
+                      color="#9CA3AF"
+                    />
+                  </View>
+                </TouchableOpacity>
+              </Link>
+            ))
           )}
         </View>
 
@@ -300,77 +318,93 @@ export default function BrowseScreen() {
               Join GlamGo to book services, shop products, or grow your beauty
               business
             </Text>
-            {/* DEMO MODE: Show all 3 role demo buttons */}
-            {DEMO_MODE ? (
-              <>
-                <TouchableOpacity
-                  style={[
-                    styles.ctaButton,
-                    { backgroundColor: "#FF6B6B", marginBottom: 12 },
-                  ]}
-                  onPress={() => {
-                    console.log(
-                      "🧪 TEST button clicked - navigating to product-detail",
-                    );
-                    router.push("/product-detail?id=1");
-                  }}
-                >
-                  <Text style={styles.ctaButtonText}>
-                    🧪 TEST Product Detail Page
-                  </Text>
-                </TouchableOpacity>
 
-                <TouchableOpacity
-                  style={[
-                    styles.ctaButton,
-                    { backgroundColor: "#9b59b6", marginBottom: 12 },
-                  ]}
-                  onPress={() => router.push("/(customer)/shop")}
-                >
-                  <Text style={styles.ctaButtonText}>
-                    🎬 Demo Customer Experience
-                  </Text>
-                </TouchableOpacity>
+            {/* Role Preview Buttons */}
+            <View style={styles.rolePreviewSection}>
+              <Text style={styles.rolePreviewTitle}>
+                Choose Your Experience:
+              </Text>
 
-                <TouchableOpacity
-                  style={[
-                    styles.ctaButton,
-                    { backgroundColor: "#C9A961", marginBottom: 12 },
-                  ]}
-                  onPress={() => router.push("/(vendor)/dashboard")}
-                >
-                  <Text style={styles.ctaButtonText}>
-                    🎬 Demo Vendor Dashboard
+              <TouchableOpacity
+                style={styles.rolePreviewButton}
+                onPress={() => router.push("/role-preview-customer")}
+              >
+                <View style={styles.rolePreviewIcon}>
+                  <MaterialCommunityIcons
+                    name="account-heart"
+                    size={24}
+                    color={Colors.primary.royalPurple}
+                  />
+                </View>
+                <View style={styles.rolePreviewText}>
+                  <Text style={styles.rolePreviewName}>Customer</Text>
+                  <Text style={styles.rolePreviewDesc}>
+                    Book & shop services
                   </Text>
-                </TouchableOpacity>
+                </View>
+                <FontAwesome
+                  name="chevron-right"
+                  size={16}
+                  color={Colors.neutral.mediumGrey}
+                />
+              </TouchableOpacity>
 
-                <TouchableOpacity
-                  style={[styles.ctaButton, { backgroundColor: "#4A90E2" }]}
-                  onPress={() => router.push("/(driver)/available")}
-                >
-                  <Text style={styles.ctaButtonText}>
-                    🎬 Demo Driver Portal
+              <TouchableOpacity
+                style={styles.rolePreviewButton}
+                onPress={() => router.push("/role-preview-vendor")}
+              >
+                <View style={styles.rolePreviewIcon}>
+                  <MaterialCommunityIcons
+                    name="store"
+                    size={24}
+                    color={Colors.primary.royalPurple}
+                  />
+                </View>
+                <View style={styles.rolePreviewText}>
+                  <Text style={styles.rolePreviewName}>Vendor</Text>
+                  <Text style={styles.rolePreviewDesc}>Grow your business</Text>
+                </View>
+                <FontAwesome
+                  name="chevron-right"
+                  size={16}
+                  color={Colors.neutral.mediumGrey}
+                />
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.rolePreviewButton}
+                onPress={() => router.push("/role-preview-driver")}
+              >
+                <View style={styles.rolePreviewIcon}>
+                  <MaterialCommunityIcons
+                    name="car"
+                    size={24}
+                    color={Colors.primary.royalPurple}
+                  />
+                </View>
+                <View style={styles.rolePreviewText}>
+                  <Text style={styles.rolePreviewName}>Driver</Text>
+                  <Text style={styles.rolePreviewDesc}>
+                    Earn on your schedule
                   </Text>
-                </TouchableOpacity>
-              </>
-            ) : (
-              <>
-                <TouchableOpacity
-                  style={styles.ctaButton}
-                  onPress={() => router.push("/(auth)/role-selection")}
-                >
-                  <Text style={styles.ctaButtonText}>Create Free Account</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.ctaSecondary}
-                  onPress={() => router.push("/(auth)/sign-in")}
-                >
-                  <Text style={styles.ctaSecondaryText}>
-                    Already have an account? Sign in
-                  </Text>
-                </TouchableOpacity>
-              </>
-            )}
+                </View>
+                <FontAwesome
+                  name="chevron-right"
+                  size={16}
+                  color={Colors.neutral.mediumGrey}
+                />
+              </TouchableOpacity>
+            </View>
+
+            {/* Sign In Link */}
+            <TouchableOpacity
+              style={styles.ctaSecondary}
+              onPress={() => router.push("/(auth)/sign-in")}
+            >
+              <Text style={styles.ctaSecondaryText}>
+                Already have an account? Sign in
+              </Text>
+            </TouchableOpacity>
           </View>
         </View>
 
@@ -593,6 +627,11 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     color: "#4A2B7C",
   },
+  productArrow: {
+    justifyContent: "center",
+    alignItems: "center",
+    paddingLeft: 12,
+  },
   lockBadge: {
     position: "absolute",
     top: 8,
@@ -661,6 +700,46 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "rgba(255, 255, 255, 0.9)",
     fontWeight: "600",
+  },
+  // Role preview styles
+  rolePreviewSection: {
+    marginBottom: 24,
+  },
+  rolePreviewTitle: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "rgba(255, 255, 255, 0.95)",
+    marginBottom: 16,
+  },
+  rolePreviewButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "rgba(255, 255, 255, 0.15)",
+    padding: 16,
+    borderRadius: 12,
+    marginBottom: 12,
+  },
+  rolePreviewIcon: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: "rgba(255, 255, 255, 0.95)",
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: 12,
+  },
+  rolePreviewText: {
+    flex: 1,
+  },
+  rolePreviewName: {
+    fontSize: 17,
+    fontWeight: "700",
+    color: "#FFF",
+    marginBottom: 2,
+  },
+  rolePreviewDesc: {
+    fontSize: 13,
+    color: "rgba(255, 255, 255, 0.8)",
   },
   // Empty state styles
   emptyState: {

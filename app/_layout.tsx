@@ -74,8 +74,16 @@ export default function RootLayout() {
 
     const inAuthGroup = segments[0] === "(auth)";
     const inBrowse = segments[0] === "browse";
+    const inProductDetail = segments[0] === "product-detail";
+    const inRolePreview = segments[0]?.startsWith("role-preview-");
 
-    if (!isAuthenticated && !inAuthGroup && !inBrowse) {
+    if (
+      !isAuthenticated &&
+      !inAuthGroup &&
+      !inBrowse &&
+      !inProductDetail &&
+      !inRolePreview
+    ) {
       // Redirect to browse page for unauthenticated users
       router.replace("/browse");
     } else if (isAuthenticated && (inAuthGroup || inBrowse)) {
@@ -122,6 +130,19 @@ function RootLayoutNav() {
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
       <Stack>
         <Stack.Screen name="browse" options={{ headerShown: false }} />
+        <Stack.Screen name="product-detail" options={{ headerShown: false }} />
+        <Stack.Screen
+          name="role-preview-customer"
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="role-preview-vendor"
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="role-preview-driver"
+          options={{ headerShown: false }}
+        />
         <Stack.Screen name="(auth)" options={{ headerShown: false }} />
         <Stack.Screen name="(customer)" options={{ headerShown: false }} />
         <Stack.Screen name="(vendor)" options={{ headerShown: false }} />
