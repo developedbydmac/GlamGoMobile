@@ -1,4 +1,4 @@
-import { fetchUserAttributes, getCurrentUser, signOut } from "aws-amplify/auth";
+import { getCurrentCognitoUser, signOutFromCognito } from "@/services/cognitoAuth";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { Alert, Platform, StyleSheet, TouchableOpacity } from "react-native";
@@ -17,17 +17,13 @@ export default function TabOneScreen() {
 
   const loadUserInfo = async () => {
     try {
-      const user = await getCurrentUser();
-      const attributes = await fetchUserAttributes();
-      setUserInfo({ user, attributes });
-      console.log("User Info:", { user, attributes });
-    } catch (error: any) {
-      // This is expected if user is not authenticated yet
-      if (error.name === "UserUnAuthenticatedException") {
-        console.log("User is not authenticated:", error.message);
-      } else {
-        console.error("Error loading user info:", error);
+      const user = await getCurrentCognitoUser();
+      if (user) {
+        setUserInfo({ user });
+        console.log("User Info:", user);
       }
+    } catch (error: any) {
+      console.error("Error loading user info:", error);
     }
   };
 
@@ -36,8 +32,8 @@ export default function TabOneScreen() {
     if (Platform.OS === "web") {
       if (window.confirm("Are you sure you want to sign out?")) {
         try {
-          await signOut();
-          router.replace("/(auth)/role-selection");
+          await signOutFromCognito();
+          router.replace("/(auth)/role-selection" as any);
         } catch (error) {
           console.error("Error signing out:", error);
           alert("Failed to sign out. Please try again.");
@@ -51,8 +47,8 @@ export default function TabOneScreen() {
           style: "destructive",
           onPress: async () => {
             try {
-              await signOut();
-              router.replace("/(auth)/role-selection");
+              await signOutFromCognito();
+              router.replace("/(auth)/role-selection" as any);
             } catch (error) {
               console.error("Error signing out:", error);
               Alert.alert("Error", "Failed to sign out");

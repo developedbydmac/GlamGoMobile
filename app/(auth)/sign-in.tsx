@@ -8,7 +8,7 @@ import {
     Typography,
 } from "@/constants/DesignSystem";
 import { Ionicons } from "@expo/vector-icons";
-import { getCurrentUser, signIn } from "aws-amplify/auth";
+import { signInWithCognito } from "../../services/cognitoAuth";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
@@ -60,72 +60,56 @@ export default function SignInScreen() {
     setLoading(true);
 
     try {
-      console.log("=== SIGN-IN DEBUG START ===");
+      console.log("=== DIRECT COGNITO SIGN-IN START ===");
       console.log("Attempting sign-in for:", email.trim().toLowerCase());
 
-      const { isSignedIn, nextStep } = await signIn({
-        username: email.trim().toLowerCase(),
-        password,
-      });
-
-      console.log(
-        "Sign-in result:",
-        JSON.stringify({ isSignedIn, nextStep }, null, 2),
+      // Use direct Cognito SDK
+      const user = await signInWithCognito(
+        email.trim().toLowerCase(),
+        password
       );
 
-      if (isSignedIn) {
-        // Get user info to verify
-        const user = await getCurrentUser();
-        console.log("Current user:", user.userId);
+      console.log("✅ Sign-in successful!");
+      console.log("User ID:", user.userId);
+      console.log("Role:", user.role);
 
-        // Navigate to home without alert (smoother UX)
-        router.replace("/(tabs)");
-      } else if (nextStep.signInStep === "CONFIRM_SIGN_UP") {
-        setError(
-          "Your account isn't verified yet. Please check your email for the verification code.",
-        );
+      // Navigate based on role (check both uppercase and lowercase)
+      const roleUpper = user.role?.toUpperCase();
+      
+      if (roleUpper === 'VENDOR') {
+        console.log("Navigating to vendor products...");
+        router.replace("/(vendor)/products" as any);
+      } else if (roleUpper === 'DRIVER') {
+        console.log("Navigating to driver available...");
+        router.replace("/(driver)/available" as any);
       } else {
-        setError(
-          "Additional verification steps required. Please check your email.",
-        );
+        console.log("Navigating to customer shop...");
+        router.replace("/(customer)/shop" as any);
       }
-      console.log("=== SIGN-IN DEBUG END ===");
+
+      console.log("Navigation about to happen for role:", user.role);
+      console.log("=== DIRECT COGNITO SIGN-IN END ===");
     } catch (error: any) {
       console.error("=== SIGN-IN ERROR START ===");
       console.error("Error type:", typeof error);
       console.error("Error name:", error?.name);
       console.error("Error code:", error?.code);
       console.error("Error message:", error?.message);
-      console.error("Error toString:", error?.toString());
-
-      // Try to stringify the entire error object
-      try {
-        console.error("Full error (JSON):", JSON.stringify(error, null, 2));
-      } catch (e) {
-        console.error("Could not stringify error, using direct log:");
-        console.error("Full error:", error);
-      }
-
-      // Check if it's an AWS Amplify error with underscoreCase
-      if (error?.__type) {
-        console.error("AWS Error Type (__type):", error.__type);
-      }
-
+      console.error("Full error:", error);
       console.error("=== SIGN-IN ERROR END ===");
 
       // User-friendly error messages
       let errorMessage = "Something went wrong. Please try again.";
 
-      if (error.name === "UserNotFoundException") {
+      if (error.code === "UserNotFoundException") {
         errorMessage =
           "We couldn't find an account with that email. Did you sign up yet?";
-      } else if (error.name === "NotAuthorizedException") {
+      } else if (error.code === "NotAuthorizedException") {
         errorMessage =
           "The password you entered is incorrect. Please try again.";
-      } else if (error.name === "UserNotConfirmedException") {
+      } else if (error.code === "UserNotConfirmedException") {
         errorMessage =
           "Please check your email and verify your account first. Check your spam folder if you don't see it.";
-        // Optionally navigate to verification screen
       } else if (error.message) {
         errorMessage = error.message;
       }
@@ -156,7 +140,7 @@ export default function SignInScreen() {
 
             {/* Header */}
             <TouchableOpacity
-              onPress={() => router.push("/browse")}
+              onPress={() => router.push("/browse" as any)}
               style={styles.backButton}
             >
               <View style={styles.backButtonContent}>
@@ -253,9 +237,46 @@ export default function SignInScreen() {
               />
             </View>
 
+            {/* Demo Quick-Fill Buttons */}
+            <View style={styles.demoSection}>
+              <Text style={styles.demoTitle}>🧪 Demo Accounts</Text>
+              <View style={styles.demoButtonsGrid}>
+                <TouchableOpacity
+                  style={[styles.demoButton, styles.demoButtonCustomer]}
+                  onPress={() => {
+                    setEmail('customer@test.com');
+                    setPassword('Test1234!');
+                  }}
+                  disabled={loading}
+                >
+                  <Text style={styles.demoButtonText}>Customer</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.demoButton, styles.demoButtonVendor]}
+                  onPress={() => {
+                    setEmail('vendor@test.com');
+                    setPassword('Test1234!');
+                  }}
+                  disabled={loading}
+                >
+                  <Text style={styles.demoButtonText}>Vendor</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.demoButton, styles.demoButtonDriver]}
+                  onPress={() => {
+                    setEmail('driver@test.com');
+                    setPassword('Test1234!');
+                  }}
+                  disabled={loading}
+                >
+                  <Text style={styles.demoButtonText}>Driver</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+
             {/* Sign Up Link */}
             <TouchableOpacity
-              onPress={() => router.push("/(auth)/role-selection")}
+              onPress={() => router.push("/(auth)/role-selection" as any)}
               style={styles.signUpContainer}
             >
               <Text style={styles.signUpText}>
@@ -352,5 +373,43 @@ const styles = StyleSheet.create({
     color: Colors.primary.royalPurple,
     fontWeight: Typography.fontWeight.bold,
     textDecorationLine: "underline",
+  },
+  demoSection: {
+    marginTop: Spacing['2xl'],
+    padding: Spacing.lg,
+    backgroundColor: '#F3E8FF',
+    borderRadius: BorderRadius.lg,
+  },
+  demoTitle: {
+    fontSize: Typography.fontSize.base,
+    fontWeight: Typography.fontWeight.semibold as any,
+    color: Colors.primary.royalPurple,
+    marginBottom: Spacing.md,
+    textAlign: 'center',
+  },
+  demoButtonsGrid: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: Spacing.sm,
+  },
+  demoButton: {
+    flex: 1,
+    padding: Spacing.md,
+    borderRadius: BorderRadius.lg,
+    alignItems: 'center',
+  },
+  demoButtonCustomer: {
+    backgroundColor: Colors.primary.royalPurple,
+  },
+  demoButtonVendor: {
+    backgroundColor: '#C39BD3',
+  },
+  demoButtonDriver: {
+    backgroundColor: '#2ECC71',
+  },
+  demoButtonText: {
+    color: Colors.neutral.white,
+    fontSize: Typography.fontSize.sm,
+    fontWeight: Typography.fontWeight.semibold as any,
   },
 });

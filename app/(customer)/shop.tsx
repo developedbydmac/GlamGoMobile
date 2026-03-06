@@ -33,27 +33,27 @@ const categories = [
   "Nails",
   "Skin Care",
   "Makeup",
-  "Massage",
-  "Lashes",
+  "Tools & Accessories",
+  "Fragrances",
 ];
 
-// Mock beauty services with Unsplash images (fallback if no real data)
+// Mock beauty supply products with Unsplash images (fallback if no real data)
 const mockServices = [
   {
     id: "1",
-    name: "Luxury Hair Styling",
-    storeName: "Elegant Salon & Spa",
-    price: 85,
+    name: "Professional Hair Dryer 2000W",
+    storeName: "Beauty Pro Supply",
+    price: 89.99,
     rating: 4.8,
     category: "Hair Care",
     image:
-      "https://images.unsplash.com/photo-1562322140-8baeececf3df?w=400&h=300&fit=crop",
+      "https://images.unsplash.com/photo-1522338242992-e1a54906a8da?w=400&h=300&fit=crop",
   },
   {
     id: "2",
-    name: "Premium Manicure",
-    storeName: "Polished Nails Studio",
-    price: 45,
+    name: "Gel Nail Polish Set (12 Colors)",
+    storeName: "Nail Artistry Supplies",
+    price: 34.99,
     rating: 4.9,
     category: "Nails",
     image:
@@ -61,9 +61,9 @@ const mockServices = [
   },
   {
     id: "3",
-    name: "Facial Treatment",
-    storeName: "Glow Skincare Bar",
-    price: 120,
+    name: "Vitamin C Serum 30ml",
+    storeName: "Skincare Essentials",
+    price: 24.99,
     rating: 4.7,
     category: "Skin Care",
     image:
@@ -71,33 +71,53 @@ const mockServices = [
   },
   {
     id: "4",
-    name: "Makeup Application",
-    storeName: "Glamour Beauty Studio",
-    price: 95,
+    name: "Makeup Brush Set (15 Pieces)",
+    storeName: "Glamour Beauty Supply",
+    price: 45.99,
     rating: 4.9,
     category: "Makeup",
     image:
-      "https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?w=400&h=300&fit=crop",
+      "https://images.unsplash.com/photo-1512496015851-a90fb38ba796?w=400&h=300&fit=crop",
   },
   {
     id: "5",
-    name: "Massage Therapy",
-    storeName: "Serenity Wellness Spa",
-    price: 110,
+    name: "Massage Oil Collection",
+    storeName: "Wellness & Beauty Co",
+    price: 28.99,
     rating: 4.8,
-    category: "Massage",
+    category: "Skin Care",
     image:
-      "https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=400&h=300&fit=crop",
+      "https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?w=400&h=300&fit=crop",
   },
   {
     id: "6",
-    name: "Eyelash Extensions",
-    storeName: "Lash & Brow Boutique",
-    price: 150,
+    name: "False Eyelash Kit with Glue",
+    storeName: "Lash Beauty Supply",
+    price: 18.99,
     rating: 4.9,
-    category: "Lashes",
+    category: "Makeup",
     image:
-      "https://images.unsplash.com/photo-1519699047748-de8e457a634e?w=400&h=300&fit=crop",
+      "https://images.unsplash.com/photo-1583001308144-a096c91d9c1c?w=400&h=300&fit=crop",
+  },
+  {
+    id: "7",
+    name: "Curling Iron Set (3 Sizes)",
+    storeName: "Hair Tools Pro",
+    price: 65.99,
+    rating: 4.7,
+    category: "Hair Care",
+    image:
+      "https://images.unsplash.com/photo-1522337660859-02fbefca4702?w=400&h=300&fit=crop",
+  },
+  {
+    id: "8",
+    name: "Luxury Perfume Gift Set",
+    storeName: "Fragrance Boutique",
+    price: 120.00,
+    rating: 4.9,
+    category: "Fragrances",
+    image:
+      "https://images.unsplash.com/photo-1541643600914-78b084683601?w=400&h=300&fit=crop",
   },
 ];
 

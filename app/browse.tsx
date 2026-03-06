@@ -1,9 +1,9 @@
 import { Colors } from "@/constants/DesignSystem";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
-import { Link, useRouter } from "expo-router";
+import { Link, useRouter, useFocusEffect } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
     Image,
     Platform,
@@ -14,6 +14,7 @@ import {
     TouchableOpacity,
     View,
 } from "react-native";
+import { getCurrentCognitoUser } from "@/services/cognitoAuth";
 
 /**
  * Browse/Explore Screen - Pre-Authentication
@@ -117,6 +118,32 @@ export default function BrowseScreen() {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [user, setUser] = useState<any>(null);
+  const [isAuthChecked, setIsAuthChecked] = useState(false);
+
+  // Check authentication status on mount
+  useEffect(() => {
+    checkAuth();
+  }, []);
+
+  // Re-check auth when screen comes into focus (e.g., after sign-out)
+  useFocusEffect(
+    useCallback(() => {
+      checkAuth();
+    }, [])
+  );
+
+  const checkAuth = async () => {
+    try {
+      const currentUser = await getCurrentCognitoUser();
+      setUser(currentUser);
+    } catch (error) {
+      // User not authenticated
+      setUser(null);
+    } finally {
+      setIsAuthChecked(true);
+    }
+  };
 
   // Filter products based on search and category
   const filteredProducts = mockProducts.filter((product) => {
@@ -136,23 +163,40 @@ export default function BrowseScreen() {
     <View style={styles.container}>
       <StatusBar style="dark" />
 
-      {/* Header with Auth CTAs */}
+      {/* Header with Auth CTAs or User Info */}
       <View style={styles.header}>
         <Text style={styles.logo}>GlamGo</Text>
-        <View style={styles.authButtons}>
-          <TouchableOpacity
-            style={styles.signInButton}
-            onPress={() => router.push("/(auth)/sign-in")}
-          >
-            <Text style={styles.signInText}>Sign In</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.joinButton}
-            onPress={() => router.push("/(auth)/role-selection")}
-          >
-            <Text style={styles.joinText}>Join Free</Text>
-          </TouchableOpacity>
-        </View>
+        {isAuthChecked && (
+          <View style={styles.authButtons}>
+            {user ? (
+              // Show user info when authenticated (no tap action - just info display)
+              <View style={styles.userInfoButton}>
+                <Text style={styles.userInfoText}>
+                  👋 {user.email?.split('@')[0] || 'User'}
+                </Text>
+                <Text style={styles.userRoleText}>
+                  {user.role === 'VENDOR' ? '🏪 Vendor' : user.role === 'DRIVER' ? '🚗 Driver' : '🛍️ Customer'}
+                </Text>
+              </View>
+            ) : (
+              // Show auth buttons when not authenticated
+              <>
+                <TouchableOpacity
+                  style={styles.signInButton}
+                  onPress={() => router.push("/(auth)/sign-in")}
+                >
+                  <Text style={styles.signInText}>Sign In</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.joinButton}
+                  onPress={() => router.push("/(auth)/role-selection")}
+                >
+                  <Text style={styles.joinText}>Join Free</Text>
+                </TouchableOpacity>
+              </>
+            )}
+          </View>
+        )}
       </View>
 
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
@@ -460,6 +504,25 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: "600",
     color: "#FFFFFF",
+  },
+  userInfoButton: {
+    backgroundColor: "#F0E6FF",
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+    borderWidth: 1.5,
+    borderColor: "#4A2B7C",
+  },
+  userInfoText: {
+    fontSize: 15,
+    fontWeight: "600",
+    color: "#4A2B7C",
+    marginBottom: 2,
+  },
+  userRoleText: {
+    fontSize: 12,
+    fontWeight: "500",
+    color: "#666",
   },
   content: {
     flex: 1,

@@ -1,5 +1,5 @@
 import type { Schema } from "@/amplify/data/resource";
-import { getCurrentUser } from "aws-amplify/auth";
+import { getCurrentCognitoUser } from "@/services/cognitoAuth";
 import { generateClient } from "aws-amplify/data";
 import { router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
@@ -55,7 +55,11 @@ export default function CreateProductScreen() {
 
   const loadUserAndStores = async () => {
     try {
-      const user = await getCurrentUser();
+      const user = await getCurrentCognitoUser();
+      if (!user) {
+        Alert.alert("Error", "Please sign in to continue");
+        return;
+      }
       setUserInfo({ userId: user.userId, username: user.username });
 
       // Load user's stores
@@ -178,7 +182,7 @@ export default function CreateProductScreen() {
             },
             {
               text: "View Products",
-              onPress: () => router.push("/(tabs)"),
+              onPress: () => router.push("/(tabs)" as any),
             },
           ],
         );

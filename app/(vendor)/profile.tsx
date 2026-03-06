@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { signOut } from 'aws-amplify/auth';
+import { signOutFromCognito } from '@/services/cognitoAuth';
 import { useRouter } from 'expo-router';
 import { Colors, Typography, Spacing, BorderRadius } from '@/constants/DesignSystem';
 
@@ -11,10 +11,21 @@ export default function VendorProfileScreen() {
 
   const handleSignOut = async () => {
     try {
-      await signOut();
-      router.replace('/browse');
+      await signOutFromCognito();
+      // Use push instead of replace so navigation history is maintained
+      router.push('/browse' as any);
     } catch (error) {
       console.error('Sign out error:', error);
+    }
+  };
+
+  const handleSwitchRole = async () => {
+    try {
+      await signOutFromCognito();
+      // Navigate to sign-in to choose a different role
+      router.push('/(auth)/sign-in' as any);
+    } catch (error) {
+      console.error('Switch role error:', error);
     }
   };
 
@@ -52,9 +63,17 @@ export default function VendorProfileScreen() {
             <Ionicons name="chevron-forward" size={24} color={Colors.neutral.mediumGrey} />
           </TouchableOpacity>
 
+          {/* Switch Role Button */}
+          <TouchableOpacity style={[styles.menuItem, styles.switchRoleButton]} onPress={handleSwitchRole}>
+            <Ionicons name="swap-horizontal" size={24} color={Colors.primary.royalPurple} />
+            <Text style={[styles.menuText, styles.switchRoleText]}>Switch Role</Text>
+            <Ionicons name="arrow-forward" size={24} color={Colors.primary.royalPurple} />
+          </TouchableOpacity>
+
+          {/* Sign Out Button */}
           <TouchableOpacity style={[styles.menuItem, styles.signOutButton]} onPress={handleSignOut}>
             <Ionicons name="log-out" size={24} color={Colors.semantic.error} />
-            <Text style={[styles.menuText, styles.signOutText]}>Sign Out</Text>
+            <Text style={[styles.menuText, styles.signOutText]}>Sign Out & Browse</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -110,5 +129,14 @@ const styles = StyleSheet.create({
   },
   signOutText: {
     color: Colors.semantic.error,
+  },
+  switchRoleButton: {
+    marginTop: Spacing.md,
+    borderWidth: 1.5,
+    borderColor: Colors.primary.royalPurple,
+    backgroundColor: Colors.neutral.softWhite,
+  },
+  switchRoleText: {
+    color: Colors.primary.royalPurple,
   },
 });

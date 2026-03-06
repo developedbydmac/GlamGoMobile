@@ -26,39 +26,22 @@ export default function VendorProductsScreen() {
 
   const loadInventory = async () => {
     try {
-      // PHASE 2: Use mock data (no AppSync yet)
-      // Simulate checking for store - for now, assume vendor has a store
-      setHasStore(true);
-      
-      // Mock products data
-      const mockProducts = [
-        {
-          id: '1',
-          name: 'Silk Press & Style',
-          price: 65,
-          category: 'Hair',
-          inventory: 10,
-          description: 'Professional silk press with heat protectant',
-        },
-        {
-          id: '2',
-          name: 'Full Set Acrylic Nails',
-          price: 45,
-          category: 'Nails',
-          inventory: 8,
-          description: 'Custom acrylic nails with your choice of design',
-        },
-        {
-          id: '3',
-          name: 'Glam Makeup Application',
-          price: 75,
-          category: 'Makeup',
-          inventory: 5,
-          description: 'Full face makeup for any occasion',
-        },
-      ];
-      
-      setProducts(mockProducts);
+      // First check if vendor has a store
+      try {
+        await getVendorStore();
+        setHasStore(true);
+      } catch (error: any) {
+        if (error.message === 'NO_STORE_FOUND') {
+          setHasStore(false);
+          setProducts([]);
+          setLoading(false);
+          return;
+        }
+        throw error;
+      }
+
+      const data = await getInventory();
+      setProducts(data);
     } catch (error: any) {
       console.error('Error loading inventory:', error);
       Alert.alert('Error', 'Could not load products. Please try again.');
@@ -125,7 +108,7 @@ export default function VendorProductsScreen() {
       <View style={styles.addButtonContainer}>
         <TouchableOpacity
           style={styles.addButton}
-          onPress={() => router.push('/add-product' as any)}
+          onPress={() => router.push('/add-product')}
         >
           <Ionicons name="add-circle" size={20} color="#fff" />
           <Text style={styles.addButtonText}>Add New Product</Text>
@@ -146,7 +129,7 @@ export default function VendorProductsScreen() {
             <ProductCard
               product={item}
               onEdit={() => router.push({
-                pathname: '/edit-product' as any,
+                pathname: '/edit-product',
                 params: { productId: item.id }
               })}
             />
@@ -157,11 +140,8 @@ export default function VendorProductsScreen() {
           ListEmptyComponent={
             <View style={styles.emptyState}>
               <Ionicons name="bag-handle-outline" size={64} color={Colors.neutral.lightGrey} />
-              <Text style={styles.emptyText}>Ready to start selling?</Text>
-              <Text style={styles.emptySubtext}>
-                Tap the button above to add your first product.{'\n'}
-                It only takes a minute! 💅
-              </Text>
+              <Text style={styles.emptyText}>No products yet</Text>
+              <Text style={styles.emptySubtext}>Add your first product to get started</Text>
             </View>
           }
         />
