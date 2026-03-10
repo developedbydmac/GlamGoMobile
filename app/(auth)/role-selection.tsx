@@ -39,7 +39,7 @@ const roleOptions: RoleOption[] = [
     title: "I need beauty services",
     description: "Book appointments and discover talented stylists near you",
     icon: "person",
-    gradient: [Colors.primary.deepPurple, Colors.primary.royalPurple],
+    gradient: [Colors.primary.deepPurple, Colors.primary.deepPlum],
     features: ["Browse services", "Book appointments", "Track orders"],
   },
   {
@@ -94,7 +94,7 @@ export default function RoleSelectionScreen() {
             style={styles.backButton}
           >
             <View style={styles.backButtonContent}>
-              <Ionicons name="chevron-back" size={24} color={Colors.primary.royalPurple} />
+              <Ionicons name="chevron-back" size={24} color={Colors.primary.deepPlum} />
               <Text style={styles.backButtonText}>Back to Browse</Text>
             </View>
           </TouchableOpacity>
@@ -212,7 +212,7 @@ export default function RoleSelectionScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.neutral.softWhite,
+    backgroundColor: Colors.neutral.blushCream,
   },
   
   containerDark: {
@@ -249,7 +249,7 @@ const styles = StyleSheet.create({
   
   backButtonText: {
     fontSize: Typography.fontSize.base,
-    color: Colors.primary.royalPurple,
+    color: Colors.primary.deepPlum,
     fontWeight: Typography.fontWeight.semibold,
   },
   
@@ -266,7 +266,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: Typography.fontSize['3xl'],
     fontWeight: Typography.fontWeight.bold,
-    color: Colors.primary.royalPurple,
+    color: Colors.primary.deepPlum,
     marginBottom: Spacing.md,
     textAlign: "center",
     fontFamily: Typography.fontFamily,
@@ -317,7 +317,7 @@ const styles = StyleSheet.create({
   },
   
   roleCardSelected: {
-    borderColor: Colors.primary.royalPurple,
+    borderColor: Colors.primary.deepPlum,
     borderWidth: 2,
     ...Shadows.light,
   },
@@ -325,7 +325,7 @@ const styles = StyleSheet.create({
   iconGradient: {
     width: 64,
     height: 64,
-    borderRadius: BorderRadius.full,
+    borderRadius: BorderRadius.pill,
     justifyContent: "center",
     alignItems: "center",
     marginBottom: Spacing.base,
@@ -339,7 +339,7 @@ const styles = StyleSheet.create({
   roleTitle: {
     fontSize: Typography.fontSize.lg,
     fontWeight: Typography.fontWeight.semibold,
-    color: Colors.neutral.darkGrey,
+    color: Colors.neutral.darkText,
     marginBottom: Spacing.xs,
     fontFamily: Typography.fontFamily,
   },
@@ -389,7 +389,7 @@ const styles = StyleSheet.create({
     right: Spacing.base,
     width: 32,
     height: 32,
-    borderRadius: BorderRadius.full,
+    borderRadius: BorderRadius.pill,
     justifyContent: "center",
     alignItems: "center",
     ...Shadows.subtle,

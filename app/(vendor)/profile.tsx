@@ -65,9 +65,9 @@ export default function VendorProfileScreen() {
 
           {/* Switch Role Button */}
           <TouchableOpacity style={[styles.menuItem, styles.switchRoleButton]} onPress={handleSwitchRole}>
-            <Ionicons name="swap-horizontal" size={24} color={Colors.primary.royalPurple} />
+            <Ionicons name="swap-horizontal" size={24} color={Colors.primary.deepPlum} />
             <Text style={[styles.menuText, styles.switchRoleText]}>Switch Role</Text>
-            <Ionicons name="arrow-forward" size={24} color={Colors.primary.royalPurple} />
+            <Ionicons name="arrow-forward" size={24} color={Colors.primary.deepPlum} />
           </TouchableOpacity>
 
           {/* Sign Out Button */}
@@ -84,7 +84,7 @@ export default function VendorProfileScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.neutral.softWhite,
+    backgroundColor: Colors.neutral.blushCream,
   },
   scrollContent: {
     flexGrow: 1,
@@ -122,7 +122,7 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: Typography.fontSize.base,
     fontWeight: Typography.fontWeight.medium,
-    color: Colors.neutral.darkGrey,
+    color: Colors.neutral.darkText,
   },
   signOutButton: {
     marginTop: Spacing.xl,
@@ -133,10 +133,10 @@ const styles = StyleSheet.create({
   switchRoleButton: {
     marginTop: Spacing.md,
     borderWidth: 1.5,
-    borderColor: Colors.primary.royalPurple,
-    backgroundColor: Colors.neutral.softWhite,
+    borderColor: Colors.primary.deepPlum,
+    backgroundColor: Colors.neutral.blushCream,
   },
   switchRoleText: {
-    color: Colors.primary.royalPurple,
+    color: Colors.primary.deepPlum,
   },
 });

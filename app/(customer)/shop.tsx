@@ -257,7 +257,7 @@ export default function CustomerShopScreen() {
     return (
       <SafeAreaView style={styles.container} edges={["top"]}>
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={Colors.primary.royalPurple} />
+          <ActivityIndicator size="large" color={Colors.primary.deepPlum} />
           <Text style={styles.loadingText}>Loading services...</Text>
         </View>
       </SafeAreaView>
@@ -400,7 +400,7 @@ export default function CustomerShopScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.neutral.softWhite,
+    backgroundColor: Colors.neutral.blushCream,
   },
   header: {
     paddingHorizontal: Spacing.xl,
@@ -410,7 +410,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: Typography.fontSize["3xl"],
     fontWeight: Typography.fontWeight.bold,
-    color: Colors.primary.royalPurple,
+    color: Colors.primary.deepPlum,
   },
   subtitle: {
     fontSize: Typography.fontSize.base,
@@ -431,7 +431,7 @@ const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     fontSize: Typography.fontSize.base,
-    color: Colors.neutral.darkGrey,
+    color: Colors.neutral.darkText,
     paddingVertical: Spacing.xs,
   },
   categoryContainer: {
@@ -444,14 +444,14 @@ const styles = StyleSheet.create({
   categoryChip: {
     paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.sm,
-    borderRadius: BorderRadius.full,
+    borderRadius: BorderRadius.pill,
     backgroundColor: Colors.neutral.white,
     borderWidth: 1,
     borderColor: Colors.neutral.lightGrey,
   },
   categoryChipActive: {
-    backgroundColor: Colors.primary.royalPurple,
-    borderColor: Colors.primary.royalPurple,
+    backgroundColor: Colors.primary.deepPlum,
+    borderColor: Colors.primary.deepPlum,
   },
   categoryText: {
     fontSize: Typography.fontSize.sm,
@@ -494,7 +494,7 @@ const styles = StyleSheet.create({
   serviceName: {
     fontSize: Typography.fontSize.base,
     fontWeight: Typography.fontWeight.semibold,
-    color: Colors.neutral.darkGrey,
+    color: Colors.neutral.darkText,
     marginBottom: Spacing.xs,
   },
   storeRow: {
@@ -516,7 +516,7 @@ const styles = StyleSheet.create({
   price: {
     fontSize: Typography.fontSize.lg,
     fontWeight: Typography.fontWeight.bold,
-    color: Colors.primary.royalPurple,
+    color: Colors.primary.deepPlum,
   },
   rating: {
     flexDirection: "row",
@@ -526,7 +526,7 @@ const styles = StyleSheet.create({
   ratingText: {
     fontSize: Typography.fontSize.sm,
     fontWeight: Typography.fontWeight.medium,
-    color: Colors.neutral.darkGrey,
+    color: Colors.neutral.darkText,
   },
   loadingContainer: {
     flex: 1,
@@ -547,7 +547,7 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontSize: Typography.fontSize.xl,
     fontWeight: Typography.fontWeight.semibold,
-    color: Colors.neutral.darkGrey,
+    color: Colors.neutral.darkText,
     marginTop: Spacing.lg,
     marginBottom: Spacing.xs,
   },

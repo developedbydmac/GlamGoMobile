@@ -64,11 +64,11 @@ export default function GradientButton({
     
     switch (variant) {
       case 'primary':
-        return [Colors.primary.deepPurple, Colors.primary.violet] as const;
+        return ['#5E2C91', '#3B1B64'] as const;  // Light plum → Dark plum
       case 'secondary':
-        return [Colors.secondary.darkGold, Colors.secondary.champagneGold] as const;
+        return [Colors.secondary.darkGold, Colors.secondary.softGold] as const;
       default:
-        return [Colors.primary.deepPurple, Colors.primary.violet] as const;
+        return ['#5E2C91', '#3B1B64'] as const;
     }
   };
 
@@ -89,7 +89,7 @@ export default function GradientButton({
         activeOpacity={0.7}
       >
         {loading ? (
-          <ActivityIndicator color={Colors.primary.royalPurple} />
+          <ActivityIndicator color={Colors.neutral.blushCream} />
         ) : (
           <Text style={[styles.outlineButtonText, isDark && styles.outlineButtonTextDark, textStyle]}>
             {title}
@@ -129,7 +129,7 @@ export default function GradientButton({
 
 const styles = StyleSheet.create({
   button: {
-    borderRadius: BorderRadius.md,
+    borderRadius: BorderRadius.pill,  // 999
     overflow: 'hidden',
   },
   
@@ -141,25 +141,31 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: BorderRadius.md,
+    borderRadius: BorderRadius.pill,
     paddingHorizontal: Spacing.xl,
-    ...Shadows.light,
+    paddingVertical: Spacing.md,  // 12px
+    shadowColor: '#3B1B64',
+    shadowOpacity: 0.25,
+    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 6 },
+    elevation: 4,
   },
   
   buttonText: {
     color: Colors.neutral.white,
     fontSize: Typography.fontSize.base,
     fontWeight: Typography.fontWeight.semibold,
-    fontFamily: Typography.fontFamily,
+    fontFamily: Typography.fontFamily.body,
     textAlign: 'center',
+    letterSpacing: Typography.letterSpacing.relaxed,
   },
   
   outlineButton: {
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 2,
-    borderColor: Colors.primary.royalPurple,
-    borderRadius: BorderRadius.md,
+    borderColor: Colors.primary.deepPlum,
+    borderRadius: BorderRadius.pill,
     backgroundColor: 'transparent',
     paddingHorizontal: Spacing.xl,
   },
@@ -169,10 +175,11 @@ const styles = StyleSheet.create({
   },
   
   outlineButtonText: {
-    color: Colors.primary.royalPurple,
+    color: Colors.primary.deepPlum,
     fontSize: Typography.fontSize.base,
-    fontWeight: Typography.fontWeight.semibold,
-    fontFamily: Typography.fontFamily,
+    fontWeight: Typography.fontWeight.medium,
+    fontFamily: Typography.fontFamily.body,
+    letterSpacing: Typography.letterSpacing.relaxed,
   },
   
   outlineButtonTextDark: {

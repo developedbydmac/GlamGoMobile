@@ -1,5 +1,5 @@
 import GlamGoLogo from "@/components/GlamGoLogo";
-import { Colors, Typography, Spacing } from "@/constants/DesignSystem";
+import { Colors, Typography, Spacing, BorderRadius, Shadows } from "@/constants/DesignSystem";
 import { Ionicons } from "@expo/vector-icons";
 import { autoSignIn, confirmSignUp, signUp } from "aws-amplify/auth";
 import { useLocalSearchParams, useRouter } from "expo-router";
@@ -277,6 +277,7 @@ export default function SignUpScreen() {
           >
             {/* Logo */}
             <GlamGoLogo size="small" />
+            <Text style={styles.tagline}>BEAUTY DELIVERED</Text>
 
             {/* Header */}
             <TouchableOpacity
@@ -284,7 +285,7 @@ export default function SignUpScreen() {
               style={styles.backButton}
             >
               <View style={styles.backButtonContent}>
-                <Ionicons name="chevron-back" size={24} color={Colors.primary.royalPurple} />
+                <Ionicons name="chevron-back" size={24} color={Colors.primary.deepPlum} />
                 <Text style={styles.backButtonText}>Back to Role Selection</Text>
               </View>
             </TouchableOpacity>
@@ -393,7 +394,7 @@ export default function SignUpScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FAF9F7", // Soft cream background for luxury feel
+    backgroundColor: Colors.neutral.blushCream,  // #FFF8F5
   },
   keyboardView: {
     flex: 1,
@@ -403,8 +404,8 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    paddingHorizontal: 24,
-    paddingTop: Platform.OS === "ios" ? 20 : 40,
+    paddingHorizontal: Spacing.xl,
+    paddingTop: Platform.OS === "ios" ? Spacing.xl : Spacing['3xl'],
   },
   contentMobileWeb: {
     maxWidth: 480,
@@ -412,161 +413,161 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   backButton: {
-    marginBottom: 24,
-    marginTop: 8,
+    marginBottom: Spacing['3xl'],
+    marginTop: Spacing.sm,
   },
   backButtonContent: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
+    gap: Spacing.xs,
   },
   backButtonText: {
-    fontSize: 16,
-    color: "#4A2B7C", // GlamGo Purple
-    fontWeight: "600",
+    fontSize: Typography.fontSize.sm,
+    color: Colors.secondary.softGold,  // #BF9553
+    fontWeight: Typography.fontWeight.medium,
+    letterSpacing: Typography.letterSpacing.relaxed,
+    fontFamily: Typography.fontFamily.body,
   },
   header: {
-    marginBottom: 40,
+    marginBottom: Spacing['4xl'],
   },
   roleIndicator: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 20,
-    backgroundColor: "#FFFFFF",
-    paddingVertical: 10,
-    paddingHorizontal: 18,
-    borderRadius: 24,
+    marginBottom: Spacing.lg,
+    backgroundColor: Colors.neutral.white,
+    paddingVertical: Spacing.sm,
+    paddingHorizontal: Spacing.base,
+    borderRadius: BorderRadius.pill,
     alignSelf: "flex-start",
-    borderWidth: 1.5,
-    borderColor: "#E8E8E8",
-    shadowColor: "#4A2B7C",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.08,
-    shadowRadius: 6,
-    elevation: 3,
+    borderWidth: 1,
+    borderColor: Colors.neutral.lightGrey,  // #E7D9EA
+    ...Shadows.subtle,
   },
   roleEmoji: {
-    fontSize: 22,
-    marginRight: 10,
+    fontSize: 20,
+    marginRight: Spacing.sm,
+  },
+  tagline: {
+    fontSize: Typography.fontSize.xs,
+    letterSpacing: Typography.letterSpacing.wider,
+    textTransform: 'uppercase',
+    color: Colors.secondary.softGold,
+    marginTop: Spacing.sm,
+    marginBottom: Spacing.lg,
+    fontFamily: Typography.fontFamily.bodyMedium,
   },
   roleText: {
-    fontSize: 15,
-    fontWeight: "700",
-    color: "#4A2B7C", // GlamGo Purple
-    letterSpacing: 0.5,
+    fontSize: Typography.fontSize.xs,
+    fontWeight: Typography.fontWeight.semibold,
+    color: Colors.primary.deepPlum,
+    letterSpacing: Typography.letterSpacing.wide,
     textTransform: "uppercase",
   },
   title: {
-    fontSize: 32,
-    fontWeight: "700",
-    color: "#4A2B7C", // GlamGo Purple
-    marginBottom: 12,
-    letterSpacing: 0.3,
+    fontSize: Typography.fontSize['4xl'],
+    fontWeight: Typography.fontWeight.semibold,
+    color: Colors.primary.deepPlum,  // #522888
+    marginBottom: Spacing.base,
+    letterSpacing: Typography.letterSpacing.relaxed,
+    fontFamily: Typography.fontFamily.heading,  // Serif
   },
   subtitle: {
-    fontSize: 17,
-    color: "#6B6B6B",
-    lineHeight: 24,
-    fontWeight: "400",
+    fontSize: Typography.fontSize.sm,
+    color: Colors.neutral.mutedText,  // #8C7A9A
+    lineHeight: Typography.lineHeight.relaxed,
+    fontWeight: Typography.fontWeight.normal,
+    fontFamily: Typography.fontFamily.body,
   },
   emailText: {
-    fontWeight: "700",
-    color: "#C9A961", // GlamGo Gold
+    fontWeight: Typography.fontWeight.semibold,
+    color: Colors.secondary.softGold,  // #BF9553
   },
   form: {
-    marginBottom: 32,
+    marginBottom: Spacing['3xl'],
   },
   inputContainer: {
-    marginBottom: 24,
+    marginBottom: Spacing.lg,
   },
   label: {
-    fontSize: 15,
-    fontWeight: "600",
-    color: "#2C2C2C",
-    marginBottom: 10,
-    letterSpacing: 0.2,
+    fontSize: Typography.fontSize.xs,
+    fontWeight: Typography.fontWeight.medium,
+    color: Colors.neutral.mutedText,
+    marginBottom: Spacing.sm,
+    letterSpacing: Typography.letterSpacing.wide,
+    textTransform: 'uppercase',
+    fontFamily: Typography.fontFamily.body,
   },
   input: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 14,
-    paddingHorizontal: 18,
-    paddingVertical: 16,
-    fontSize: 16,
-    color: "#2C2C2C",
-    borderWidth: 1.5,
-    borderColor: "#E8E8E8",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.04,
-    shadowRadius: 4,
-    elevation: 2,
+    backgroundColor: Colors.neutral.surface,  // #FFFDFC
+    borderRadius: BorderRadius.md,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.sm,
+    fontSize: Typography.fontSize.base,
+    color: Colors.neutral.darkText,  // #2E2335
+    borderWidth: 1,
+    borderColor: Colors.neutral.lightGrey,  // #E7D9EA
+    fontFamily: Typography.fontFamily.body,
+    ...Shadows.subtle,
   },
   hint: {
-    fontSize: 13,
-    color: "#999999",
-    marginTop: 8,
-    lineHeight: 18,
+    fontSize: Typography.fontSize.xs,
+    color: Colors.neutral.mutedText,
+    marginTop: Spacing.sm,
+    lineHeight: Typography.lineHeight.relaxed,
+    fontFamily: Typography.fontFamily.body,
   },
   signUpButton: {
-    backgroundColor: "#4A2B7C", // GlamGo Purple
-    borderRadius: 16,
-    paddingVertical: 18,
+    backgroundColor: Colors.primary.deepPlum,
+    borderRadius: BorderRadius.pill,
+    paddingVertical: Spacing.md,
     alignItems: "center",
-    marginTop: 12,
-    shadowColor: "#4A2B7C",
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 6,
+    marginTop: Spacing.base,
+    shadowColor: '#3B1B64',
+    shadowOpacity: 0.25,
+    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 6 },
+    elevation: 4,
   },
   signUpButtonDisabled: {
-    backgroundColor: "#B8B8D8",
-    shadowOpacity: 0,
+    backgroundColor: Colors.neutral.mediumGrey,
+    shadowOpacity: 0.1,
   },
   signUpButtonText: {
-    color: "#FFFFFF",
-    fontSize: 17,
-    fontWeight: "700",
-    letterSpacing: 0.8,
-    textTransform: "uppercase",
+    color: Colors.neutral.white,
+    fontSize: Typography.fontSize.base,
+    fontWeight: Typography.fontWeight.semibold,
+    letterSpacing: Typography.letterSpacing.relaxed,
+    fontFamily: Typography.fontFamily.body,
   },
   signInContainer: {
     alignItems: "center",
-    paddingBottom: 32,
-    marginTop: 24,
+    paddingBottom: Spacing['3xl'],
+    marginTop: Spacing.xl,
   },
   signInText: {
-    fontSize: 15,
-    color: "#6B6B6B",
-    fontWeight: "400",
+    fontSize: Typography.fontSize.sm,
+    color: Colors.neutral.mutedText,
+    fontWeight: Typography.fontWeight.normal,
+    fontFamily: Typography.fontFamily.body,
   },
   signInLink: {
-    color: "#4A2B7C", // GlamGo Purple
-    fontWeight: "700",
-    textDecorationLine: "underline",
+    color: Colors.secondary.softGold,  // #BF9553
+    fontWeight: Typography.fontWeight.medium,
   },
   resendContainer: {
     alignItems: "center",
-    marginBottom: 24,
-    marginTop: 8,
+    marginBottom: Spacing.lg,
+    marginTop: Spacing.sm,
   },
   resendText: {
-    fontSize: 15,
-    color: "#6B6B6B",
-    fontWeight: "400",
+    fontSize: Typography.fontSize.sm,
+    color: Colors.neutral.mutedText,
+    fontWeight: Typography.fontWeight.normal,
+    fontFamily: Typography.fontFamily.body,
   },
   resendLink: {
-    color: "#C9A961", // GlamGo Gold
-    fontWeight: "700",
-    textDecorationLine: "underline",
+    color: Colors.secondary.softGold,  // #BF9553
+    fontWeight: Typography.fontWeight.medium,
   },
 });

@@ -125,7 +125,7 @@ export default function AddProductScreen() {
         {/* Header */}
         <View style={styles.header}>
           <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-            <Ionicons name="arrow-back" size={24} color={Colors.neutral.darkGrey} />
+            <Ionicons name="arrow-back" size={24} color={Colors.primary.deepPlum} />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Add Product</Text>
           <View style={styles.headerPlaceholder} />
@@ -207,7 +207,7 @@ export default function AddProductScreen() {
               <Switch
                 value={isAvailable}
                 onValueChange={setIsAvailable}
-                trackColor={{ true: Colors.primary.royalPurple, false: Colors.neutral.lightGrey }}
+                trackColor={{ true: Colors.primary.deepPlum, false: Colors.neutral.lightGrey }}
                 thumbColor="#fff"
               />
             </View>
@@ -260,7 +260,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: Typography.fontSize.lg,
     fontWeight: Typography.fontWeight.semibold as any,
-    color: Colors.neutral.darkGrey,
+    color: Colors.primary.deepPlum,
   },
   headerPlaceholder: {
     width: 40,
@@ -274,7 +274,7 @@ const styles = StyleSheet.create({
   label: {
     fontSize: Typography.fontSize.sm,
     fontWeight: Typography.fontWeight.semibold as any,
-    color: Colors.neutral.darkGrey,
+    color: Colors.neutral.darkText,
     marginBottom: Spacing.xs,
     marginTop: Spacing.lg,
   },
@@ -295,19 +295,19 @@ const styles = StyleSheet.create({
   categoryChip: {
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.sm,
-    borderRadius: BorderRadius.full,
+    borderRadius: BorderRadius.pill,
     borderWidth: 1,
     borderColor: Colors.neutral.lightGrey,
     backgroundColor: Colors.neutral.white,
     marginRight: Spacing.sm,
   },
   categoryChipActive: {
-    backgroundColor: Colors.primary.royalPurple,
-    borderColor: Colors.primary.royalPurple,
+    backgroundColor: Colors.primary.deepPlum,
+    borderColor: Colors.primary.deepPlum,
   },
   categoryText: {
     fontSize: Typography.fontSize.sm,
-    color: Colors.neutral.darkGrey,
+    color: Colors.neutral.darkText,
   },
   categoryTextActive: {
     color: Colors.neutral.white,
@@ -328,7 +328,7 @@ const styles = StyleSheet.create({
     marginTop: Spacing.xs,
   },
   saveButton: {
-    backgroundColor: Colors.primary.royalPurple,
+    backgroundColor: Colors.primary.deepPlum,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',

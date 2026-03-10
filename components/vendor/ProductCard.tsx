@@ -41,7 +41,7 @@ export default function ProductCard({ product, onEdit }: ProductCardProps) {
       ) : null}
 
       <TouchableOpacity style={styles.editButton} onPress={onEdit}>
-        <Ionicons name="create-outline" size={18} color={Colors.primary.royalPurple} />
+        <Ionicons name="create-outline" size={18} color={Colors.primary.deepPlum} />
         <Text style={styles.editButtonText}>Edit Product</Text>
       </TouchableOpacity>
     </View>
@@ -79,13 +79,13 @@ const styles = StyleSheet.create({
   name: {
     fontSize: Typography.fontSize.base,
     fontWeight: Typography.fontWeight.semibold as any,
-    color: Colors.neutral.darkGrey,
+    color: Colors.neutral.darkText,
     marginBottom: Spacing.xs,
   },
   price: {
     fontSize: Typography.fontSize.xl,
     fontWeight: Typography.fontWeight.bold as any,
-    color: Colors.primary.royalPurple,
+    color: Colors.primary.deepPlum,
   },
   inventoryRow: {
     flexDirection: 'row',
@@ -111,13 +111,13 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.sm,
     paddingHorizontal: Spacing.md,
     borderWidth: 1,
-    borderColor: Colors.primary.royalPurple,
+    borderColor: Colors.primary.deepPlum,
     borderRadius: BorderRadius.lg,
     alignSelf: 'flex-start',
   },
   editButtonText: {
     fontSize: Typography.fontSize.sm,
     fontWeight: Typography.fontWeight.semibold as any,
-    color: Colors.primary.royalPurple,
+    color: Colors.primary.deepPlum,
   },
 });

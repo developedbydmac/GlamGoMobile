@@ -78,7 +78,7 @@ export default function BookingScreen() {
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={24} color={Colors.neutral.darkGrey} />
+          <Ionicons name="arrow-back" size={24} color={Colors.neutral.darkText} />
         </TouchableOpacity>
         <View style={styles.headerText}>
           <Text style={styles.headerTitle}>When works for you?</Text>
@@ -165,7 +165,7 @@ export default function BookingScreen() {
         {selectedDate && selectedTime && (
           <View style={styles.summaryCard}>
             <View style={styles.summaryHeader}>
-              <Ionicons name="calendar-outline" size={24} color={Colors.primary.royalPurple} />
+              <Ionicons name="calendar-outline" size={24} color={Colors.primary.deepPlum} />
               <Text style={styles.summaryTitle}>Your appointment</Text>
             </View>
             <Text style={styles.summaryDate}>
@@ -218,7 +218,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: Typography.fontSize.xl,
     fontWeight: Typography.fontWeight.bold as any,
-    color: Colors.neutral.darkGrey,
+    color: Colors.neutral.darkText,
   },
   headerSubtitle: {
     fontSize: Typography.fontSize.sm,
@@ -234,14 +234,14 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: Typography.fontSize.lg,
     fontWeight: Typography.fontWeight.bold as any,
-    color: Colors.neutral.darkGrey,
+    color: Colors.neutral.darkText,
     marginBottom: Spacing.md,
   },
   dateScroll: {
     gap: Spacing.md,
   },
   dateCard: {
-    backgroundColor: Colors.neutral.softWhite,
+    backgroundColor: Colors.neutral.blushCream,
     borderRadius: BorderRadius.lg,
     padding: Spacing.md,
     alignItems: 'center',
@@ -250,8 +250,8 @@ const styles = StyleSheet.create({
     borderColor: 'transparent',
   },
   dateCardSelected: {
-    backgroundColor: Colors.primary.royalPurple,
-    borderColor: Colors.primary.royalPurple,
+    backgroundColor: Colors.primary.deepPlum,
+    borderColor: Colors.primary.deepPlum,
   },
   dateDay: {
     fontSize: Typography.fontSize.sm,
@@ -261,7 +261,7 @@ const styles = StyleSheet.create({
   dateNumber: {
     fontSize: Typography.fontSize['2xl'],
     fontWeight: Typography.fontWeight.bold as any,
-    color: Colors.neutral.darkGrey,
+    color: Colors.neutral.darkText,
     marginBottom: Spacing.xs,
   },
   dateMonth: {
@@ -277,7 +277,7 @@ const styles = StyleSheet.create({
     gap: Spacing.md,
   },
   timeCard: {
-    backgroundColor: Colors.neutral.softWhite,
+    backgroundColor: Colors.neutral.blushCream,
     borderRadius: BorderRadius.lg,
     paddingVertical: Spacing.md,
     paddingHorizontal: Spacing.lg,
@@ -285,13 +285,13 @@ const styles = StyleSheet.create({
     borderColor: 'transparent',
   },
   timeCardSelected: {
-    backgroundColor: Colors.primary.royalPurple,
-    borderColor: Colors.primary.royalPurple,
+    backgroundColor: Colors.primary.deepPlum,
+    borderColor: Colors.primary.deepPlum,
   },
   timeText: {
     fontSize: Typography.fontSize.base,
     fontWeight: Typography.fontWeight.semibold as any,
-    color: Colors.neutral.darkGrey,
+    color: Colors.neutral.darkText,
   },
   timeTextSelected: {
     color: Colors.neutral.white,
@@ -312,18 +312,18 @@ const styles = StyleSheet.create({
   summaryTitle: {
     fontSize: Typography.fontSize.lg,
     fontWeight: Typography.fontWeight.bold as any,
-    color: Colors.primary.royalPurple,
+    color: Colors.primary.deepPlum,
   },
   summaryDate: {
     fontSize: Typography.fontSize.base,
     fontWeight: Typography.fontWeight.semibold as any,
-    color: Colors.neutral.darkGrey,
+    color: Colors.neutral.darkText,
     marginBottom: Spacing.xs,
   },
   summaryTime: {
     fontSize: Typography.fontSize['2xl'],
     fontWeight: Typography.fontWeight.bold as any,
-    color: Colors.primary.royalPurple,
+    color: Colors.primary.deepPlum,
     marginBottom: Spacing.md,
   },
   summaryNote: {
@@ -338,7 +338,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.neutral.white,
   },
   confirmButton: {
-    backgroundColor: Colors.primary.royalPurple,
+    backgroundColor: Colors.primary.deepPlum,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',

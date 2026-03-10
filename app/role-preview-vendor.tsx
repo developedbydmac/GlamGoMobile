@@ -29,7 +29,7 @@ export default function VendorPreviewScreen() {
           <Ionicons
             name="arrow-back"
             size={24}
-            color={Colors.neutral.darkGrey}
+            color={Colors.neutral.darkText}
           />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Vendor Experience</Text>
@@ -42,7 +42,7 @@ export default function VendorPreviewScreen() {
           <Ionicons
             name="storefront"
             size={80}
-            color={Colors.primary.royalPurple}
+            color={Colors.primary.deepPlum}
             style={styles.heroIcon}
           />
           <Text style={styles.heroTitle}>Grow Your Business</Text>
@@ -60,7 +60,7 @@ export default function VendorPreviewScreen() {
             <Ionicons
               name="add-circle"
               size={32}
-              color={Colors.primary.royalPurple}
+              color={Colors.primary.deepPlum}
             />
             <View style={styles.featureText}>
               <Text style={styles.featureTitle}>
@@ -77,7 +77,7 @@ export default function VendorPreviewScreen() {
             <Ionicons
               name="calendar-outline"
               size={32}
-              color={Colors.primary.royalPurple}
+              color={Colors.primary.deepPlum}
             />
             <View style={styles.featureText}>
               <Text style={styles.featureTitle}>Manage Appointments</Text>
@@ -92,7 +92,7 @@ export default function VendorPreviewScreen() {
             <Ionicons
               name="receipt"
               size={32}
-              color={Colors.primary.royalPurple}
+              color={Colors.primary.deepPlum}
             />
             <View style={styles.featureText}>
               <Text style={styles.featureTitle}>Track Orders</Text>
@@ -106,7 +106,7 @@ export default function VendorPreviewScreen() {
             <Ionicons
               name="bar-chart"
               size={32}
-              color={Colors.primary.royalPurple}
+              color={Colors.primary.deepPlum}
             />
             <View style={styles.featureText}>
               <Text style={styles.featureTitle}>Business Analytics</Text>
@@ -120,7 +120,7 @@ export default function VendorPreviewScreen() {
             <Ionicons
               name="cash"
               size={32}
-              color={Colors.primary.royalPurple}
+              color={Colors.primary.deepPlum}
             />
             <View style={styles.featureText}>
               <Text style={styles.featureTitle}>Get Paid</Text>
@@ -134,7 +134,7 @@ export default function VendorPreviewScreen() {
             <Ionicons
               name="people"
               size={32}
-              color={Colors.primary.royalPurple}
+              color={Colors.primary.deepPlum}
             />
             <View style={styles.featureText}>
               <Text style={styles.featureTitle}>Customer Management</Text>
@@ -189,7 +189,7 @@ export default function VendorPreviewScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.neutral.softWhite,
+    backgroundColor: Colors.neutral.blushCream,
   },
   header: {
     flexDirection: "row",
@@ -210,7 +210,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: Typography.fontSize.lg,
     fontWeight: Typography.fontWeight.semibold,
-    color: Colors.neutral.darkGrey,
+    color: Colors.neutral.darkText,
   },
   placeholder: {
     width: 40,
@@ -230,7 +230,7 @@ const styles = StyleSheet.create({
   heroTitle: {
     fontSize: Typography.fontSize["3xl"],
     fontWeight: Typography.fontWeight.bold,
-    color: Colors.neutral.darkGrey,
+    color: Colors.neutral.darkText,
     marginBottom: Spacing.md,
     textAlign: "center",
   },
@@ -246,7 +246,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: Typography.fontSize.xl,
     fontWeight: Typography.fontWeight.bold,
-    color: Colors.neutral.darkGrey,
+    color: Colors.neutral.darkText,
     marginBottom: Spacing.lg,
   },
   featureCard: {
@@ -263,7 +263,7 @@ const styles = StyleSheet.create({
   featureTitle: {
     fontSize: Typography.fontSize.base,
     fontWeight: Typography.fontWeight.semibold,
-    color: Colors.neutral.darkGrey,
+    color: Colors.neutral.darkText,
     marginBottom: Spacing.xs,
   },
   featureDescription: {
@@ -299,7 +299,7 @@ const styles = StyleSheet.create({
     paddingBottom: Spacing["2xl"],
   },
   primaryButton: {
-    backgroundColor: Colors.primary.royalPurple,
+    backgroundColor: Colors.primary.deepPlum,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
@@ -318,12 +318,12 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.lg,
     borderRadius: 12,
     borderWidth: 2,
-    borderColor: Colors.primary.royalPurple,
+    borderColor: Colors.primary.deepPlum,
   },
   secondaryButtonText: {
     fontSize: Typography.fontSize.base,
     fontWeight: Typography.fontWeight.semibold,
-    color: Colors.primary.royalPurple,
+    color: Colors.primary.deepPlum,
     textAlign: "center",
   },
 });

@@ -135,7 +135,7 @@ export default function VendorProductsScreen() {
       {/* Products List */}
       {loading ? (
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={Colors.primary.royalPurple} />
+          <ActivityIndicator size="large" color={Colors.primary.deepPlum} />
           <Text style={styles.loadingText}>Loading inventory...</Text>
         </View>
       ) : (
@@ -173,7 +173,7 @@ export default function VendorProductsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.neutral.softWhite,
+    backgroundColor: Colors.neutral.blushCream,
   },
   header: {
     flexDirection: 'row',
@@ -187,13 +187,13 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: Typography.fontSize.xl,
     fontWeight: Typography.fontWeight.bold as any,
-    color: Colors.neutral.darkGrey,
+    color: Colors.primary.deepPlum,
   },
   addButtonContainer: {
     padding: Spacing.lg,
   },
   addButton: {
-    backgroundColor: Colors.primary.royalPurple,
+    backgroundColor: Colors.primary.deepPlum,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -255,7 +255,7 @@ const styles = StyleSheet.create({
   noStoreTitle: {
     fontSize: Typography.fontSize['2xl'],
     fontWeight: Typography.fontWeight.bold as any,
-    color: Colors.neutral.darkGrey,
+    color: Colors.primary.deepPlum,
     marginTop: Spacing.lg,
     marginBottom: Spacing.md,
   },

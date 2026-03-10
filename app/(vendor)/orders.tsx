@@ -102,7 +102,7 @@ export default function VendorOrdersScreen() {
       case 'PENDING':
         return Colors.semantic.warning;
       case 'CONFIRMED':
-        return Colors.primary.royalPurple;
+        return Colors.primary.deepPlum;
       case 'PICKED_UP':
         return Colors.semantic.info;
       case 'DELIVERED':
@@ -166,7 +166,7 @@ export default function VendorOrdersScreen() {
       <View style={styles.itemsList}>
         {item.items.map((itemName, index) => (
           <View key={index} style={styles.itemRow}>
-            <Ionicons name="checkmark-circle" size={16} color={Colors.primary.royalPurple} />
+            <Ionicons name="checkmark-circle" size={16} color={Colors.primary.deepPlum} />
             <Text style={styles.itemText}>{itemName}</Text>
           </View>
         ))}
@@ -266,7 +266,7 @@ export default function VendorOrdersScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.neutral.softWhite,
+    backgroundColor: Colors.neutral.blushCream,
   },
   header: {
     backgroundColor: Colors.neutral.white,
@@ -278,7 +278,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: Typography.fontSize['2xl'],
     fontWeight: Typography.fontWeight.bold as any,
-    color: Colors.neutral.darkGrey,
+    color: Colors.neutral.darkText,
   },
   headerSubtitle: {
     fontSize: Typography.fontSize.sm,
@@ -297,11 +297,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: Spacing.sm,
     paddingHorizontal: Spacing.md,
-    borderRadius: BorderRadius.full,
+    borderRadius: BorderRadius.pill,
     gap: Spacing.xs,
   },
   filterTabActive: {
-    backgroundColor: Colors.primary.royalPurple,
+    backgroundColor: Colors.primary.deepPlum,
   },
   filterTabText: {
     fontSize: Typography.fontSize.sm,
@@ -313,7 +313,7 @@ const styles = StyleSheet.create({
   },
   badge: {
     backgroundColor: Colors.neutral.white,
-    borderRadius: BorderRadius.full,
+    borderRadius: BorderRadius.pill,
     minWidth: 20,
     height: 20,
     justifyContent: 'center',
@@ -323,7 +323,7 @@ const styles = StyleSheet.create({
   badgeText: {
     fontSize: Typography.fontSize.xs,
     fontWeight: Typography.fontWeight.bold as any,
-    color: Colors.primary.royalPurple,
+    color: Colors.primary.deepPlum,
   },
   listContent: {
     padding: Spacing.lg,
@@ -338,7 +338,7 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
     paddingVertical: Spacing.xs,
     paddingHorizontal: Spacing.md,
-    borderRadius: BorderRadius.full,
+    borderRadius: BorderRadius.pill,
     marginBottom: Spacing.md,
   },
   statusText: {
@@ -361,12 +361,12 @@ const styles = StyleSheet.create({
   customerName: {
     fontSize: Typography.fontSize.base,
     fontWeight: Typography.fontWeight.semibold as any,
-    color: Colors.neutral.darkGrey,
+    color: Colors.neutral.darkText,
   },
   orderTotal: {
     fontSize: Typography.fontSize.xl,
     fontWeight: Typography.fontWeight.bold as any,
-    color: Colors.primary.royalPurple,
+    color: Colors.primary.deepPlum,
   },
   itemsList: {
     marginBottom: Spacing.md,
@@ -392,7 +392,7 @@ const styles = StyleSheet.create({
     color: Colors.neutral.mediumGrey,
   },
   confirmButton: {
-    backgroundColor: Colors.primary.royalPurple,
+    backgroundColor: Colors.primary.deepPlum,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -414,7 +414,7 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontSize: Typography.fontSize.xl,
     fontWeight: Typography.fontWeight.bold as any,
-    color: Colors.neutral.darkGrey,
+    color: Colors.neutral.darkText,
     marginTop: Spacing.lg,
     marginBottom: Spacing.sm,
   },

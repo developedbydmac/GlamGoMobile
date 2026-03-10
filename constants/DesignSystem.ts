@@ -8,32 +8,37 @@
 import { Platform } from 'react-native';
 
 /**
- * Color Palette
- * Carefully selected for accessibility and premium feel
+ * GlamGo Luxury Color Palette
+ * Refined to match logo: soft purple, muted gold, blush warmth
+ * High-end beauty brand aesthetic with breathing room
  */
 export const Colors = {
-  // Primary Colors
+  // Primary Colors - Refined Plum (softer, more elegant)
   primary: {
-    royalPurple: '#4A2C82',      // Main brand color - buttons, headers
-    deepPurple: '#3A1F6B',       // Darker variant for gradients
-    lightPurple: '#6A4CA2',      // Lighter variant for hover states
-    violet: '#7C5FC5',           // Gradient end color
+    deepPlum: '#522888',         // Main brand - refined purple
+    darkPlum: '#3B1B64',         // Gradient end / shadows
+    lightPlum: '#5E2C91',        // Gradient start / hover
+    lavender: '#8C7A9A',         // Muted text variant
   },
   
-  // Secondary Colors
+  // Secondary Colors - Soft Gold (muted, not metallic)
   secondary: {
-    champagneGold: '#D4AF37',    // Accents, links, premium indicators
-    darkGold: '#B8961F',         // Darker gold for text contrast
-    lightGold: '#E8C96B',        // Lighter gold for backgrounds
+    softGold: '#BF9553',         // Primary gold accent (refined)
+    champagneGold: '#D4AF37',    // Warmer variant
+    darkGold: '#9A7843',         // Darker for contrast
+    paleGold: '#E8D4A0',         // Subtle backgrounds
   },
   
-  // Neutral Colors
+  // Neutral Colors - Blush & Warm Tones
   neutral: {
     white: '#FFFFFF',
-    softWhite: '#FAFAFA',        // Background to avoid harsh pure white
-    lightGrey: '#E5E5E5',        // Borders
-    mediumGrey: '#9E9E9E',       // Secondary text
-    darkGrey: '#424242',         // Primary text
+    surface: '#FFFDFC',          // Near-white with blush hint
+    blushCream: '#FFF8F5',       // Soft blush background (lighter)
+    softBlush: '#F5EDE8',        // Card backgrounds
+    lightGrey: '#E7D9EA',        // Borders (purple-tinted)
+    mediumGrey: '#B7A8C5',       // Placeholder text (purple-tinted)
+    mutedText: '#8C7A9A',        // Secondary text
+    darkText: '#2E2335',         // Primary text (plum-tinted)
     black: '#000000',
   },
   
@@ -41,42 +46,69 @@ export const Colors = {
   semantic: {
     success: '#4CAF50',
     warning: '#FF9800',
-    error: '#F44336',
-    info: '#2196F3',
+    error: '#D9534F',            // Softer red
+    info: '#6B9BD1',
   },
   
   // Dark Mode Support
   dark: {
-    background: '#121212',
-    surface: '#1E1E1E',
-    primary: '#BB86FC',
-    secondary: '#03DAC6',
-    text: '#FFFFFF',
-    textSecondary: '#B3B3B3',
+    background: '#1A1416',
+    surface: '#2C2229',
+    primary: '#8C7A9A',
+    secondary: '#BF9553',
+    text: '#FFF8F5',
+    textSecondary: '#B7A8C5',
   },
 };
 
 /**
- * Typography System
- * Following iOS system font sizes and weights
+ * Typography System - Luxury GlamGo
+ * Display serif for headings (Playfair Display or similar)
+ * Clean sans for body text (Inter/SF Pro)
  */
 export const Typography = {
-  fontFamily: Platform.select({
-    ios: 'System',
-    android: 'Roboto',
-    default: 'System',
-  }),
+  fontFamily: {
+    // Heading fonts - elegant display serif (Playfair Display)
+    heading: Platform.select({
+      ios: 'PlayfairDisplay-SemiBold',
+      android: 'PlayfairDisplay-SemiBold',
+      default: 'Georgia',
+    }),
+    // Body fonts - refined sans serif (Inter)
+    body: Platform.select({
+      ios: 'Inter-Regular',
+      android: 'Inter-Regular',
+      default: 'System',
+    }),
+    bodyMedium: Platform.select({
+      ios: 'Inter-Medium',
+      android: 'Inter-Medium',
+      default: 'System',
+    }),
+    bodySemiBold: Platform.select({
+      ios: 'Inter-SemiBold',
+      android: 'Inter-SemiBold',
+      default: 'System',
+    }),
+    bodyBold: Platform.select({
+      ios: 'Inter-Bold',
+      android: 'Inter-Bold',
+      default: 'System',
+    }),
+  },
   
-  // Font Sizes
+  // Font Sizes - More hierarchy for luxury feel
   fontSize: {
     xs: 12,
-    sm: 14,
+    sm: 13,
     base: 16,      // Base size - prevents iOS auto-zoom on inputs
-    lg: 18,
-    xl: 20,
-    '2xl': 24,
-    '3xl': 30,
-    '4xl': 36,
+    md: 17,
+    lg: 19,
+    xl: 22,
+    '2xl': 28,
+    '3xl': 34,
+    '4xl': 42,
+    '5xl': 52,
   },
   
   // Font Weights
@@ -89,115 +121,131 @@ export const Typography = {
     heavy: '800' as const,
   },
   
+  // Letter Spacing - Refined tracking
+  letterSpacing: {
+    tight: -0.5,
+    normal: 0,
+    relaxed: 0.5,
+    wide: 1,
+    wider: 1.5,
+    widest: 2,
+  },
+  
   // Line Heights
   lineHeight: {
     tight: 1.2,
+    snug: 1.375,
     normal: 1.5,
     relaxed: 1.75,
+    loose: 2,
   },
 };
 
 /**
- * Spacing System
- * Consistent 8px grid system
+ * Spacing System - Luxury breathing room
+ * 4px base unit for consistent rhythm
  */
 export const Spacing = {
-  xs: 4,
-  sm: 8,
-  md: 12,
-  base: 16,
-  lg: 20,
-  xl: 24,
-  '2xl': 32,
-  '3xl': 40,
-  '4xl': 48,
-  '5xl': 64,
+  xs: 4,    // 1 unit
+  sm: 8,    // 2 units
+  md: 12,   // 3 units
+  base: 16, // 4 units
+  lg: 24,   // 6 units
+  xl: 32,   // 8 units
+  '2xl': 40,  // 10 units
+  '3xl': 48,  // 12 units
+  '4xl': 64,  // 16 units
+  '5xl': 80,  // 20 units
 };
 
 /**
- * Border Radius
- * Modern, soft corners
+ * Spacing helper function (like your reference)
+ * Usage: spacing(3) = 12px, spacing(6) = 24px
+ */
+export const spacing = (n: number) => n * 4;
+
+/**
+ * Border Radius - Refined luxury
+ * Matching your reference theme
  */
 export const BorderRadius = {
   none: 0,
-  sm: 4,
-  base: 8,
-  md: 12,     // Modern standard
-  lg: 16,
-  xl: 20,
-  full: 9999,
+  sm: 8,
+  md: 12,
+  lg: 24,
+  pill: 999,  // Full pill shape
 };
 
 /**
- * Shadows
- * Platform-specific elevation
+ * Shadows - Refined elevation
+ * Purple-tinted shadows for brand consistency
  */
 export const Shadows = {
   subtle: {
-    shadowColor: '#000',
+    shadowColor: Colors.primary.darkPlum,  // #3B1B64
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
+    shadowOpacity: 0.08,
+    shadowRadius: 6,
     elevation: 2,
   },
   
   light: {
-    shadowColor: '#000',
+    shadowColor: Colors.primary.darkPlum,
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
+    shadowOpacity: 0.12,
+    shadowRadius: 12,
     elevation: 4,
   },
   
   medium: {
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.15,
-    shadowRadius: 16,
-    elevation: 8,
+    shadowColor: Colors.primary.darkPlum,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.25,
+    shadowRadius: 12,
+    elevation: 6,
   },
   
   heavy: {
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 12 },
-    shadowOpacity: 0.2,
-    shadowRadius: 24,
-    elevation: 12,
+    shadowColor: Colors.primary.darkPlum,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.3,
+    shadowRadius: 16,
+    elevation: 8,
   },
 };
 
 /**
- * Component Styles
- * Reusable component styling rules
+ * Component Styles - Luxury GlamGo
+ * Reusable component styling rules with refined aesthetics
  */
 export const Components = {
-  // Modern Input Field
+  // Luxury Input Field
   input: {
-    height: 56,
+    height: 58,
     borderRadius: BorderRadius.md,
-    borderWidth: 1,
+    borderWidth: 1.5,
     borderColor: Colors.neutral.lightGrey,
     paddingHorizontal: Spacing.base,
-    fontSize: Typography.fontSize.base,    // 16pt to prevent iOS zoom
+    fontSize: Typography.fontSize.base,
     backgroundColor: Colors.neutral.white,
     ...Shadows.subtle,
   },
   
-  // Premium Button
+  // Premium Pill Button
   button: {
     height: 56,
-    borderRadius: BorderRadius.md,
+    borderRadius: BorderRadius.pill,     // Full pill shape
     paddingHorizontal: Spacing.xl,
     justifyContent: 'center' as const,
     alignItems: 'center' as const,
     ...Shadows.light,
   },
   
-  // Card Container
+  // Elevated Card Container
   card: {
     backgroundColor: Colors.neutral.white,
-    borderRadius: BorderRadius.md,
-    padding: Spacing.base,
+    borderRadius: BorderRadius.lg,
+    padding: Spacing.lg,
     ...Shadows.subtle,
   },
 };
@@ -238,35 +286,35 @@ export const Animation = {
 };
 
 /**
- * User Role Colors
- * Distinct colors for each user type
+ * User Role Colors - Luxury variants
+ * Distinct colors for each user type with refined palette
  */
 export const RoleColors = {
   CUSTOMER: {
-    primary: '#4A2C82',
-    light: '#6A4CA2',
+    primary: '#4A1C6B',        // Deep plum
+    light: '#7B4C9E',
     icon: 'person.fill',
   },
   VENDOR: {
-    primary: '#D4AF37',
-    light: '#E8C96B',
+    primary: '#C9A961',        // Metallic gold
+    light: '#E8D4A0',
     icon: 'handbag.fill',
   },
   DRIVER: {
-    primary: '#2196F3',
-    light: '#64B5F6',
+    primary: '#6B9BD1',        // Softer blue
+    light: '#A2C4E8',
     icon: 'car.fill',
   },
 };
 
 /**
- * Gradient Definitions
- * Premium gradients for buttons and backgrounds
+ * Gradient Definitions - Luxury GlamGo
+ * Refined gradients matching the softer aesthetic
  */
 export const Gradients = {
-  primary: [Colors.primary.deepPurple, Colors.primary.violet],
-  gold: [Colors.secondary.darkGold, Colors.secondary.champagneGold],
-  dark: ['#1a1a1a', '#2d2d2d'],
+  primary: [Colors.primary.lightPlum, Colors.primary.darkPlum] as const,  // #5E2C91 → #3B1B64
+  gold: [Colors.secondary.darkGold, Colors.secondary.softGold] as const,
+  dark: ['#1A1416', '#2C2229'] as const,
 };
 
 /**

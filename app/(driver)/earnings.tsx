@@ -38,7 +38,7 @@ export default function DriverEarningsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.neutral.softWhite,
+    backgroundColor: Colors.neutral.blushCream,
   },
   scrollContent: {
     flexGrow: 1,

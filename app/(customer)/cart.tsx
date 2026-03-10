@@ -108,14 +108,14 @@ export default function CustomerCartScreen() {
             style={styles.quantityButton}
             onPress={() => updateQuantity(item.id, -1)}
           >
-            <Ionicons name="remove" size={16} color={Colors.primary.royalPurple} />
+            <Ionicons name="remove" size={16} color={Colors.primary.deepPlum} />
           </TouchableOpacity>
           <Text style={styles.quantity}>{item.quantity}</Text>
           <TouchableOpacity
             style={styles.quantityButton}
             onPress={() => updateQuantity(item.id, 1)}
           >
-            <Ionicons name="add" size={16} color={Colors.primary.royalPurple} />
+            <Ionicons name="add" size={16} color={Colors.primary.deepPlum} />
           </TouchableOpacity>
         </View>
         <TouchableOpacity onPress={() => removeItem(item.id)}>
@@ -194,7 +194,7 @@ export default function CustomerCartScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.neutral.softWhite,
+    backgroundColor: Colors.neutral.blushCream,
   },
   header: {
     backgroundColor: Colors.neutral.white,
@@ -206,7 +206,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: Typography.fontSize['2xl'],
     fontWeight: Typography.fontWeight.bold as any,
-    color: Colors.neutral.darkGrey,
+    color: Colors.neutral.darkText,
   },
   itemCount: {
     fontSize: Typography.fontSize.sm,
@@ -242,7 +242,7 @@ const styles = StyleSheet.create({
   itemName: {
     fontSize: Typography.fontSize.base,
     fontWeight: Typography.fontWeight.semibold as any,
-    color: Colors.neutral.darkGrey,
+    color: Colors.neutral.darkText,
     marginBottom: Spacing.xs,
   },
   storeName: {
@@ -253,7 +253,7 @@ const styles = StyleSheet.create({
   itemPrice: {
     fontSize: Typography.fontSize.base,
     fontWeight: Typography.fontWeight.bold as any,
-    color: Colors.primary.royalPurple,
+    color: Colors.primary.deepPlum,
   },
   itemActions: {
     alignItems: 'center',
@@ -267,16 +267,16 @@ const styles = StyleSheet.create({
   quantityButton: {
     width: 28,
     height: 28,
-    borderRadius: BorderRadius.full,
+    borderRadius: BorderRadius.pill,
     borderWidth: 1,
-    borderColor: Colors.primary.royalPurple,
+    borderColor: Colors.primary.deepPlum,
     justifyContent: 'center',
     alignItems: 'center',
   },
   quantity: {
     fontSize: Typography.fontSize.base,
     fontWeight: Typography.fontWeight.semibold as any,
-    color: Colors.neutral.darkGrey,
+    color: Colors.neutral.darkText,
     minWidth: 24,
     textAlign: 'center',
   },
@@ -300,7 +300,7 @@ const styles = StyleSheet.create({
   },
   summaryValue: {
     fontSize: Typography.fontSize.base,
-    color: Colors.neutral.darkGrey,
+    color: Colors.neutral.darkText,
   },
   totalRow: {
     marginTop: Spacing.sm,
@@ -312,15 +312,15 @@ const styles = StyleSheet.create({
   totalLabel: {
     fontSize: Typography.fontSize.lg,
     fontWeight: Typography.fontWeight.bold as any,
-    color: Colors.neutral.darkGrey,
+    color: Colors.neutral.darkText,
   },
   totalValue: {
     fontSize: Typography.fontSize.lg,
     fontWeight: Typography.fontWeight.bold as any,
-    color: Colors.primary.royalPurple,
+    color: Colors.primary.deepPlum,
   },
   checkoutButton: {
-    backgroundColor: Colors.primary.royalPurple,
+    backgroundColor: Colors.primary.deepPlum,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -342,7 +342,7 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontSize: Typography.fontSize.xl,
     fontWeight: Typography.fontWeight.bold as any,
-    color: Colors.neutral.darkGrey,
+    color: Colors.neutral.darkText,
     marginTop: Spacing.xl,
     marginBottom: Spacing.sm,
   },
@@ -354,7 +354,7 @@ const styles = StyleSheet.create({
     lineHeight: 22,
   },
   browseButton: {
-    backgroundColor: Colors.primary.royalPurple,
+    backgroundColor: Colors.primary.deepPlum,
     paddingVertical: Spacing.md,
     paddingHorizontal: Spacing.xl,
     borderRadius: BorderRadius.lg,

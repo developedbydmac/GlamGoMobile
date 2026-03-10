@@ -139,7 +139,7 @@ export default function DriverAvailableScreen() {
       {/* Store Info */}
       <View style={styles.section}>
         <View style={styles.iconRow}>
-          <Ionicons name="storefront" size={20} color={Colors.primary.royalPurple} />
+          <Ionicons name="storefront" size={20} color={Colors.primary.deepPlum} />
           <Text style={styles.sectionTitle}>Pickup</Text>
         </View>
         <Text style={styles.storeName}>{item.storeName}</Text>
@@ -224,7 +224,7 @@ export default function DriverAvailableScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.neutral.softWhite,
+    backgroundColor: Colors.neutral.blushCream,
   },
   header: {
     backgroundColor: Colors.neutral.white,
@@ -236,7 +236,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: Typography.fontSize['2xl'],
     fontWeight: Typography.fontWeight.bold as any,
-    color: Colors.neutral.darkGrey,
+    color: Colors.neutral.darkText,
   },
   headerSubtitle: {
     fontSize: Typography.fontSize.sm,
@@ -270,7 +270,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#E3F2FD',
     paddingVertical: Spacing.xs,
     paddingHorizontal: Spacing.sm,
-    borderRadius: BorderRadius.full,
+    borderRadius: BorderRadius.pill,
     marginBottom: Spacing.md,
     gap: Spacing.xs,
   },
@@ -300,13 +300,13 @@ const styles = StyleSheet.create({
   storeName: {
     fontSize: Typography.fontSize.lg,
     fontWeight: Typography.fontWeight.bold as any,
-    color: Colors.neutral.darkGrey,
+    color: Colors.neutral.darkText,
     marginBottom: Spacing.xs,
   },
   customerName: {
     fontSize: Typography.fontSize.base,
     fontWeight: Typography.fontWeight.semibold as any,
-    color: Colors.neutral.darkGrey,
+    color: Colors.neutral.darkText,
     marginBottom: Spacing.xs,
   },
   address: {
@@ -333,7 +333,7 @@ const styles = StyleSheet.create({
   itemsTitle: {
     fontSize: Typography.fontSize.sm,
     fontWeight: Typography.fontWeight.semibold as any,
-    color: Colors.neutral.darkGrey,
+    color: Colors.neutral.darkText,
     marginBottom: Spacing.sm,
   },
   itemRow: {
@@ -358,7 +358,7 @@ const styles = StyleSheet.create({
   earningLabel: {
     fontSize: Typography.fontSize.base,
     fontWeight: Typography.fontWeight.semibold as any,
-    color: Colors.neutral.darkGrey,
+    color: Colors.neutral.darkText,
   },
   earningAmount: {
     fontSize: Typography.fontSize.xl,
@@ -388,7 +388,7 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontSize: Typography.fontSize.xl,
     fontWeight: Typography.fontWeight.bold as any,
-    color: Colors.neutral.darkGrey,
+    color: Colors.neutral.darkText,
     marginTop: Spacing.lg,
     marginBottom: Spacing.sm,
   },

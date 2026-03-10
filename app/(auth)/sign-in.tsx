@@ -6,6 +6,7 @@ import {
     Colors,
     Spacing,
     Typography,
+    Shadows,
 } from "@/constants/DesignSystem";
 import { Ionicons } from "@expo/vector-icons";
 import { signInWithCognito } from "../../services/cognitoAuth";
@@ -137,6 +138,7 @@ export default function SignInScreen() {
           >
             {/* Logo */}
             <GlamGoLogo size={isMobileWeb ? "small" : "medium"} />
+            <Text style={styles.tagline}>BEAUTY DELIVERED</Text>
 
             {/* Header */}
             <TouchableOpacity
@@ -147,7 +149,7 @@ export default function SignInScreen() {
                 <Ionicons
                   name="chevron-back"
                   size={24}
-                  color={Colors.primary.royalPurple}
+                  color={Colors.primary.deepPlum}
                 />
                 <Text style={styles.backButtonText}>Back to Browse</Text>
               </View>
@@ -293,7 +295,7 @@ export default function SignInScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.neutral.softWhite,
+    backgroundColor: Colors.neutral.blushCream,  // #FFF8F5
   },
   keyboardView: {
     flex: 1,
@@ -304,16 +306,25 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     paddingHorizontal: Spacing.xl,
-    paddingTop: Platform.OS === "ios" ? Spacing.xl : Spacing["2xl"],
+    paddingTop: Platform.OS === "ios" ? Spacing['3xl'] : Spacing['4xl'],
   },
   contentMobileWeb: {
     maxWidth: 480,
     alignSelf: "center",
     width: "100%",
   },
+  tagline: {
+    fontSize: Typography.fontSize.xs,
+    letterSpacing: Typography.letterSpacing.wider,
+    textTransform: 'uppercase',
+    color: Colors.secondary.softGold,
+    marginTop: Spacing.sm,
+    marginBottom: Spacing.lg,
+    fontFamily: Typography.fontFamily.bodyMedium,
+  },
   backButton: {
-    marginBottom: Spacing.xl,
-    marginTop: Spacing.xs,
+    marginBottom: Spacing['3xl'],
+    marginTop: Spacing.sm,
   },
   backButtonContent: {
     flexDirection: "row",
@@ -321,15 +332,17 @@ const styles = StyleSheet.create({
     gap: Spacing.xs,
   },
   backButtonText: {
-    fontSize: Typography.fontSize.base,
-    color: Colors.primary.royalPurple,
-    fontWeight: Typography.fontWeight.semibold,
+    fontSize: Typography.fontSize.sm,
+    color: Colors.secondary.softGold,  // #BF9553
+    fontWeight: Typography.fontWeight.medium,
+    letterSpacing: Typography.letterSpacing.relaxed,
+    fontFamily: Typography.fontFamily.body,
   },
   header: {
-    marginBottom: Spacing["3xl"],
+    marginBottom: Spacing['4xl'],  // Generous breathing room
   },
   errorContainer: {
-    backgroundColor: "#FFF5F5",
+    backgroundColor: "#FFF9F9",
     borderWidth: 1.5,
     borderColor: Colors.semantic.error,
     borderRadius: BorderRadius.md,
@@ -339,53 +352,59 @@ const styles = StyleSheet.create({
   errorText: {
     color: Colors.semantic.error,
     fontSize: Typography.fontSize.sm,
-    lineHeight: Typography.lineHeight.normal,
+    lineHeight: Typography.lineHeight.relaxed,
     fontWeight: Typography.fontWeight.medium,
   },
   title: {
-    fontSize: Typography.fontSize["3xl"],
-    fontWeight: Typography.fontWeight.bold,
-    color: Colors.primary.royalPurple,
-    marginBottom: Spacing.md,
-    letterSpacing: 0.3,
+    fontSize: Typography.fontSize['4xl'],  // 32px+
+    fontWeight: Typography.fontWeight.semibold,
+    color: Colors.primary.deepPlum,  // #522888
+    marginBottom: Spacing.base,
+    letterSpacing: Typography.letterSpacing.relaxed,
+    fontFamily: Typography.fontFamily.heading,  // Serif
   },
   subtitle: {
-    fontSize: Typography.fontSize.lg,
-    color: Colors.neutral.mediumGrey,
+    fontSize: Typography.fontSize.sm,
+    color: Colors.neutral.mutedText,  // #8C7A9A
     lineHeight: Typography.lineHeight.relaxed,
     fontWeight: Typography.fontWeight.normal,
+    fontFamily: Typography.fontFamily.body,
   },
   form: {
     gap: Spacing.lg,
-    marginBottom: Spacing["2xl"],
+    marginBottom: Spacing['3xl'],
   },
   signUpContainer: {
     alignItems: "center",
-    paddingBottom: Platform.OS === "ios" ? Spacing["3xl"] : Spacing.xl,
-    marginTop: Spacing.xl,
+    paddingBottom: Platform.OS === "ios" ? Spacing['3xl'] : Spacing.xl,
+    marginTop: Spacing['3xl'],
   },
   signUpText: {
     fontSize: Typography.fontSize.sm,
-    color: Colors.neutral.mediumGrey,
+    color: Colors.neutral.mutedText,
     fontWeight: Typography.fontWeight.normal,
+    fontFamily: Typography.fontFamily.body,
   },
   signUpLink: {
-    color: Colors.primary.royalPurple,
-    fontWeight: Typography.fontWeight.bold,
-    textDecorationLine: "underline",
+    color: Colors.secondary.softGold,  // #BF9553
+    fontWeight: Typography.fontWeight.medium,
   },
   demoSection: {
-    marginTop: Spacing['2xl'],
+    marginTop: Spacing['3xl'],
     padding: Spacing.lg,
-    backgroundColor: '#F3E8FF',
+    backgroundColor: Colors.neutral.softBlush,  // #F5EDE8
     borderRadius: BorderRadius.lg,
+    ...Shadows.subtle,
   },
   demoTitle: {
-    fontSize: Typography.fontSize.base,
-    fontWeight: Typography.fontWeight.semibold as any,
-    color: Colors.primary.royalPurple,
+    fontSize: Typography.fontSize.sm,
+    fontWeight: Typography.fontWeight.medium as any,
+    color: Colors.primary.deepPlum,
     marginBottom: Spacing.md,
     textAlign: 'center',
+    letterSpacing: Typography.letterSpacing.wide,
+    textTransform: 'uppercase',
+    fontFamily: Typography.fontFamily.body,
   },
   demoButtonsGrid: {
     flexDirection: 'row',
@@ -395,21 +414,23 @@ const styles = StyleSheet.create({
   demoButton: {
     flex: 1,
     padding: Spacing.md,
-    borderRadius: BorderRadius.lg,
+    borderRadius: BorderRadius.sm,
     alignItems: 'center',
+    ...Shadows.subtle,
   },
   demoButtonCustomer: {
-    backgroundColor: Colors.primary.royalPurple,
+    backgroundColor: Colors.primary.deepPlum,
   },
   demoButtonVendor: {
-    backgroundColor: '#C39BD3',
+    backgroundColor: Colors.secondary.softGold,
   },
   demoButtonDriver: {
-    backgroundColor: '#2ECC71',
+    backgroundColor: '#6B9BD1',
   },
   demoButtonText: {
     color: Colors.neutral.white,
-    fontSize: Typography.fontSize.sm,
+    fontSize: Typography.fontSize.xs,
     fontWeight: Typography.fontWeight.semibold as any,
+    letterSpacing: Typography.letterSpacing.normal,
   },
 });

@@ -111,7 +111,7 @@ export default function ProductDetailScreen() {
           <Ionicons
             name="arrow-back"
             size={24}
-            color={Colors.neutral.darkGrey}
+            color={Colors.neutral.darkText}
           />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Service Details</Text>
@@ -165,7 +165,7 @@ export default function ProductDetailScreen() {
               <Ionicons
                 name="time-outline"
                 size={20}
-                color={Colors.primary.royalPurple}
+                color={Colors.primary.deepPlum}
               />
               <Text style={styles.duration}>{product.duration}</Text>
             </View>
@@ -184,7 +184,7 @@ export default function ProductDetailScreen() {
               <Ionicons
                 name="location"
                 size={20}
-                color={Colors.primary.royalPurple}
+                color={Colors.primary.deepPlum}
               />
               <Text style={styles.address}>{product.address}</Text>
             </View>
@@ -199,7 +199,7 @@ export default function ProductDetailScreen() {
                   <Ionicons
                     name="checkmark-circle"
                     size={16}
-                    color={Colors.primary.royalPurple}
+                    color={Colors.primary.deepPlum}
                   />
                   <Text style={styles.amenityText}>{amenity}</Text>
                 </View>
@@ -212,7 +212,7 @@ export default function ProductDetailScreen() {
             <Ionicons
               name="information-circle"
               size={24}
-              color={Colors.primary.royalPurple}
+              color={Colors.primary.deepPlum}
             />
             <Text style={styles.demoText}>
               In the full app, customers can book appointments, add to cart, and
@@ -247,7 +247,7 @@ export default function ProductDetailScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.neutral.softWhite,
+    backgroundColor: Colors.neutral.blushCream,
   },
   header: {
     flexDirection: "row",
@@ -268,7 +268,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: Typography.fontSize.lg,
     fontWeight: Typography.fontWeight.semibold,
-    color: Colors.neutral.darkGrey,
+    color: Colors.neutral.darkText,
   },
   placeholder: {
     width: 40,
@@ -287,7 +287,7 @@ const styles = StyleSheet.create({
   productName: {
     fontSize: Typography.fontSize["2xl"],
     fontWeight: Typography.fontWeight.bold,
-    color: Colors.neutral.darkGrey,
+    color: Colors.neutral.darkText,
     marginBottom: Spacing.sm,
   },
   storeRow: {
@@ -313,7 +313,7 @@ const styles = StyleSheet.create({
   ratingText: {
     fontSize: Typography.fontSize.base,
     fontWeight: Typography.fontWeight.semibold,
-    color: Colors.neutral.darkGrey,
+    color: Colors.neutral.darkText,
   },
   reviewsText: {
     fontSize: Typography.fontSize.sm,
@@ -323,12 +323,12 @@ const styles = StyleSheet.create({
     backgroundColor: "#F3E8FF",
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.xs,
-    borderRadius: BorderRadius.full,
+    borderRadius: BorderRadius.pill,
   },
   categoryText: {
     fontSize: Typography.fontSize.sm,
     fontWeight: Typography.fontWeight.medium,
-    color: Colors.primary.royalPurple,
+    color: Colors.primary.deepPlum,
   },
   priceRow: {
     flexDirection: "row",
@@ -361,7 +361,7 @@ const styles = StyleSheet.create({
   price: {
     fontSize: Typography.fontSize["2xl"],
     fontWeight: Typography.fontWeight.bold,
-    color: Colors.primary.royalPurple,
+    color: Colors.primary.deepPlum,
   },
   durationContainer: {
     flexDirection: "row",
@@ -371,7 +371,7 @@ const styles = StyleSheet.create({
   duration: {
     fontSize: Typography.fontSize.base,
     fontWeight: Typography.fontWeight.medium,
-    color: Colors.neutral.darkGrey,
+    color: Colors.neutral.darkText,
   },
   section: {
     marginBottom: Spacing.xl,
@@ -379,7 +379,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: Typography.fontSize.lg,
     fontWeight: Typography.fontWeight.bold,
-    color: Colors.neutral.darkGrey,
+    color: Colors.neutral.darkText,
     marginBottom: Spacing.md,
   },
   description: {
@@ -410,13 +410,13 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.neutral.white,
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.sm,
-    borderRadius: BorderRadius.full,
+    borderRadius: BorderRadius.pill,
     borderWidth: 1,
     borderColor: Colors.neutral.lightGrey,
   },
   amenityText: {
     fontSize: Typography.fontSize.sm,
-    color: Colors.neutral.darkGrey,
+    color: Colors.neutral.darkText,
   },
   demoNotice: {
     flexDirection: "row",
@@ -430,7 +430,7 @@ const styles = StyleSheet.create({
   demoText: {
     flex: 1,
     fontSize: Typography.fontSize.sm,
-    color: Colors.primary.royalPurple,
+    color: Colors.primary.deepPlum,
     lineHeight: 20,
   },
   bottomBar: {
@@ -451,7 +451,7 @@ const styles = StyleSheet.create({
     }),
   },
   bookButton: {
-    backgroundColor: Colors.primary.royalPurple,
+    backgroundColor: Colors.primary.deepPlum,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",

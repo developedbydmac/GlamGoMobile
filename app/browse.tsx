@@ -377,7 +377,7 @@ export default function BrowseScreen() {
                   <MaterialCommunityIcons
                     name="account-heart"
                     size={24}
-                    color={Colors.primary.royalPurple}
+                    color={Colors.primary.deepPlum}
                   />
                 </View>
                 <View style={styles.rolePreviewText}>
@@ -401,7 +401,7 @@ export default function BrowseScreen() {
                   <MaterialCommunityIcons
                     name="store"
                     size={24}
-                    color={Colors.primary.royalPurple}
+                    color={Colors.primary.deepPlum}
                   />
                 </View>
                 <View style={styles.rolePreviewText}>
@@ -423,7 +423,7 @@ export default function BrowseScreen() {
                   <MaterialCommunityIcons
                     name="car"
                     size={24}
-                    color={Colors.primary.royalPurple}
+                    color={Colors.primary.deepPlum}
                   />
                 </View>
                 <View style={styles.rolePreviewText}>

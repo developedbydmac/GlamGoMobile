@@ -9,7 +9,7 @@ export default function CustomerOrdersScreen() {
     <SafeAreaView style={styles.container} edges={['top']}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.header}>
-          <Ionicons name="receipt" size={48} color={Colors.primary.royalPurple} />
+          <Ionicons name="receipt" size={48} color={Colors.primary.deepPlum} />
           <Text style={styles.title}>My Orders</Text>
           <Text style={styles.subtitle}>Track your appointments and orders</Text>
         </View>
@@ -30,7 +30,7 @@ export default function CustomerOrdersScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.neutral.softWhite,
+    backgroundColor: Colors.neutral.blushCream,
   },
   scrollContent: {
     flexGrow: 1,
@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: Typography.fontSize['3xl'],
     fontWeight: Typography.fontWeight.bold,
-    color: Colors.primary.royalPurple,
+    color: Colors.primary.deepPlum,
     marginTop: Spacing.md,
   },
   subtitle: {

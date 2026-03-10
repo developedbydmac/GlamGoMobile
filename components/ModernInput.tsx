@@ -87,14 +87,17 @@ export default function ModernInput({
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: Spacing.base,
+    marginBottom: Spacing.lg,
   },
   
   label: {
-    fontSize: Typography.fontSize.sm,
+    fontSize: Typography.fontSize.xs,
     fontWeight: Typography.fontWeight.medium,
-    color: Colors.neutral.darkGrey,
-    marginBottom: Spacing.xs,
+    color: Colors.neutral.mutedText,
+    marginBottom: Spacing.sm,
+    letterSpacing: Typography.letterSpacing.wide,
+    textTransform: 'uppercase',
+    fontFamily: Typography.fontFamily.body,
   },
   
   labelDark: {
@@ -104,21 +107,22 @@ const styles = StyleSheet.create({
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    height: 56,
-    backgroundColor: Colors.neutral.white,
+    minHeight: 56,
+    backgroundColor: Colors.neutral.surface,  // #FFFDFC
     borderRadius: BorderRadius.md,
     borderWidth: 1,
-    borderColor: Colors.neutral.lightGrey,
+    borderColor: Colors.neutral.lightGrey,  // #E7D9EA
     ...Shadows.subtle,
   },
   
   inputContainerFocused: {
-    borderColor: Colors.primary.royalPurple,
-    borderWidth: 2,
+    borderColor: Colors.primary.deepPlum,
+    borderWidth: 1.5,
   },
   
   inputContainerError: {
     borderColor: Colors.semantic.error,
+    backgroundColor: '#FFF9F9',
   },
   
   inputContainerDark: {
@@ -129,10 +133,12 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     height: '100%',
-    paddingHorizontal: Spacing.base,
-    fontSize: Typography.fontSize.base,  // 16pt to prevent iOS auto-zoom
-    fontFamily: Typography.fontFamily,
-    color: Colors.neutral.darkGrey,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.sm,
+    fontSize: Typography.fontSize.base,
+    fontFamily: Typography.fontFamily.body,
+    color: Colors.neutral.darkText,
+    letterSpacing: Typography.letterSpacing.normal,
   },
   
   inputDark: {
@@ -148,13 +154,13 @@ const styles = StyleSheet.create({
   },
   
   leftIcon: {
-    paddingLeft: Spacing.base,
+    paddingLeft: Spacing.md,
     justifyContent: 'center',
     alignItems: 'center',
   },
   
   rightIcon: {
-    paddingRight: Spacing.base,
+    paddingRight: Spacing.md,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -163,14 +169,16 @@ const styles = StyleSheet.create({
     fontSize: Typography.fontSize.xs,
     color: Colors.semantic.error,
     marginTop: Spacing.xs,
-    marginLeft: Spacing.xs,
+    marginLeft: Spacing.sm,
+    fontWeight: Typography.fontWeight.medium,
   },
   
   helperText: {
     fontSize: Typography.fontSize.xs,
-    color: Colors.neutral.mediumGrey,
+    color: Colors.neutral.mutedText,
     marginTop: Spacing.xs,
-    marginLeft: Spacing.xs,
+    marginLeft: Spacing.sm,
+    letterSpacing: Typography.letterSpacing.normal,
   },
   
   helperTextDark: {

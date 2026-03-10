@@ -67,7 +67,7 @@ export default function CreateStoreScreen() {
         {/* Header */}
         <View style={styles.header}>
           <View style={styles.headerContent}>
-            <Ionicons name="storefront" size={32} color={Colors.primary.royalPurple} />
+            <Ionicons name="storefront" size={32} color={Colors.primary.deepPlum} />
             <View style={styles.headerText}>
               <Text style={styles.headerTitle}>Set up your store</Text>
               <Text style={styles.headerSubtitle}>
@@ -214,12 +214,12 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: Typography.fontSize['2xl'],
     fontWeight: Typography.fontWeight.bold as any,
-    color: Colors.primary.royalPurple,
+    color: Colors.primary.deepPlum,
     marginBottom: Spacing.xs,
   },
   headerSubtitle: {
     fontSize: Typography.fontSize.base,
-    color: Colors.primary.royalPurple,
+    color: Colors.primary.deepPlum,
     opacity: 0.8,
   },
   scrollView: {
@@ -234,13 +234,13 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: Typography.fontSize.lg,
     fontWeight: Typography.fontWeight.bold as any,
-    color: Colors.neutral.darkGrey,
+    color: Colors.neutral.darkText,
     marginBottom: Spacing.lg,
   },
   label: {
     fontSize: Typography.fontSize.sm,
     fontWeight: Typography.fontWeight.semibold as any,
-    color: Colors.neutral.darkGrey,
+    color: Colors.neutral.darkText,
     marginBottom: Spacing.xs,
     marginTop: Spacing.md,
   },
@@ -266,7 +266,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   createButton: {
-    backgroundColor: Colors.primary.royalPurple,
+    backgroundColor: Colors.primary.deepPlum,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',

@@ -221,7 +221,7 @@ export default function DriverActiveScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.neutral.softWhite,
+    backgroundColor: Colors.neutral.blushCream,
   },
   header: {
     backgroundColor: Colors.neutral.white,
@@ -233,7 +233,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: Typography.fontSize['2xl'],
     fontWeight: Typography.fontWeight.bold as any,
-    color: Colors.neutral.darkGrey,
+    color: Colors.neutral.darkText,
   },
   headerSubtitle: {
     fontSize: Typography.fontSize.sm,
@@ -267,7 +267,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#E3F2FD',
     paddingVertical: Spacing.xs,
     paddingHorizontal: Spacing.md,
-    borderRadius: BorderRadius.full,
+    borderRadius: BorderRadius.pill,
     marginBottom: Spacing.lg,
     gap: Spacing.sm,
   },
@@ -319,7 +319,7 @@ const styles = StyleSheet.create({
   timelineName: {
     fontSize: Typography.fontSize.base,
     fontWeight: Typography.fontWeight.bold as any,
-    color: Colors.neutral.darkGrey,
+    color: Colors.neutral.darkText,
     marginBottom: Spacing.xs,
   },
   timelineAddress: {
@@ -349,7 +349,7 @@ const styles = StyleSheet.create({
   itemsTitle: {
     fontSize: Typography.fontSize.sm,
     fontWeight: Typography.fontWeight.semibold as any,
-    color: Colors.neutral.darkGrey,
+    color: Colors.neutral.darkText,
     marginBottom: Spacing.sm,
   },
   itemRow: {
@@ -374,7 +374,7 @@ const styles = StyleSheet.create({
   earningLabel: {
     fontSize: Typography.fontSize.base,
     fontWeight: Typography.fontWeight.semibold as any,
-    color: Colors.neutral.darkGrey,
+    color: Colors.neutral.darkText,
   },
   earningAmount: {
     fontSize: Typography.fontSize.xl,
@@ -426,7 +426,7 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontSize: Typography.fontSize.xl,
     fontWeight: Typography.fontWeight.bold as any,
-    color: Colors.neutral.darkGrey,
+    color: Colors.neutral.darkText,
     marginTop: Spacing.lg,
     marginBottom: Spacing.sm,
   },
