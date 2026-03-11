@@ -31,7 +31,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
 
       // User is authenticated, set role
-      console.log("✅ User role fetched:", user.role);
+      console.log("✅ User role fetched and cached:", user.role);
       setUserRole(user.role);
     } catch (error) {
       console.log("❌ Failed to fetch user role:", error);

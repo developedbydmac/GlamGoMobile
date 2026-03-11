@@ -60,7 +60,7 @@ export default function ModernInput({
             rightIcon && styles.inputWithRightIcon,
             isDark && styles.inputDark,
             style,
-          ]}
+          ] as any}
           placeholderTextColor={isDark ? Colors.dark.textSecondary : Colors.neutral.mediumGrey}
           onFocus={(e) => {
             setIsFocused(true);
@@ -146,11 +146,11 @@ const styles = StyleSheet.create({
   },
   
   inputWithLeftIcon: {
-    paddingLeft: Spacing.xs,
+    paddingLeft: Spacing.xs as number,
   },
   
   inputWithRightIcon: {
-    paddingRight: Spacing.xs,
+    paddingRight: Spacing.xs as number,
   },
   
   leftIcon: {

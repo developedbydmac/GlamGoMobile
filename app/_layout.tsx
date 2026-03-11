@@ -1,8 +1,8 @@
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import {
-    DarkTheme,
-    DefaultTheme,
-    ThemeProvider,
+  DarkTheme,
+  DefaultTheme,
+  ThemeProvider,
 } from "@react-navigation/native";
 import { useFonts } from "expo-font";
 import { Stack, useRouter, useSegments } from "expo-router";
@@ -18,8 +18,8 @@ import { getCurrentCognitoUser } from "@/services/cognitoAuth";
 // NOTE: Using direct AWS Cognito SDK instead of Amplify to avoid storage adapter issues
 
 export {
-    // Catch any errors thrown by the Layout component.
-    ErrorBoundary
+  // Catch any errors thrown by the Layout component.
+  ErrorBoundary
 } from "expo-router";
 
 export const unstable_settings = {
@@ -33,13 +33,6 @@ SplashScreen.preventAutoHideAsync();
 export default function RootLayout() {
   const [loaded, error] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
-    'PlayfairDisplay-Regular': require('@expo-google-fonts/playfair-display/PlayfairDisplay_400Regular.ttf'),
-    'PlayfairDisplay-SemiBold': require('@expo-google-fonts/playfair-display/PlayfairDisplay_600SemiBold.ttf'),
-    'PlayfairDisplay-Bold': require('@expo-google-fonts/playfair-display/PlayfairDisplay_700Bold.ttf'),
-    'Inter-Regular': require('@expo-google-fonts/inter/Inter_400Regular.ttf'),
-    'Inter-Medium': require('@expo-google-fonts/inter/Inter_500Medium.ttf'),
-    'Inter-SemiBold': require('@expo-google-fonts/inter/Inter_600SemiBold.ttf'),
-    'Inter-Bold': require('@expo-google-fonts/inter/Inter_700Bold.ttf'),
     ...FontAwesome.font,
   });
 
@@ -49,28 +42,28 @@ export default function RootLayout() {
   const router = useRouter();
   const segments = useSegments();
 
-  // Check authentication status on mount
+  // Check authentication status ONLY on mount (not on every navigation)
   useEffect(() => {
     checkAuthStatus();
   }, []);
-
-  // Re-check auth when segments change (navigation happens)
-  useEffect(() => {
-    checkAuthStatus();
-  }, [segments]);
 
   const checkAuthStatus = async () => {
     try {
       // Check if user is authenticated using direct Cognito
       const user = await getCurrentCognitoUser();
-      
+
       if (user) {
-        console.log("✅ User is authenticated");
+        console.log("✅ Session restored - User is authenticated");
         console.log("✅ User role:", user.role);
         setIsAuthenticated(true);
-        setUserRole(user.role.toUpperCase() as "CUSTOMER" | "VENDOR" | "DRIVER");
+        setUserRole(
+          user.role.toUpperCase() as "CUSTOMER" | "VENDOR" | "DRIVER",
+        );
+        // Don't auto-navigate - let user explore the landing page
       } else {
-        console.log("👤 User is not authenticated (normal for logged out state)");
+        console.log(
+          "👤 No cached session - User is not authenticated (normal for logged out state)",
+        );
         setIsAuthenticated(false);
         setUserRole(null);
       }
@@ -89,7 +82,7 @@ export default function RootLayout() {
     const inAuthGroup = segments[0] === "(auth)";
     const inBrowse = segments[0] === "browse";
     const inProductDetail = segments[0] === "product-detail";
-    const inRolePreview = String(segments[0] || '').startsWith("role-preview-");
+    const inRolePreview = String(segments[0] || "").startsWith("role-preview-");
     const inVendorGroup = segments[0] === "(vendor)";
     const inCustomerGroup = segments[0] === "(customer)";
     const inTabsGroup = segments[0] === "(tabs)";
@@ -107,21 +100,27 @@ export default function RootLayout() {
     // Only block if trying to access OTHER roles' screens
     if (isAuthenticated && userRole) {
       // Vendor trying to access customer/driver screens
-      if (userRole === "VENDOR" && (inCustomerGroup || inTabsGroup || inDriverGroup)) {
+      if (
+        userRole === "VENDOR" &&
+        (inCustomerGroup || inTabsGroup || inDriverGroup)
+      ) {
         console.log("⛔ Vendor cannot access customer/driver screens");
-        router.replace("/(vendor)/products" as any);
+        router.replace("/(vendor)/dashboard" as any);
         return;
       }
       // Customer trying to access vendor/driver screens
       if (userRole === "CUSTOMER" && (inVendorGroup || inDriverGroup)) {
         console.log("⛔ Customer cannot access vendor/driver screens");
-        router.replace("/(customer)/shop" as any);
+        router.replace("/(customer)/dashboard" as any);
         return;
       }
       // Driver trying to access vendor/customer screens
-      if (userRole === "DRIVER" && (inVendorGroup || inCustomerGroup || inTabsGroup)) {
+      if (
+        userRole === "DRIVER" &&
+        (inVendorGroup || inCustomerGroup || inTabsGroup)
+      ) {
         console.log("⛔ Driver cannot access vendor/customer screens");
-        router.replace("/(driver)/available" as any);
+        router.replace("/(driver)/dashboard" as any);
         return;
       }
     }
@@ -187,7 +186,6 @@ function RootLayoutNav() {
         <Stack.Screen name="(customer)" options={{ headerShown: false }} />
         <Stack.Screen name="(vendor)" options={{ headerShown: false }} />
         <Stack.Screen name="(driver)" options={{ headerShown: false }} />
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="modal" options={{ presentation: "modal" }} />
       </Stack>
     </ThemeProvider>

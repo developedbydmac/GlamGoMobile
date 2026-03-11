@@ -74,21 +74,21 @@ export default function SignInScreen() {
       console.log("User ID:", user.userId);
       console.log("Role:", user.role);
 
-      // Navigate based on role (check both uppercase and lowercase)
+      // Navigate based on role to correct dashboard
       const roleUpper = user.role?.toUpperCase();
       
       if (roleUpper === 'VENDOR') {
-        console.log("Navigating to vendor products...");
-        router.replace("/(vendor)/products" as any);
+        console.log("🏪 Navigating to vendor dashboard...");
+        router.replace("/(vendor)/dashboard" as any);
       } else if (roleUpper === 'DRIVER') {
-        console.log("Navigating to driver available...");
-        router.replace("/(driver)/available" as any);
+        console.log("🚗 Navigating to driver dashboard...");
+        router.replace("/(driver)/dashboard" as any);
       } else {
-        console.log("Navigating to customer shop...");
-        router.replace("/(customer)/shop" as any);
+        console.log("🛍️ Navigating to customer dashboard...");
+        router.replace("/(customer)/dashboard" as any);
       }
 
-      console.log("Navigation about to happen for role:", user.role);
+      console.log("✅ Navigation completed for role:", user.role);
       console.log("=== DIRECT COGNITO SIGN-IN END ===");
     } catch (error: any) {
       console.error("=== SIGN-IN ERROR START ===");

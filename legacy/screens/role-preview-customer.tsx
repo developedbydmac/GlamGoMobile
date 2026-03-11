@@ -7,15 +7,15 @@ import {
     StyleSheet,
     Text,
     TouchableOpacity,
-    View,
+    View
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 /**
- * Vendor Role Preview Screen
- * Shows what vendors will see after creating an account
+ * Customer Role Preview Screen
+ * Shows what customers will see after creating an account
  */
-export default function VendorPreviewScreen() {
+export default function CustomerPreviewScreen() {
   const router = useRouter();
 
   return (
@@ -32,7 +32,7 @@ export default function VendorPreviewScreen() {
             color={Colors.neutral.darkText}
           />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Vendor Experience</Text>
+        <Text style={styles.headerTitle}>Customer Experience</Text>
         <View style={styles.placeholder} />
       </View>
 
@@ -40,15 +40,15 @@ export default function VendorPreviewScreen() {
         {/* Hero Section */}
         <View style={styles.heroSection}>
           <Ionicons
-            name="storefront"
+            name="cart"
             size={80}
             color={Colors.primary.deepPlum}
             style={styles.heroIcon}
           />
-          <Text style={styles.heroTitle}>Grow Your Business</Text>
+          <Text style={styles.heroTitle}>Shop & Book Services</Text>
           <Text style={styles.heroSubtitle}>
-            Manage your beauty business, reach more customers, and increase your
-            revenue
+            Discover beauty services, book appointments, and shop products from
+            local vendors
           </Text>
         </View>
 
@@ -58,16 +58,29 @@ export default function VendorPreviewScreen() {
 
           <View style={styles.featureCard}>
             <Ionicons
-              name="add-circle"
+              name="search"
               size={32}
               color={Colors.primary.deepPlum}
             />
             <View style={styles.featureText}>
-              <Text style={styles.featureTitle}>
-                Create Services & Products
-              </Text>
+              <Text style={styles.featureTitle}>Browse Services</Text>
               <Text style={styles.featureDescription}>
-                Add your beauty services and products with photos, pricing, and
+                Search and discover beauty services from verified vendors in
+                your area
+              </Text>
+            </View>
+          </View>
+
+          <View style={styles.featureCard}>
+            <Ionicons
+              name="calendar"
+              size={32}
+              color={Colors.primary.deepPlum}
+            />
+            <View style={styles.featureText}>
+              <Text style={styles.featureTitle}>Book Appointments</Text>
+              <Text style={styles.featureDescription}>
+                Schedule services at your convenience with real-time
                 availability
               </Text>
             </View>
@@ -75,72 +88,42 @@ export default function VendorPreviewScreen() {
 
           <View style={styles.featureCard}>
             <Ionicons
-              name="calendar-outline"
+              name="cart-outline"
               size={32}
               color={Colors.primary.deepPlum}
             />
             <View style={styles.featureText}>
-              <Text style={styles.featureTitle}>Manage Appointments</Text>
+              <Text style={styles.featureTitle}>Shop Products</Text>
               <Text style={styles.featureDescription}>
-                View and manage customer bookings with a built-in calendar
-                system
+                Purchase beauty products and get them delivered to your door
               </Text>
             </View>
           </View>
 
           <View style={styles.featureCard}>
             <Ionicons
-              name="receipt"
+              name="star"
               size={32}
               color={Colors.primary.deepPlum}
             />
             <View style={styles.featureText}>
-              <Text style={styles.featureTitle}>Track Orders</Text>
+              <Text style={styles.featureTitle}>Rate & Review</Text>
               <Text style={styles.featureDescription}>
-                Monitor product orders and appointment bookings in real-time
+                Share your experience and help others find the best services
               </Text>
             </View>
           </View>
 
           <View style={styles.featureCard}>
             <Ionicons
-              name="bar-chart"
+              name="receipt-outline"
               size={32}
               color={Colors.primary.deepPlum}
             />
             <View style={styles.featureText}>
-              <Text style={styles.featureTitle}>Business Analytics</Text>
+              <Text style={styles.featureTitle}>Order History</Text>
               <Text style={styles.featureDescription}>
-                Track your revenue, popular services, and customer trends
-              </Text>
-            </View>
-          </View>
-
-          <View style={styles.featureCard}>
-            <Ionicons
-              name="cash"
-              size={32}
-              color={Colors.primary.deepPlum}
-            />
-            <View style={styles.featureText}>
-              <Text style={styles.featureTitle}>Get Paid</Text>
-              <Text style={styles.featureDescription}>
-                Receive payments securely and track your earnings
-              </Text>
-            </View>
-          </View>
-
-          <View style={styles.featureCard}>
-            <Ionicons
-              name="people"
-              size={32}
-              color={Colors.primary.deepPlum}
-            />
-            <View style={styles.featureText}>
-              <Text style={styles.featureTitle}>Customer Management</Text>
-              <Text style={styles.featureDescription}>
-                Build relationships with your customers and manage their
-                profiles
+                Track your appointments, orders, and past purchases
               </Text>
             </View>
           </View>
@@ -156,7 +139,7 @@ export default function VendorPreviewScreen() {
               color="#D1D5DB"
             />
             <Text style={styles.placeholderText}>
-              Vendor Dashboard Screenshot
+              Customer Dashboard Screenshot
             </Text>
             <Text style={styles.placeholderSubtext}>
               Coming soon after account creation
@@ -168,9 +151,11 @@ export default function VendorPreviewScreen() {
         <View style={styles.ctaSection}>
           <TouchableOpacity
             style={styles.primaryButton}
-            onPress={() => router.push("/(auth)/sign-up?role=VENDOR")}
+            onPress={() => router.push("/(auth)/sign-up?role=CUSTOMER" as any)}
           >
-            <Text style={styles.primaryButtonText}>Create Vendor Account</Text>
+            <Text style={styles.primaryButtonText}>
+              Create Customer Account
+            </Text>
             <Ionicons name="arrow-forward" size={20} color="#FFF" />
           </TouchableOpacity>
 

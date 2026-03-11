@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: Spacing.sm,
     paddingVertical: Spacing.xs,
-    borderRadius: BorderRadius.full,
+    borderRadius: BorderRadius.pill,
     gap: Spacing.xs,
   },
   inStock: {

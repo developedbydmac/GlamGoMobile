@@ -3,6 +3,6 @@
   "version": "1.0.0",
   "main": "./handler.ts",
   "dependencies": {
-    "@aws-sdk/client-cognito-identity-provider": "^3.500.0"
+    "@aws-sdk/client-cognito-identity-provider": "^3.1005.0"
   }
 }

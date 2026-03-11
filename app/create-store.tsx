@@ -200,8 +200,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#F3E8FF',
     paddingHorizontal: Spacing.xl,
     paddingVertical: Spacing.xl,
-    borderBottomLeftRadius: BorderRadius.xl,
-    borderBottomRightRadius: BorderRadius.xl,
+    borderBottomLeftRadius: BorderRadius.lg,
+    borderBottomRightRadius: BorderRadius.lg,
   },
   headerContent: {
     flexDirection: 'row',

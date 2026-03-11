@@ -163,7 +163,7 @@ export default function DriverPreviewScreen() {
         <View style={styles.ctaSection}>
           <TouchableOpacity
             style={styles.primaryButton}
-            onPress={() => router.push("/(auth)/sign-up?role=DRIVER")}
+            onPress={() => router.push("/(auth)/sign-up?role=DRIVER" as any)}
           >
             <Text style={styles.primaryButtonText}>Create Driver Account</Text>
             <Ionicons name="arrow-forward" size={20} color="#FFF" />

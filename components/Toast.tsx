@@ -159,6 +159,6 @@ const styles = StyleSheet.create({
     color: Colors.neutral.white,
     fontSize: Typography.fontSize.sm,
     fontWeight: Typography.fontWeight.medium,
-    fontFamily: Typography.fontFamily,
+    fontFamily: Typography.fontFamily.body,
   },
 });

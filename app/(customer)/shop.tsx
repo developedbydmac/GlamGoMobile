@@ -343,7 +343,7 @@ export default function CustomerShopScreen() {
                 key={service.id}
                 style={styles.serviceCard}
                 activeOpacity={0.7}
-                onPress={() => router.push(`/product-detail?id=${service.id}`)}
+                onPress={() => router.push(`/product-detail?id=${service.id}` as any)}
               >
                 <Image
                   source={{ uri: service.image }}

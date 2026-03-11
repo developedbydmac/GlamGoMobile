@@ -39,7 +39,7 @@ const roleOptions: RoleOption[] = [
     title: "I need beauty services",
     description: "Book appointments and discover talented stylists near you",
     icon: "person",
-    gradient: [Colors.primary.deepPurple, Colors.primary.deepPlum],
+    gradient: [Colors.primary.lightPlum, Colors.primary.deepPlum],
     features: ["Browse services", "Book appointments", "Track orders"],
   },
   {
@@ -73,98 +73,93 @@ export default function RoleSelectionScreen() {
   const handleContinue = () => {
     if (selectedRole) {
       router.push({
-        pathname: "/(auth)/sign-up",
+        pathname: "/(auth)/sign-up" as any,
         params: { role: selectedRole },
       });
     }
   };
 
   return (
-    <SafeAreaView style={[styles.container, isDark && styles.containerDark]}>
+    <SafeAreaView style={[styles.container, isDark && styles.containerDark] as any}>
       <StatusBar barStyle={isDark ? "light-content" : "dark-content"} />
       <ScrollView
-        contentContainerStyle={styles.scrollContent}
+        contentContainerStyle={styles.scrollContent as any}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
       >
-        <View style={[styles.content, isMobileWeb && styles.contentMobileWeb]}>
+        <View style={[styles.content, isMobileWeb && styles.contentMobileWeb] as any}>
           {/* Back Button */}
           <TouchableOpacity
-            onPress={() => router.push('/browse')}
-            style={styles.backButton}
+            onPress={() => router.push('/browse' as any)}
+            style={styles.backButton as any}
           >
-            <View style={styles.backButtonContent}>
+            <View style={styles.backButtonContent as any}>
               <Ionicons name="chevron-back" size={24} color={Colors.primary.deepPlum} />
-              <Text style={styles.backButtonText}>Back to Browse</Text>
+              <Text style={styles.backButtonText as any}>Back to Browse</Text>
             </View>
           </TouchableOpacity>
 
           {/* Logo */}
-          <View style={styles.logoContainer}>
-            <GlamGoLogo size={isMobileWeb ? "small" : "medium"} />
+          <View style={styles.logoContainer as any}>
+            <GlamGoLogo size="large" />
           </View>
 
           {/* Header */}
-          <View style={styles.header}>
-            <Text style={[styles.title, isDark && styles.titleDark]}>
-              Welcome to GlamGo
+          <View style={styles.header as any}>
+            <Text style={[styles.title, isDark && styles.titleDark] as any}>
+              Choose Your Path
             </Text>
-            <Text style={[styles.subtitle, isDark && styles.subtitleDark]}>
-              How would you like to use GlamGo today?
+            <Text style={[styles.subtitle, isDark && styles.subtitleDark] as any}>
+              Select how you'd like to use GlamGo
             </Text>
           </View>
 
           {/* Role Cards */}
-          <View style={styles.rolesContainer}>
+          <View style={styles.rolesContainer as any}>
             {roleOptions.map((role) => (
               <TouchableOpacity
                 key={role.id}
-                activeOpacity={0.7}
                 onPress={() => handleRoleSelect(role.id)}
-                style={styles.roleCardWrapper}
+                style={styles.roleCardWrapper as any}
               >
                 <View
                   style={[
                     styles.roleCard,
-                    selectedRole === role.id && styles.roleCardSelected,
                     isDark && styles.roleCardDark,
-                    isMobileWeb && styles.roleCardMobileWeb,
-                  ]}
+                    selectedRole === role.id && styles.roleCardSelected,
+                  ] as any}
                 >
-                  {/* Icon Circle with Gradient */}
                   <LinearGradient
                     colors={role.gradient}
-                    style={styles.iconGradient}
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 1 }}
+                    style={styles.iconGradient as any}
                   >
                     <Ionicons
                       name={role.icon}
                       size={32}
-                      color={Colors.neutral.white}
+                      color="#FFFFFF"
                     />
                   </LinearGradient>
-
-                  {/* Role Info */}
-                  <View style={styles.roleInfo}>
-                    <Text style={[styles.roleTitle, isDark && styles.roleTitleDark]}>
+                  
+                  <View style={styles.roleInfo as any}>
+                    <Text style={[styles.roleTitle, isDark && styles.roleTitleDark] as any}>
                       {role.title}
                     </Text>
-                    <Text style={[styles.roleDescription, isDark && styles.roleDescriptionDark]}>
+                    <Text style={[styles.roleDescription, isDark && styles.roleDescriptionDark] as any}>
                       {role.description}
                     </Text>
                     
-                    {/* Features */}
-                    <View style={styles.featuresContainer}>
+                    <View style={styles.featuresContainer as any}>
                       {role.features.map((feature, index) => (
-                        <View key={index} style={styles.featureRow}>
+                        <View key={index} style={styles.featureRow as any}>
                           <Ionicons
                             name="checkmark-circle"
                             size={16}
-                            color={selectedRole === role.id ? role.gradient[0] : Colors.neutral.mediumGrey}
-                            style={styles.featureIcon}
+                            color={role.gradient[0]}
+                            style={styles.featureIcon as any}
                           />
-                          <Text style={[styles.featureText, isDark && styles.featureTextDark]}>
+                          <Text style={[styles.featureText, isDark && styles.featureTextDark] as any}>
                             {feature}
                           </Text>
                         </View>
@@ -172,10 +167,9 @@ export default function RoleSelectionScreen() {
                     </View>
                   </View>
 
-                  {/* Selection Indicator */}
                   {selectedRole === role.id && (
-                    <View style={[styles.selectedBadge, { backgroundColor: role.gradient[0] }]}>
-                      <Ionicons name="checkmark" size={20} color={Colors.neutral.white} />
+                    <View style={[styles.selectedBadge, { backgroundColor: role.gradient[0] }] as any}>
+                      <Ionicons name="checkmark" size={20} color="#FFFFFF" />
                     </View>
                   )}
                 </View>
@@ -184,23 +178,22 @@ export default function RoleSelectionScreen() {
           </View>
 
           {/* Continue Button */}
-          <View style={styles.buttonContainer}>
+          <View style={styles.buttonContainer as any}>
             <GradientButton
               title="Continue"
               onPress={handleContinue}
               disabled={!selectedRole}
-              fullWidth
             />
           </View>
 
           {/* Sign In Link */}
           <TouchableOpacity
-            onPress={() => router.push("/(auth)/sign-in")}
-            style={styles.signInContainer}
+            onPress={() => router.push("/(auth)/sign-in" as any)}
+            style={styles.signInContainer as any}
           >
-            <Text style={[styles.signInText, isDark && styles.signInTextDark]}>
+            <Text style={[styles.signInText, isDark && styles.signInTextDark] as any}>
               Already have an account?{" "}
-              <Text style={styles.signInLink}>Sign In</Text>
+              <Text style={styles.signInLink as any}>Sign In</Text>
             </Text>
           </TouchableOpacity>
         </View>
@@ -269,7 +262,7 @@ const styles = StyleSheet.create({
     color: Colors.primary.deepPlum,
     marginBottom: Spacing.md,
     textAlign: "center",
-    fontFamily: Typography.fontFamily,
+    fontFamily: Typography.fontFamily.heading,
   },
   
   titleDark: {
@@ -282,7 +275,7 @@ const styles = StyleSheet.create({
     lineHeight: Typography.fontSize.lg * Typography.lineHeight.normal,
     textAlign: "center",
     fontWeight: Typography.fontWeight.normal,
-    fontFamily: Typography.fontFamily,
+    fontFamily: Typography.fontFamily.body,
   },
   
   subtitleDark: {
@@ -341,7 +334,7 @@ const styles = StyleSheet.create({
     fontWeight: Typography.fontWeight.semibold,
     color: Colors.neutral.darkText,
     marginBottom: Spacing.xs,
-    fontFamily: Typography.fontFamily,
+    fontFamily: Typography.fontFamily.bodySemiBold,
   },
   
   roleTitleDark: {
@@ -353,7 +346,7 @@ const styles = StyleSheet.create({
     color: Colors.neutral.mediumGrey,
     lineHeight: Typography.fontSize.sm * Typography.lineHeight.normal,
     marginBottom: Spacing.md,
-    fontFamily: Typography.fontFamily,
+    fontFamily: Typography.fontFamily.body,
   },
   
   roleDescriptionDark: {
@@ -376,7 +369,7 @@ const styles = StyleSheet.create({
   featureText: {
     fontSize: Typography.fontSize.xs,
     color: Colors.neutral.mediumGrey,
-    fontFamily: Typography.fontFamily,
+    fontFamily: Typography.fontFamily.body,
   },
   
   featureTextDark: {
@@ -409,7 +402,7 @@ const styles = StyleSheet.create({
   signInText: {
     fontSize: Typography.fontSize.sm,
     color: Colors.neutral.mediumGrey,
-    fontFamily: Typography.fontFamily,
+    fontFamily: Typography.fontFamily.body,
   },
   
   signInTextDark: {

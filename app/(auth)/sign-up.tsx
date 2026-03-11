@@ -115,7 +115,7 @@ export default function SignUpScreen() {
         );
       } else if (nextStep.signUpStep === "DONE") {
         Alert.alert("Success", "Account created successfully!");
-        router.replace("/(tabs)");
+        router.replace("/(tabs)" as any);
       }
     } catch (error: any) {
       console.error("Sign up error:", error);
@@ -146,14 +146,14 @@ export default function SignUpScreen() {
         try {
           await autoSignIn();
           Alert.alert("Success", "Account verified! Welcome to GlamGo!");
-          router.replace("/(tabs)");
+          router.replace("/(tabs)" as any);
         } catch (autoSignInError) {
           console.log(
             "Auto sign-in failed, redirecting to sign-in:",
             autoSignInError,
           );
           Alert.alert("Success", "Account verified! Please sign in.");
-          router.replace("/(auth)/sign-in");
+          router.replace("/(auth)/sign-in" as any);
         }
       }
     } catch (error: any) {
@@ -281,7 +281,7 @@ export default function SignUpScreen() {
 
             {/* Header */}
             <TouchableOpacity
-              onPress={() => router.push('/(auth)/role-selection')}
+              onPress={() => router.push('/(auth)/role-selection' as any)}
               style={styles.backButton}
             >
               <View style={styles.backButtonContent}>
@@ -377,7 +377,7 @@ export default function SignUpScreen() {
 
             {/* Sign In Link */}
             <TouchableOpacity
-              onPress={() => router.push("/(auth)/sign-in")}
+              onPress={() => router.push("/(auth)/sign-in" as any)}
               style={styles.signInContainer}
             >
               <Text style={styles.signInText}>

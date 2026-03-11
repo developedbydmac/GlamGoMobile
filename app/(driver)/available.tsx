@@ -1,3 +1,8 @@
+/**
+ * Driver Available Orders Screen
+ * Shows list of available delivery orders for drivers to accept
+ */
+
 import React, { useState, useEffect } from 'react';
 import {
   View,
@@ -11,8 +16,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors, Typography, Spacing, BorderRadius } from '@/constants/DesignSystem';
-// import { getAvailableOrders, updateOrderStatus } from '@/services/orderService';
+import { Colors, Typography, Spacing, BorderRadius, Shadows } from '@/constants/DesignSystem';
 
 interface AvailableOrder {
   id: string;
