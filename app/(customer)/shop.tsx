@@ -4,8 +4,9 @@ import {
     Colors,
     Spacing,
     Typography,
+    Shadows,
 } from "@/constants/DesignSystem";
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { generateClient } from "aws-amplify/data";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
@@ -18,8 +19,13 @@ import {
     TextInput,
     TouchableOpacity,
     View,
+    Dimensions,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { LinearGradient } from "expo-linear-gradient";
+import { getCurrentCognitoUser } from "@/services/cognitoAuth";
+
+const { width } = Dimensions.get('window');
 
 const client = generateClient<Schema>();
 
@@ -129,14 +135,25 @@ export default function CustomerShopScreen() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [useMockData, setUseMockData] = useState(false);
+  const [user, setUser] = useState<any>(null);
 
   useEffect(() => {
+    fetchUser();
     fetchProducts();
   }, []);
 
   useEffect(() => {
     filterServices();
   }, [searchQuery, selectedCategory, services]);
+
+  async function fetchUser() {
+    try {
+      const currentUser = await getCurrentCognitoUser();
+      setUser(currentUser);
+    } catch (error) {
+      console.log('Could not fetch user:', error);
+    }
+  }
 
   async function fetchProducts() {
     try {
@@ -267,9 +284,61 @@ export default function CustomerShopScreen() {
   return (
     <SafeAreaView style={styles.container} edges={["top"]}>
       <ScrollView showsVerticalScrollIndicator={false}>
+        {/* Welcome Dashboard Section */}
+        <View style={styles.dashboardSection}>
+          <View style={styles.welcomeHeader}>
+            <View>
+              <Text style={styles.welcomeText}>Welcome back!</Text>
+              <Text style={styles.userName}>
+                {user?.email?.split('@')[0] || 'Customer'} 🛍️
+              </Text>
+            </View>
+            <TouchableOpacity 
+              style={styles.profileButton}
+              onPress={() => router.push('/(customer)/profile' as any)}
+            >
+              <LinearGradient
+                colors={[Colors.primary.lightPlum, Colors.primary.deepPlum]}
+                style={styles.profileGradient}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+              >
+                <Text style={styles.profileInitial}>
+                  {(user?.email?.charAt(0) || 'C').toUpperCase()}
+                </Text>
+              </LinearGradient>
+            </TouchableOpacity>
+          </View>
+
+          {/* Quick Stats */}
+          <View style={styles.statsContainer}>
+            <View style={styles.statCard}>
+              <View style={styles.statIconContainer}>
+                <Ionicons name="cart" size={20} color={Colors.primary.deepPlum} />
+              </View>
+              <Text style={styles.statValue}>0</Text>
+              <Text style={styles.statLabel}>Cart Items</Text>
+            </View>
+            <View style={styles.statCard}>
+              <View style={styles.statIconContainer}>
+                <Ionicons name="receipt" size={20} color={Colors.secondary.softGold} />
+              </View>
+              <Text style={styles.statValue}>0</Text>
+              <Text style={styles.statLabel}>Active Orders</Text>
+            </View>
+            <View style={styles.statCard}>
+              <View style={styles.statIconContainer}>
+                <Ionicons name="heart" size={20} color="#E94B8B" />
+              </View>
+              <Text style={styles.statValue}>0</Text>
+              <Text style={styles.statLabel}>Favorites</Text>
+            </View>
+          </View>
+        </View>
+
         {/* Header */}
         <View style={styles.header}>
-          <Text style={styles.title}>Discover Services</Text>
+          <Text style={styles.title}>Browse Services</Text>
           <Text style={styles.subtitle}>
             {useMockData
               ? "Demo services (add real products in Vendor portal)"
@@ -555,5 +624,86 @@ const styles = StyleSheet.create({
     fontSize: Typography.fontSize.base,
     color: Colors.neutral.mediumGrey,
     textAlign: "center",
+  },
+  // Dashboard Section Styles
+  dashboardSection: {
+    backgroundColor: Colors.neutral.white,
+    paddingHorizontal: Spacing.lg,
+    paddingTop: Spacing.md,
+    paddingBottom: Spacing.xl,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.neutral.lightGrey,
+  },
+  welcomeHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: Spacing.lg,
+  },
+  welcomeText: {
+    fontSize: Typography.fontSize.sm,
+    color: Colors.neutral.mediumGrey,
+    fontFamily: Typography.fontFamily.body,
+  },
+  userName: {
+    fontSize: Typography.fontSize['2xl'],
+    fontWeight: Typography.fontWeight.bold,
+    color: Colors.neutral.darkText,
+    fontFamily: Typography.fontFamily.heading,
+    marginTop: Spacing.xs,
+  },
+  profileButton: {
+    borderRadius: 25,
+    ...Shadows.medium,
+  },
+  profileGradient: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  profileInitial: {
+    fontSize: Typography.fontSize.xl,
+    fontWeight: Typography.fontWeight.bold,
+    color: Colors.neutral.white,
+    fontFamily: Typography.fontFamily.heading,
+  },
+  statsContainer: {
+    flexDirection: 'row',
+    gap: Spacing.sm,
+  },
+  statCard: {
+    flex: 1,
+    backgroundColor: Colors.neutral.blushCream,
+    borderRadius: BorderRadius.lg,
+    padding: Spacing.md,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: Colors.neutral.lightGrey,
+  },
+  statIconContainer: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: Colors.neutral.white,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: Spacing.xs,
+    ...Shadows.subtle,
+  },
+  statValue: {
+    fontSize: Typography.fontSize.xl,
+    fontWeight: Typography.fontWeight.bold,
+    color: Colors.neutral.darkText,
+    fontFamily: Typography.fontFamily.heading,
+    marginTop: Spacing.xs,
+  },
+  statLabel: {
+    fontSize: Typography.fontSize.xs,
+    color: Colors.neutral.mediumGrey,
+    fontFamily: Typography.fontFamily.body,
+    textAlign: 'center',
+    marginTop: Spacing.xs,
   },
 });

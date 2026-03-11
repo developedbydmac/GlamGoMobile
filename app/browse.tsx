@@ -30,8 +30,12 @@ import {
     TouchableOpacity,
     View,
     Dimensions,
+    Modal,
+    Alert,
+    ActivityIndicator,
 } from "react-native";
-import { getCurrentCognitoUser } from "@/services/cognitoAuth";
+import { getCurrentCognitoUser, signOutFromCognito } from "@/services/cognitoAuth";
+import { getAllProducts, Product as CatalogProduct } from "@/services/catalogService";
 
 const { width } = Dimensions.get("window");
 const CARD_WIDTH = (width - Spacing.xl * 3) / 2;
@@ -48,10 +52,11 @@ interface Product {
   id: string;
   name: string;
   price: number;
-  category: string;
-  storeName: string;
-  rating: number;
-  image: string;
+  category?: string;
+  storeName?: string;
+  rating?: number;
+  imageUrl?: string;
+  image?: string; // Fallback for compatibility
 }
 
 interface User {
@@ -119,17 +124,41 @@ export default function BrowseScreen() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [isAuthChecked, setIsAuthChecked] = useState(false);
+  const [showUserMenu, setShowUserMenu] = useState(false);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
 
   // Lifecycle - Authentication Check
   useEffect(() => {
     checkAuth();
   }, []);
 
+  // Lifecycle - Fetch Products
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
   useFocusEffect(
     useCallback(() => {
       checkAuth();
+      fetchProducts();
     }, [])
   );
+
+  // Business Logic - Fetch Products from API
+  const fetchProducts = async () => {
+    try {
+      setLoading(true);
+      const fetchedProducts = await getAllProducts();
+      setProducts(fetchedProducts);
+    } catch (error) {
+      console.error('Error fetching products:', error);
+      // Keep empty array on error
+      setProducts([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Business Logic - Authentication
   const checkAuth = async () => {
@@ -144,15 +173,15 @@ export default function BrowseScreen() {
   };
 
   // Business Logic - Filtering
-  const filteredProducts = MOCK_PRODUCTS.filter((product) => {
+  const filteredProducts = products.filter((product) => {
     const matchesSearch =
       product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      product.storeName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      product.category.toLowerCase().includes(searchQuery.toLowerCase());
+      (product.storeName?.toLowerCase() || '').includes(searchQuery.toLowerCase()) ||
+      (product.category?.toLowerCase() || '').includes(searchQuery.toLowerCase());
 
     const matchesCategory =
       !selectedCategory ||
-      product.category.toLowerCase().includes(selectedCategory.toLowerCase());
+      (product.category?.toLowerCase() || '').includes(selectedCategory.toLowerCase());
 
     return matchesSearch && matchesCategory;
   });
@@ -164,6 +193,28 @@ export default function BrowseScreen() {
 
   const handleProductPress = (productId: string) => {
     router.push(`/product-detail?id=${productId}` as any);
+  };
+
+  const handleSignOut = async () => {
+    try {
+      await signOutFromCognito();
+      setShowUserMenu(false);
+      setUser(null);
+      if (Platform.OS === 'web') {
+        alert('Signed out successfully!');
+      } else {
+        Alert.alert('Success', 'Signed out successfully!');
+      }
+      // Refresh auth state
+      checkAuth();
+    } catch (error) {
+      console.error('Sign out error:', error);
+      if (Platform.OS === 'web') {
+        alert('Error signing out. Please try again.');
+      } else {
+        Alert.alert('Error', 'Error signing out. Please try again.');
+      }
+    }
   };
 
   return (
@@ -181,7 +232,11 @@ export default function BrowseScreen() {
           {isAuthChecked && (
             <View style={styles.authSection}>
               {user ? (
-                <View style={styles.userCard}>
+                <TouchableOpacity 
+                  style={styles.userCard}
+                  onPress={() => setShowUserMenu(true)}
+                  activeOpacity={0.7}
+                >
                   <LinearGradient
                     colors={[Colors.primary.lightPlum, Colors.primary.deepPlum] as any}
                     style={styles.userAvatar}
@@ -200,7 +255,8 @@ export default function BrowseScreen() {
                       {user.role === 'VENDOR' ? '🏪 Vendor' : user.role === 'DRIVER' ? '🚗 Driver' : '🛍️ Customer'}
                     </Text>
                   </View>
-                </View>
+                  <Ionicons name="chevron-down" size={20} color={Colors.neutral.mediumGrey} />
+                </TouchableOpacity>
               ) : (
                 <View style={styles.authButtons}>
                   <TouchableOpacity
@@ -324,10 +380,27 @@ export default function BrowseScreen() {
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Featured Services</Text>
-            <Text style={styles.resultCount}>{filteredProducts.length} results</Text>
+            {!loading && <Text style={styles.resultCount}>{filteredProducts.length} results</Text>}
           </View>
           
-          {filteredProducts.length > 0 ? (
+          {loading ? (
+            // Loading Skeleton
+            <View style={styles.productsGrid}>
+              {[1, 2, 3, 4, 5, 6].map((index) => (
+                <View key={`skeleton-${index}`} style={styles.skeletonCard}>
+                  <View style={styles.skeletonImage} />
+                  <View style={styles.skeletonContent}>
+                    <View style={styles.skeletonLine} />
+                    <View style={[styles.skeletonLine, styles.skeletonLineShort]} />
+                    <View style={styles.skeletonFooter}>
+                      <View style={[styles.skeletonLine, styles.skeletonLinePrice]} />
+                      <View style={[styles.skeletonLine, styles.skeletonLineRating]} />
+                    </View>
+                  </View>
+                </View>
+              ))}
+            </View>
+          ) : filteredProducts.length > 0 ? (
             <View style={styles.productsGrid}>
               {filteredProducts.map((product) => (
                 <TouchableOpacity
@@ -336,15 +409,18 @@ export default function BrowseScreen() {
                   onPress={() => handleProductPress(product.id)}
                   activeOpacity={0.9}
                 >
-                  <Image source={{ uri: product.image }} style={styles.productImage} />
+                  <Image 
+                    source={{ uri: product.imageUrl || product.image || 'https://via.placeholder.com/400x300' }} 
+                    style={styles.productImage} 
+                  />
                   <View style={styles.productInfo}>
                     <Text style={styles.productName} numberOfLines={2}>{product.name}</Text>
-                    <Text style={styles.productStore} numberOfLines={1}>{product.storeName}</Text>
+                    <Text style={styles.productStore} numberOfLines={1}>{product.storeName || 'Unknown Store'}</Text>
                     <View style={styles.productFooter}>
                       <Text style={styles.productPrice}>${product.price.toFixed(0)}</Text>
                       <View style={styles.ratingContainer}>
                         <Ionicons name="star" size={14} color={Colors.secondary.softGold} />
-                        <Text style={styles.ratingText}>{product.rating}</Text>
+                        <Text style={styles.ratingText}>{product.rating?.toFixed(1) || '5.0'}</Text>
                       </View>
                     </View>
                   </View>
@@ -386,6 +462,65 @@ export default function BrowseScreen() {
         {/* Spacer */}
         <View style={{ height: Spacing['4xl'] }} />
       </ScrollView>
+
+      {/* User Menu Modal */}
+      <Modal
+        visible={showUserMenu}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={() => setShowUserMenu(false)}
+      >
+        <TouchableOpacity 
+          style={styles.modalOverlay}
+          activeOpacity={1}
+          onPress={() => setShowUserMenu(false)}
+        >
+          <View style={styles.menuContainer}>
+            <View style={styles.menuHeader}>
+              <Text style={styles.menuTitle}>Account</Text>
+              <TouchableOpacity onPress={() => setShowUserMenu(false)}>
+                <Ionicons name="close" size={24} color={Colors.neutral.mediumGrey} />
+              </TouchableOpacity>
+            </View>
+            
+            {user && (
+              <View style={styles.menuUserInfo}>
+                <Text style={styles.menuUserEmail}>{user.email}</Text>
+                <Text style={styles.menuUserRole}>
+                  {user.role === 'VENDOR' ? '🏪 Vendor' : user.role === 'DRIVER' ? '🚗 Driver' : '🛍️ Customer'}
+                </Text>
+              </View>
+            )}
+
+            <TouchableOpacity 
+              style={styles.menuItem}
+              onPress={() => {
+                setShowUserMenu(false);
+                if (user?.role === 'CUSTOMER') {
+                  router.push('/(customer)/shop' as any);
+                } else if (user?.role === 'VENDOR') {
+                  router.push('/(vendor)/dashboard' as any);
+                } else if (user?.role === 'DRIVER') {
+                  router.push('/(driver)/dashboard' as any);
+                }
+              }}
+            >
+              <Ionicons name="apps" size={24} color={Colors.primary.deepPlum} />
+              <Text style={styles.menuItemText}>Go to Dashboard</Text>
+            </TouchableOpacity>
+
+            <View style={styles.menuDivider} />
+
+            <TouchableOpacity 
+              style={[styles.menuItem, styles.signOutMenuItem]}
+              onPress={handleSignOut}
+            >
+              <Ionicons name="log-out" size={24} color={Colors.semantic.error} />
+              <Text style={[styles.menuItemText, styles.signOutText]}>Sign Out</Text>
+            </TouchableOpacity>
+          </View>
+        </TouchableOpacity>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -404,12 +539,12 @@ const styles = StyleSheet.create({
     ...Shadows.light,
   },
   headerContent: {
-    paddingHorizontal: Spacing.xl,
-    paddingVertical: Spacing.base,
+    paddingHorizontal: Spacing.base,
+    paddingVertical: Spacing.xs,
   },
   logoSection: {
     alignItems: 'center',
-    marginBottom: Spacing.sm,
+    marginBottom: Spacing.xs,
   },
   tagline: {
     fontSize: Typography.fontSize.xs,
@@ -716,5 +851,109 @@ const styles = StyleSheet.create({
     fontWeight: Typography.fontWeight.bold,
     color: Colors.primary.deepPlum,
     fontFamily: Typography.fontFamily.body,
+  },
+  // Modal and Menu Styles
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'flex-start',
+    paddingTop: Platform.OS === 'ios' ? 90 : 70,
+    paddingHorizontal: Spacing.base,
+  },
+  menuContainer: {
+    backgroundColor: Colors.neutral.white,
+    borderRadius: BorderRadius.lg,
+    padding: Spacing.base,
+    ...Shadows.heavy,
+  },
+  menuHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingBottom: Spacing.sm,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.neutral.lightGrey,
+  },
+  menuTitle: {
+    fontSize: Typography.fontSize.xl,
+    fontWeight: Typography.fontWeight.bold,
+    color: Colors.neutral.darkText,
+    fontFamily: Typography.fontFamily.heading,
+  },
+  menuUserInfo: {
+    paddingVertical: Spacing.base,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.neutral.lightGrey,
+  },
+  menuUserEmail: {
+    fontSize: Typography.fontSize.base,
+    fontWeight: Typography.fontWeight.semibold,
+    color: Colors.neutral.darkText,
+    fontFamily: Typography.fontFamily.body,
+  },
+  menuUserRole: {
+    fontSize: Typography.fontSize.sm,
+    color: Colors.neutral.mediumGrey,
+    fontFamily: Typography.fontFamily.body,
+    marginTop: Spacing.xs,
+  },
+  menuItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: Spacing.base,
+    gap: Spacing.base,
+  },
+  menuItemText: {
+    fontSize: Typography.fontSize.base,
+    fontWeight: Typography.fontWeight.medium,
+    color: Colors.neutral.darkText,
+    fontFamily: Typography.fontFamily.body,
+  },
+  menuDivider: {
+    height: 1,
+    backgroundColor: Colors.neutral.lightGrey,
+    marginVertical: Spacing.xs,
+  },
+  signOutMenuItem: {
+    marginTop: Spacing.xs,
+  },
+  signOutText: {
+    color: Colors.semantic.error,
+  },
+  // Loading Skeleton Styles
+  skeletonCard: {
+    width: CARD_WIDTH,
+    backgroundColor: Colors.neutral.white,
+    borderRadius: BorderRadius.lg,
+    overflow: 'hidden',
+    ...Shadows.medium,
+  },
+  skeletonImage: {
+    width: '100%',
+    height: 160,
+    backgroundColor: Colors.neutral.lightGrey,
+  },
+  skeletonContent: {
+    padding: Spacing.sm,
+  },
+  skeletonLine: {
+    height: 12,
+    backgroundColor: Colors.neutral.lightGrey,
+    borderRadius: BorderRadius.sm,
+    marginBottom: Spacing.xs,
+  },
+  skeletonLineShort: {
+    width: '60%',
+  },
+  skeletonFooter: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: Spacing.sm,
+  },
+  skeletonLinePrice: {
+    width: 50,
+  },
+  skeletonLineRating: {
+    width: 40,
   },
 });

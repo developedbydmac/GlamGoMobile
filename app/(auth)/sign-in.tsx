@@ -84,8 +84,8 @@ export default function SignInScreen() {
         console.log("🚗 Navigating to driver dashboard...");
         router.replace("/(driver)/dashboard" as any);
       } else {
-        console.log("🛍️ Navigating to customer dashboard...");
-        router.replace("/(customer)/dashboard" as any);
+        console.log("🛍️ Navigating to customer shop...");
+        router.replace("/(customer)/shop" as any);
       }
 
       console.log("✅ Navigation completed for role:", user.role);

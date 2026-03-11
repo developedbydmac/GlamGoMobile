@@ -10,6 +10,8 @@ import {
   CognitoUserAttribute,
 } from 'amazon-cognito-identity-js';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import type { User, UserRole } from '@/types/user';
+import { normalizeRole } from '@/types/user';
 
 // Cognito User Pool Configuration
 const poolData = {
@@ -19,10 +21,11 @@ const poolData = {
 
 const userPool = new CognitoUserPool(poolData);
 
+// Legacy AuthUser interface for backward compatibility
 export interface AuthUser {
   username: string;
   email: string;
-  role: 'vendor' | 'customer' | 'driver';
+  role: UserRole;
   userId: string;
   attributes: any;
 }
@@ -59,20 +62,22 @@ export const signInWithCognito = (
             attrs[attr.Name] = attr.Value;
           });
 
-          // Determine role from custom attribute or email
-          let role: 'vendor' | 'customer' | 'driver' = 'customer';
+          // Determine role from custom attribute or email - ALWAYS UPPERCASE
+          let role: UserRole = 'CUSTOMER';
           if (attrs['custom:role']) {
-            role = attrs['custom:role'];
+            role = normalizeRole(attrs['custom:role']);
           } else if (email.includes('vendor')) {
-            role = 'vendor';
+            role = 'VENDOR';
           } else if (email.includes('driver')) {
-            role = 'driver';
+            role = 'DRIVER';
+          } else if (email.includes('admin')) {
+            role = 'ADMIN';
           }
 
           const user: AuthUser = {
             username: email,
             email: attrs.email || email,
-            role,
+            role, // Now always uppercase
             userId: attrs.sub || '',
             attributes: attrs,
           };
@@ -114,12 +119,18 @@ export const signOutFromCognito = async (): Promise<void> => {
 
 /**
  * Get current authenticated user
+ * Returns user with UPPERCASE role
  */
 export const getCurrentCognitoUser = async (): Promise<AuthUser | null> => {
   try {
     const userJson = await AsyncStorage.getItem('cognitoUser');
     if (userJson) {
-      return JSON.parse(userJson);
+      const user = JSON.parse(userJson);
+      // Ensure role is always uppercase for consistency
+      if (user.role) {
+        user.role = normalizeRole(user.role);
+      }
+      return user;
     }
     return null;
   } catch (error) {

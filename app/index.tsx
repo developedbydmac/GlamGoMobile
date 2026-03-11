@@ -23,9 +23,9 @@ import {
   Text,
   TouchableOpacity,
   View,
-  Image,
 } from "react-native";
 import { getCurrentCognitoUser } from "@/services/cognitoAuth";
+import GlamGoLogo from "@/components/GlamGoLogo";
 
 const { width, height } = Dimensions.get("window");
 
@@ -114,13 +114,9 @@ export default function LandingPage() {
               }
             ]}
           >
-            {/* Actual GlamGo Logo Image */}
+            {/* GlamGo Logo Component */}
             <View style={styles.logoWrapper}>
-              <Image
-                source={require('@/assets/images/glamgo-logo.png')}
-                style={styles.logoImage}
-                resizeMode="contain"
-              />
+              <GlamGoLogo size="large" />
             </View>
             
             {/* Main Tagline - Matching logo aesthetic */}
@@ -289,11 +285,6 @@ const styles = StyleSheet.create({
     marginBottom: Spacing["2xl"],
     alignItems: "center",
     width: '100%',
-  },
-  logoImage: {
-    width: width * 0.8, // 80% of screen width
-    height: 200,
-    maxWidth: 400,
   },
   mainTagline: {
     fontSize: 32,

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   View,
   Text,
@@ -12,56 +12,25 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors, Spacing, Typography, BorderRadius } from '@/constants/DesignSystem';
-
-// Mock cart item interface (will be replaced with context/state management)
-interface CartItem {
-  id: string;
-  productId: string;
-  productName: string;
-  productPrice: number;
-  quantity: number;
-  storeId: string;
-  storeName: string;
-  imageUrl?: string;
-}
+import useCartStore, { CartItem } from '@/contexts/CartContext';
 
 export default function CustomerCartScreen() {
   const router = useRouter();
-  const [cartItems, setCartItems] = useState<CartItem[]>([
-    // Demo data - replace with actual cart state
-    {
-      id: '1',
-      productId: 'prod1',
-      productName: 'Classic Blowout',
-      productPrice: 45.00,
-      quantity: 1,
-      storeId: 'store1',
-      storeName: 'Glam Studio',
-    },
-    {
-      id: '2',
-      productId: 'prod2',
-      productName: 'Gel Manicure',
-      productPrice: 35.00,
-      quantity: 1,
-      storeId: 'store1',
-      storeName: 'Glam Studio',
-    },
-  ]);
+  const { items, updateQuantity, removeItem, getTotal, getItemCount, clearCart } = useCartStore();
 
-  const updateQuantity = (itemId: string, change: number) => {
-    setCartItems(prev =>
-      prev.map(item => {
-        if (item.id === itemId) {
-          const newQuantity = Math.max(1, item.quantity + change);
-          return { ...item, quantity: newQuantity };
-        }
-        return item;
-      })
-    );
+  const handleUpdateQuantity = (productId: string, change: number) => {
+    const item = items.find(i => i.product.id === productId);
+    if (item) {
+      const newQuantity = item.quantity + change;
+      if (newQuantity > 0) {
+        updateQuantity(productId, newQuantity);
+      } else {
+        handleRemoveItem(productId);
+      }
+    }
   };
 
-  const removeItem = (itemId: string) => {
+  const handleRemoveItem = (productId: string) => {
     Alert.alert(
       'Remove from cart?',
       'This will remove the item',
@@ -70,15 +39,16 @@ export default function CustomerCartScreen() {
         {
           text: 'Remove',
           style: 'destructive',
-          onPress: () => setCartItems(prev => prev.filter(item => item.id !== itemId)),
+          onPress: () => removeItem(productId),
         },
       ]
     );
   };
 
-  const subtotal = cartItems.reduce((sum, item) => sum + item.productPrice * item.quantity, 0);
+  const subtotal = getTotal();
   const serviceFee = subtotal * 0.05; // 5% service fee
   const total = subtotal + serviceFee;
+  const itemCount = getItemCount();
 
   const handleCheckout = () => {
     router.push('../booking');
@@ -87,8 +57,8 @@ export default function CustomerCartScreen() {
   const renderCartItem = ({ item }: { item: CartItem }) => (
     <View style={styles.cartItem}>
       <View style={styles.itemImageContainer}>
-        {item.imageUrl ? (
-          <Image source={{ uri: item.imageUrl }} style={styles.itemImage} />
+        {item.product.imageUrl ? (
+          <Image source={{ uri: item.product.imageUrl }} style={styles.itemImage} />
         ) : (
           <View style={[styles.itemImage, styles.placeholderImage]}>
             <Ionicons name="sparkles" size={24} color={Colors.secondary.champagneGold} />
@@ -97,28 +67,28 @@ export default function CustomerCartScreen() {
       </View>
 
       <View style={styles.itemDetails}>
-        <Text style={styles.itemName}>{item.productName}</Text>
-        <Text style={styles.storeName}>from {item.storeName}</Text>
-        <Text style={styles.itemPrice}>${item.productPrice.toFixed(2)}</Text>
+        <Text style={styles.itemName}>{item.product.name}</Text>
+        <Text style={styles.storeName}>from {item.product.storeName || 'Store'}</Text>
+        <Text style={styles.itemPrice}>${item.product.price.toFixed(2)}</Text>
       </View>
 
       <View style={styles.itemActions}>
         <View style={styles.quantityControl}>
           <TouchableOpacity
             style={styles.quantityButton}
-            onPress={() => updateQuantity(item.id, -1)}
+            onPress={() => handleUpdateQuantity(item.product.id, -1)}
           >
             <Ionicons name="remove" size={16} color={Colors.primary.deepPlum} />
           </TouchableOpacity>
           <Text style={styles.quantity}>{item.quantity}</Text>
           <TouchableOpacity
             style={styles.quantityButton}
-            onPress={() => updateQuantity(item.id, 1)}
+            onPress={() => handleUpdateQuantity(item.product.id, 1)}
           >
             <Ionicons name="add" size={16} color={Colors.primary.deepPlum} />
           </TouchableOpacity>
         </View>
-        <TouchableOpacity onPress={() => removeItem(item.id)}>
+        <TouchableOpacity onPress={() => handleRemoveItem(item.product.id)}>
           <Ionicons name="trash-outline" size={20} color={Colors.semantic.error} />
         </TouchableOpacity>
       </View>
@@ -141,7 +111,7 @@ export default function CustomerCartScreen() {
     </View>
   );
 
-  if (cartItems.length === 0) {
+  if (items.length === 0) {
     return (
       <SafeAreaView style={styles.container} edges={['top']}>
         <View style={styles.header}>
@@ -156,13 +126,13 @@ export default function CustomerCartScreen() {
     <SafeAreaView style={styles.container} edges={['top']}>
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Your Cart</Text>
-        <Text style={styles.itemCount}>{cartItems.length} {cartItems.length === 1 ? 'item' : 'items'}</Text>
+        <Text style={styles.itemCount}>{itemCount} {itemCount === 1 ? 'item' : 'items'}</Text>
       </View>
 
       <FlatList
-        data={cartItems}
+        data={items}
         renderItem={renderCartItem}
-        keyExtractor={item => item.id}
+        keyExtractor={item => item.product.id}
         contentContainerStyle={styles.listContent}
         ItemSeparatorComponent={() => <View style={styles.separator} />}
       />

@@ -15,6 +15,35 @@ import { type ClientSchema, a, defineData } from "@aws-amplify/backend";
  */
 
 const schema = a.schema({
+  // UserProfile Model - User account management with approval workflow
+  UserProfile: a
+    .model({
+      userId: a.id().required(), // Cognito user ID (sub)
+      email: a.string().required(),
+      name: a.string(),
+      phone: a.string(),
+
+      // Role and status for approval workflow
+      role: a.enum(["CUSTOMER", "VENDOR", "DRIVER", "ADMIN"]),
+      status: a.enum(["PENDING", "APPROVED", "SUSPENDED"]),
+
+      // Approval tracking
+      approvedBy: a.string(), // Admin user ID who approved
+      approvedAt: a.datetime(),
+
+      // Timestamps
+      createdAt: a.datetime(),
+      updatedAt: a.datetime(),
+    })
+    .authorization((allow) => [
+      // Users can read their own profile
+      allow.owner().identityClaim("sub").to(["read"]),
+      // Only admins can update status, approvedBy, and approvedAt fields
+      allow.group("ADMIN"),
+      // All authenticated users can read profiles (for display purposes)
+      allow.authenticated().to(["read"]),
+    ]),
+
   // Store Model - Vendor-owned beauty service locations
   Store: a
     .model({
@@ -121,6 +150,8 @@ const schema = a.schema({
       deliveryState: a.string().required(),
       deliveryZipCode: a.string().required(),
       deliveryPhoneNumber: a.string(),
+      deliveryLat: a.float(), // Delivery latitude for driver dispatch
+      deliveryLng: a.float(), // Delivery longitude for driver dispatch
 
       // Order details
       status: a.enum([
@@ -131,6 +162,7 @@ const schema = a.schema({
         "CANCELLED",
       ]),
       totalAmount: a.float().required().default(0),
+      deliveryFee: a.float().default(0),
 
       // Driver assignment
       driverId: a.string(),
@@ -156,6 +188,48 @@ const schema = a.schema({
       // Drivers can read and update orders assigned to them
       allow.authenticated().to(["read"]),
       // Additional custom logic for drivers would go in Lambda
+    ]),
+
+  // Driver Model - Driver profiles with location and availability
+  Driver: a
+    .model({
+      driverId: a.string().required(), // Cognito user ID
+      name: a.string().required(),
+      email: a.string().required(),
+      phoneNumber: a.string(),
+
+      // Current location for dispatching
+      currentLat: a.float().required(),
+      currentLng: a.float().required(),
+      geohash: a.string().required(), // For efficient geospatial queries
+
+      // Driver status
+      status: a.enum(["AVAILABLE", "BUSY", "OFFLINE"]),
+
+      // Performance metrics
+      rating: a.float().default(5.0),
+      totalDeliveries: a.integer().default(0),
+
+      // Vehicle information
+      vehicleType: a.string(), // e.g., "Car", "Motorcycle", "Bicycle"
+      vehiclePlate: a.string(),
+
+      // Timestamps
+      lastLocationUpdate: a.datetime(),
+
+      // Owner field for authorization
+      owner: a.string(),
+    })
+    .authorization((allow) => [
+      // Drivers can manage their own profile
+      allow.owner().identityClaim("sub"),
+      // Authenticated users can read driver info (for dispatching)
+      allow.authenticated().to(["read"]),
+    ])
+    .secondaryIndexes((index) => [
+      // GSI for efficient queries by status and geohash
+      index("status").queryField("listDriversByStatus"),
+      index("status").sortKeys(["geohash"]).queryField("listDriversByStatusAndGeohash"),
     ]),
 });
 
