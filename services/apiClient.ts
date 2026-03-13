@@ -1,5 +1,5 @@
 import { fetchAuthSession } from "aws-amplify/auth";
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosError } from "axios";
+import axios, { AxiosError, AxiosInstance, AxiosRequestConfig } from "axios";
 
 /**
  * API Gateway Client for GlamGo
@@ -46,7 +46,7 @@ class ApiGatewayClient {
       },
       (error) => {
         return Promise.reject(error);
-      }
+      },
     );
 
     // Response interceptor for error handling
@@ -79,7 +79,7 @@ class ApiGatewayClient {
         }
 
         return Promise.reject(error);
-      }
+      },
     );
   }
 
@@ -107,7 +107,7 @@ class ApiGatewayClient {
   async post<T = any>(
     url: string,
     data?: any,
-    config?: AxiosRequestConfig
+    config?: AxiosRequestConfig,
   ): Promise<T> {
     const response = await this.axiosInstance.post<T>(url, data, config);
     return response.data;
@@ -119,7 +119,7 @@ class ApiGatewayClient {
   async put<T = any>(
     url: string,
     data?: any,
-    config?: AxiosRequestConfig
+    config?: AxiosRequestConfig,
   ): Promise<T> {
     const response = await this.axiosInstance.put<T>(url, data, config);
     return response.data;
@@ -139,7 +139,7 @@ class ApiGatewayClient {
   async patch<T = any>(
     url: string,
     data?: any,
-    config?: AxiosRequestConfig
+    config?: AxiosRequestConfig,
   ): Promise<T> {
     const response = await this.axiosInstance.patch<T>(url, data, config);
     return response.data;
@@ -166,7 +166,7 @@ export const apiClient = new ApiGatewayClient();
  */
 export const customerApi = {
   healthCheck: () => apiClient.healthCheck("customer"),
-  
+
   /**
    * Create a new order
    */
@@ -210,17 +210,17 @@ export const vendorApi = {
 
 export const driverApi = {
   healthCheck: () => apiClient.healthCheck("driver"),
-  
+
   /**
    * Find nearby available drivers
    */
   findNearbyDrivers: async (
     lat: number,
     lng: number,
-    maxDistance: number = 10
+    maxDistance: number = 10,
   ) => {
     return apiClient.get(
-      `/driver/nearby?lat=${lat}&lng=${lng}&maxDistance=${maxDistance}`
+      `/driver/nearby?lat=${lat}&lng=${lng}&maxDistance=${maxDistance}`,
     );
   },
 };

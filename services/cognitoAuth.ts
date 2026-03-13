@@ -1,22 +1,28 @@
 /**
  * Direct AWS Cognito Authentication Service
  * Bypasses Amplify to avoid storage adapter issues
+ *
+ * Security: Cognito configuration is loaded from amplifyConfig.ts
+ * and amplify_outputs.json (managed by AWS). Never hardcode secrets.
  */
 
+import type { UserRole } from "@/types/user";
+import { normalizeRole } from "@/types/user";
+import { logger } from "@/utils/logger";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
-  CognitoUserPool,
-  CognitoUser,
-  AuthenticationDetails,
-  CognitoUserAttribute,
-} from 'amazon-cognito-identity-js';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import type { User, UserRole } from '@/types/user';
-import { normalizeRole } from '@/types/user';
+    AuthenticationDetails,
+    CognitoUser,
+    CognitoUserPool
+} from "amazon-cognito-identity-js";
 
-// Cognito User Pool Configuration
+// Load Cognito configuration from Amplify outputs
+// This ensures config is loaded from environment, not hardcoded
+import amplifyConfig from "@/amplify_outputs.json";
+
 const poolData = {
-  UserPoolId: 'us-east-1_ZMKLKcE8r',
-  ClientId: '7gn4qd0rl40ddb132l7g72c2sl',
+  UserPoolId: amplifyConfig.auth.user_pool_id,
+  ClientId: amplifyConfig.auth.user_pool_client_id,
 };
 
 const userPool = new CognitoUserPool(poolData);
@@ -35,9 +41,12 @@ export interface AuthUser {
  */
 export const signInWithCognito = (
   email: string,
-  password: string
+  password: string,
 ): Promise<AuthUser> => {
   return new Promise((resolve, reject) => {
+    // Log only in development
+    logger.authDebug("Sign-in attempt", { email });
+
     const authenticationDetails = new AuthenticationDetails({
       Username: email,
       Password: password,
@@ -53,6 +62,7 @@ export const signInWithCognito = (
         // Get user attributes to determine role
         cognitoUser.getUserAttributes((err, attributes) => {
           if (err) {
+            logger.error("Failed to get user attributes", err);
             reject(err);
             return;
           }
@@ -62,37 +72,45 @@ export const signInWithCognito = (
             attrs[attr.Name] = attr.Value;
           });
 
-          // Determine role from custom attribute or email - ALWAYS UPPERCASE
-          let role: UserRole = 'CUSTOMER';
-          if (attrs['custom:role']) {
-            role = normalizeRole(attrs['custom:role']);
-          } else if (email.includes('vendor')) {
-            role = 'VENDOR';
-          } else if (email.includes('driver')) {
-            role = 'DRIVER';
-          } else if (email.includes('admin')) {
-            role = 'ADMIN';
+          // Determine role from custom attribute (source of truth from post-confirmation Lambda)
+          // Fallback to email parsing is only for legacy compatibility
+          let role: UserRole = "CUSTOMER";
+          if (attrs["custom:role"]) {
+            role = normalizeRole(attrs["custom:role"]);
+          } else if (email.includes("vendor")) {
+            role = "VENDOR";
+          } else if (email.includes("driver")) {
+            role = "DRIVER";
+          } else if (email.includes("admin")) {
+            role = "ADMIN";
           }
 
           const user: AuthUser = {
             username: email,
             email: attrs.email || email,
             role, // Now always uppercase
-            userId: attrs.sub || '',
+            userId: attrs.sub || "",
             attributes: attrs,
           };
 
           // Store session tokens
-          AsyncStorage.setItem('cognitoUser', JSON.stringify(user));
-          AsyncStorage.setItem('idToken', session.getIdToken().getJwtToken());
-          AsyncStorage.setItem('accessToken', session.getAccessToken().getJwtToken());
-          AsyncStorage.setItem('refreshToken', session.getRefreshToken().getToken());
+          AsyncStorage.setItem("cognitoUser", JSON.stringify(user));
+          AsyncStorage.setItem("idToken", session.getIdToken().getJwtToken());
+          AsyncStorage.setItem(
+            "accessToken",
+            session.getAccessToken().getJwtToken(),
+          );
+          AsyncStorage.setItem(
+            "refreshToken",
+            session.getRefreshToken().getToken(),
+          );
 
+          logger.authDebug("Sign-in successful", { email, role });
           resolve(user);
         });
       },
       onFailure: (err) => {
-        console.error('Cognito Sign In Error:', err);
+        logger.error("Cognito sign-in failed", err);
         reject(err);
       },
     });
@@ -101,6 +119,7 @@ export const signInWithCognito = (
 
 /**
  * Sign out current user
+ * Clears session server-side and removes tokens from AsyncStorage
  */
 export const signOutFromCognito = async (): Promise<void> => {
   const cognitoUser = userPool.getCurrentUser();
@@ -108,13 +127,16 @@ export const signOutFromCognito = async (): Promise<void> => {
     cognitoUser.signOut();
   }
 
-  // Clear AsyncStorage
+  // Explicitly clear all tokens from AsyncStorage
+  // This ensures tokens cannot be recovered after logout
   await AsyncStorage.multiRemove([
-    'cognitoUser',
-    'idToken',
-    'accessToken',
-    'refreshToken',
+    "cognitoUser",
+    "idToken",
+    "accessToken",
+    "refreshToken",
   ]);
+
+  logger.debug("User signed out and tokens cleared");
 };
 
 /**
@@ -123,18 +145,19 @@ export const signOutFromCognito = async (): Promise<void> => {
  */
 export const getCurrentCognitoUser = async (): Promise<AuthUser | null> => {
   try {
-    const userJson = await AsyncStorage.getItem('cognitoUser');
+    const userJson = await AsyncStorage.getItem("cognitoUser");
     if (userJson) {
       const user = JSON.parse(userJson);
       // Ensure role is always uppercase for consistency
       if (user.role) {
         user.role = normalizeRole(user.role);
       }
+      logger.userDebug("Current user loaded", user);
       return user;
     }
     return null;
   } catch (error) {
-    console.error('Error getting current user:', error);
+    logger.error("Error getting current user", error);
     return null;
   }
 };
@@ -153,6 +176,7 @@ export const isSessionValid = (): Promise<boolean> => {
 
     cognitoUser.getSession((err: any, session: any) => {
       if (err || !session.isValid()) {
+        logger.debug("Session validation failed");
         resolve(false);
         return;
       }
@@ -166,8 +190,8 @@ export const isSessionValid = (): Promise<boolean> => {
  */
 export const getSessionTokens = async () => {
   return {
-    idToken: await AsyncStorage.getItem('idToken'),
-    accessToken: await AsyncStorage.getItem('accessToken'),
-    refreshToken: await AsyncStorage.getItem('refreshToken'),
+    idToken: await AsyncStorage.getItem("idToken"),
+    accessToken: await AsyncStorage.getItem("accessToken"),
+    refreshToken: await AsyncStorage.getItem("refreshToken"),
   };
 };

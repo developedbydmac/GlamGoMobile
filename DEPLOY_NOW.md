@@ -33,6 +33,7 @@ npx ampx sandbox
 ```
 
 **Expected output:**
+
 ```
 ✅ Sandbox deployed successfully
 ✅ Lambda authorizer deployed
@@ -64,6 +65,7 @@ In your Expo terminal, press `r` to reload the app.
 ### Test 3: Tap "Run All Tests"
 
 You should see:
+
 - ✅ Customer Health: Success (200)
 - 🚫 Vendor Health: Forbidden (403)
 - 🚫 Driver Health: Forbidden (403)
@@ -77,23 +79,25 @@ You should see:
 
 ### Customer Testing (Current User)
 
-| Endpoint | Expected Result |
-|----------|----------------|
-| GET /customer/health | ✅ 200 OK |
-| GET /vendor/health | ❌ 403 Forbidden |
-| GET /driver/health | ❌ 403 Forbidden |
-| GET /admin/health | ❌ 403 Forbidden |
+| Endpoint             | Expected Result  |
+| -------------------- | ---------------- |
+| GET /customer/health | ✅ 200 OK        |
+| GET /vendor/health   | ❌ 403 Forbidden |
+| GET /driver/health   | ❌ 403 Forbidden |
+| GET /admin/health    | ❌ 403 Forbidden |
 
 ---
 
 ## 🎯 Quick Commands
 
 ### Deploy:
+
 ```bash
 npx ampx sandbox
 ```
 
 ### Check deployment status:
+
 ```bash
 # Look for:
 # - "Sandbox deployed successfully"
@@ -101,6 +105,7 @@ npx ampx sandbox
 ```
 
 ### Reload Expo:
+
 ```
 Press 'r' in the Expo terminal
 ```
@@ -110,16 +115,20 @@ Press 'r' in the Expo terminal
 ## 🐛 If Deployment Fails
 
 ### Error: "Cannot find module"
+
 **Solution:**
+
 ```bash
 cd amplify/functions/authorizer && npm install && cd ../../..
 cd amplify/functions/api-gateway && npm install && cd ../../..
 ```
 
 ### Error: TypeScript compilation failed
+
 **Solution:** Already fixed! Just redeploy.
 
 ### Error: Stack already exists
+
 **Solution:** Deployment succeeded previously, just check AWS Console for API Gateway URL.
 
 ---
@@ -136,6 +145,7 @@ cd amplify/functions/api-gateway && npm install && cd ../../..
 ## 🎉 Victory Lap
 
 Once tests pass, you'll have:
+
 - ✅ Secure JWT authentication
 - ✅ Role-based access control
 - ✅ Working API Gateway

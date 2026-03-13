@@ -116,6 +116,7 @@ aws cognito-idp admin-set-user-password \
    - Tap user profile icon → Sign Out
 
 2. **Sign Up as Vendor**
+
    ```
    Role: Vendor (💅)
    Name: Test Vendor
@@ -151,6 +152,7 @@ aws cognito-idp admin-set-user-password \
 1. **Sign Out** from vendor account
 
 2. **Sign In as Admin**
+
    ```
    Email: admin@glamgo.com
    Password: AdminPass123!
@@ -190,6 +192,7 @@ aws cognito-idp admin-set-user-password \
 1. **Sign Out** from admin account
 
 2. **Sign In as Vendor** again
+
    ```
    Email: vendor-test@glamgo.com
    Password: TestPass123!
@@ -208,6 +211,7 @@ aws cognito-idp admin-set-user-password \
 1. **Sign Out**
 
 2. **Sign Up as Driver**
+
    ```
    Role: Driver (🚗)
    Name: Test Driver
@@ -244,6 +248,7 @@ aws cognito-idp admin-set-user-password \
 ### Test F: Customer Auto-Approval (No Pending Screen)
 
 1. **Sign Up as Customer**
+
    ```
    Role: Customer (✨)
    Name: Test Customer 2
@@ -290,6 +295,7 @@ aws cognito-idp admin-set-user-password \
 
 **Cause:** GraphQL query not finding pending users  
 **Fix:**
+
 1. Check Amplify sandbox is running
 2. Verify DynamoDB table has `status: PENDING` entries
 3. Check browser/app console for GraphQL errors
@@ -299,6 +305,7 @@ aws cognito-idp admin-set-user-password \
 
 **Cause:** Cached status in memory  
 **Fix:**
+
 1. Sign out completely
 2. Sign back in
 3. Status should refresh on login
@@ -307,6 +314,7 @@ aws cognito-idp admin-set-user-password \
 
 **Cause:** Missing permissions or wrong table name  
 **Fix:**
+
 1. Ensure you're using the correct table name (includes environment suffix)
 2. Check IAM permissions for admin user
 3. Verify Amplify auth is configured correctly
@@ -315,6 +323,7 @@ aws cognito-idp admin-set-user-password \
 
 **Cause:** Password not set correctly or user not in ADMIN group  
 **Fix:**
+
 1. Reset password in Cognito Console
 2. Verify user is in ADMIN group
 3. Check custom:role attribute is set to "ADMIN"
@@ -327,6 +336,7 @@ aws cognito-idp admin-set-user-password \
 ### Cognito User Pool
 
 **Users Tab:**
+
 - admin@glamgo.com (ADMIN group) - APPROVED
 - vendor-test@glamgo.com (VENDOR group) - PENDING → APPROVED
 - driver-test@glamgo.com (DRIVER group) - PENDING → SUSPENDED

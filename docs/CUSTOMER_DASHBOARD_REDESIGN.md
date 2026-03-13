@@ -14,13 +14,16 @@ Redesigned the customer experience so the **Browse tab** (formerly Shop) serves 
 ### 1. ✅ Tab Navigation Reorganization
 
 **Before:**
+
 - Shop → Cart → Orders → Profile (4 tabs)
 
 **After:**
+
 - **Browse (Home icon)** → Orders → Cart → Profile (4 tabs)
 - Dashboard file hidden from tab bar but still accessible
 
-**Rationale:** 
+**Rationale:**
+
 - "Browse" is clearer than "Shop" for the main experience
 - Home icon indicates it's the primary landing page
 - Orders moved to second position (more important than Cart for tracking)
@@ -32,6 +35,7 @@ Redesigned the customer experience so the **Browse tab** (formerly Shop) serves 
 ### 2. ✅ Dashboard Section Added to Browse Tab
 
 **New Features:**
+
 - **Welcome Header** with personalized greeting
 - **User Profile Button** with gradient avatar showing initial
 - **Quick Stats Cards** showing:
@@ -40,6 +44,7 @@ Redesigned the customer experience so the **Browse tab** (formerly Shop) serves 
   - Favorites (0)
 
 **Design:**
+
 - Clean, card-based layout
 - Icons in circular containers with shadows
 - Gradient profile button that navigates to profile page
@@ -52,6 +57,7 @@ Redesigned the customer experience so the **Browse tab** (formerly Shop) serves 
 ## Technical Implementation
 
 ### New Imports
+
 ```typescript
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Dimensions } from "react-native";
@@ -61,23 +67,26 @@ import { Shadows } from "@/constants/DesignSystem";
 ```
 
 ### New State
+
 ```typescript
 const [user, setUser] = useState<any>(null);
 ```
 
 ### New Function
+
 ```typescript
 async function fetchUser() {
   try {
     const currentUser = await getCurrentCognitoUser();
     setUser(currentUser);
   } catch (error) {
-    console.log('Could not fetch user:', error);
+    console.log("Could not fetch user:", error);
   }
 }
 ```
 
 ### UI Structure
+
 ```
 SafeAreaView
 └── ScrollView
@@ -101,6 +110,7 @@ SafeAreaView
 ## User Experience Flow
 
 ### On Sign-In as Customer:
+
 1. User signs in → Automatically redirected to `/(customer)/shop`
 2. Lands on **Browse tab** with bottom navigation visible
 3. Sees personalized dashboard at top:
@@ -116,6 +126,7 @@ SafeAreaView
    - Profile 👤
 
 ### Dashboard Interactions:
+
 - **Tap Profile Avatar** → Navigate to Profile page
 - **View Stats** → See at-a-glance account activity
 - **Scroll Down** → Start browsing products
@@ -125,17 +136,20 @@ SafeAreaView
 ## Styling Details
 
 ### Dashboard Section
+
 - Background: White
 - Padding: Standard spacing (16px horizontal, 24px bottom)
 - Border: 1px bottom border with light grey
 - Elevation: Subtle visual separation from content below
 
 ### Welcome Header
+
 - Flexbox: Row with space-between
 - Welcome text: Small, grey
 - Username: 2XL, bold, dark text with customer emoji 🛍️
 
 ### Profile Button
+
 - Size: 50x50px circular
 - Gradient: Light plum → Deep plum
 - Initial: XL, bold, white text
@@ -143,6 +157,7 @@ SafeAreaView
 - Interactive: Navigates to profile on tap
 
 ### Stat Cards
+
 - Layout: Equal width flex items with gaps
 - Background: Blush cream (brand color)
 - Border: 1px light grey
@@ -156,14 +171,18 @@ SafeAreaView
 ## Files Modified
 
 ### 1. `app/(customer)/_layout.tsx`
+
 **Changes:**
+
 - Reordered tabs: Browse → Orders → Cart → Profile
 - Changed Shop icon from `storefront` to `home`
 - Changed Shop title to "Browse"
 - Hidden dashboard from tab bar (but kept accessible)
 
 ### 2. `app/(customer)/shop.tsx`
+
 **Changes:**
+
 - Added imports for LinearGradient, Dimensions, MaterialCommunityIcons, getCurrentCognitoUser, Shadows
 - Added user state and fetchUser function
 - Added dashboard section UI before existing header
@@ -179,19 +198,21 @@ SafeAreaView
 ✅ **Personalization** - Greeting with user's name and initial  
 ✅ **Easy Navigation** - Profile button right at the top  
 ✅ **Seamless Experience** - Dashboard flows naturally into browsing  
-✅ **Bottom Tabs** - Always accessible navigation  
+✅ **Bottom Tabs** - Always accessible navigation
 
 ---
 
 ## Next Steps
 
 ### Immediate Testing:
+
 1. Sign out and sign back in as customer
 2. Verify you land on Browse tab with dashboard visible
 3. Check that profile button navigates to profile page
 4. Confirm bottom tabs are all working
 
 ### Future Enhancements:
+
 1. **Connect Real Data** to stat cards:
    - Pull actual cart count from cart service
    - Show real active orders count
@@ -216,6 +237,6 @@ SafeAreaView
 ✅ Product browsing works below dashboard  
 ✅ Bottom navigation always visible  
 ✅ No compilation errors  
-✅ Design system compliant  
+✅ Design system compliant
 
 **Status:** Ready for user testing! 🎉

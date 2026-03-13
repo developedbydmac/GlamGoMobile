@@ -3,17 +3,22 @@
  * Follows iOS design guidelines with premium styling
  */
 
-import React, { useState } from 'react';
 import {
-  TextInput,
-  View,
-  Text,
-  StyleSheet,
-  TextInputProps,
-  Platform,
-  useColorScheme,
-} from 'react-native';
-import { Colors, Typography, Spacing, BorderRadius, Shadows } from '@/constants/DesignSystem';
+    BorderRadius,
+    Colors,
+    Shadows,
+    Spacing,
+    Typography,
+} from "@/constants/DesignSystem";
+import React, { useState } from "react";
+import {
+    StyleSheet,
+    Text,
+    TextInput,
+    TextInputProps,
+    useColorScheme,
+    View
+} from "react-native";
 
 interface ModernInputProps extends TextInputProps {
   label?: string;
@@ -34,14 +39,14 @@ export default function ModernInput({
 }: ModernInputProps) {
   const [isFocused, setIsFocused] = useState(false);
   const colorScheme = useColorScheme();
-  const isDark = colorScheme === 'dark';
+  const isDark = colorScheme === "dark";
 
   return (
     <View style={styles.container}>
       {label && (
         <Text style={[styles.label, isDark && styles.labelDark]}>{label}</Text>
       )}
-      
+
       <View
         style={[
           styles.inputContainer,
@@ -51,17 +56,21 @@ export default function ModernInput({
         ]}
       >
         {leftIcon && <View style={styles.leftIcon}>{leftIcon}</View>}
-        
+
         <TextInput
           {...props}
-          style={[
-            styles.input,
-            leftIcon && styles.inputWithLeftIcon,
-            rightIcon && styles.inputWithRightIcon,
-            isDark && styles.inputDark,
-            style,
-          ] as any}
-          placeholderTextColor={isDark ? Colors.dark.textSecondary : Colors.neutral.mediumGrey}
+          style={
+            [
+              styles.input,
+              leftIcon && styles.inputWithLeftIcon,
+              rightIcon && styles.inputWithRightIcon,
+              isDark && styles.inputDark,
+              style,
+            ] as any
+          }
+          placeholderTextColor={
+            isDark ? Colors.dark.textSecondary : Colors.neutral.mediumGrey
+          }
           onFocus={(e) => {
             setIsFocused(true);
             props.onFocus?.(e);
@@ -71,10 +80,10 @@ export default function ModernInput({
             props.onBlur?.(e);
           }}
         />
-        
+
         {rightIcon && <View style={styles.rightIcon}>{rightIcon}</View>}
       </View>
-      
+
       {error && <Text style={styles.errorText}>{error}</Text>}
       {helperText && !error && (
         <Text style={[styles.helperText, isDark && styles.helperTextDark]}>
@@ -89,50 +98,50 @@ const styles = StyleSheet.create({
   container: {
     marginBottom: Spacing.lg,
   },
-  
+
   label: {
     fontSize: Typography.fontSize.xs,
     fontWeight: Typography.fontWeight.medium,
     color: Colors.neutral.mutedText,
     marginBottom: Spacing.sm,
     letterSpacing: Typography.letterSpacing.wide,
-    textTransform: 'uppercase',
+    textTransform: "uppercase",
     fontFamily: Typography.fontFamily.body,
   },
-  
+
   labelDark: {
     color: Colors.dark.text,
   },
-  
+
   inputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     minHeight: 56,
-    backgroundColor: Colors.neutral.surface,  // #FFFDFC
+    backgroundColor: Colors.neutral.surface, // #FFFDFC
     borderRadius: BorderRadius.md,
     borderWidth: 1,
-    borderColor: Colors.neutral.lightGrey,  // #E7D9EA
+    borderColor: Colors.neutral.lightGrey, // #E7D9EA
     ...Shadows.subtle,
   },
-  
+
   inputContainerFocused: {
     borderColor: Colors.primary.deepPlum,
     borderWidth: 1.5,
   },
-  
+
   inputContainerError: {
     borderColor: Colors.semantic.error,
-    backgroundColor: '#FFF9F9',
+    backgroundColor: "#FFF9F9",
   },
-  
+
   inputContainerDark: {
     backgroundColor: Colors.dark.surface,
     borderColor: Colors.dark.textSecondary,
   },
-  
+
   input: {
     flex: 1,
-    height: '100%',
+    height: "100%",
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.sm,
     fontSize: Typography.fontSize.base,
@@ -140,31 +149,31 @@ const styles = StyleSheet.create({
     color: Colors.neutral.darkText,
     letterSpacing: Typography.letterSpacing.normal,
   },
-  
+
   inputDark: {
     color: Colors.dark.text,
   },
-  
+
   inputWithLeftIcon: {
     paddingLeft: Spacing.xs as number,
   },
-  
+
   inputWithRightIcon: {
     paddingRight: Spacing.xs as number,
   },
-  
+
   leftIcon: {
     paddingLeft: Spacing.md,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
-  
+
   rightIcon: {
     paddingRight: Spacing.md,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
-  
+
   errorText: {
     fontSize: Typography.fontSize.xs,
     color: Colors.semantic.error,
@@ -172,7 +181,7 @@ const styles = StyleSheet.create({
     marginLeft: Spacing.sm,
     fontWeight: Typography.fontWeight.medium,
   },
-  
+
   helperText: {
     fontSize: Typography.fontSize.xs,
     color: Colors.neutral.mutedText,
@@ -180,7 +189,7 @@ const styles = StyleSheet.create({
     marginLeft: Spacing.sm,
     letterSpacing: Typography.letterSpacing.normal,
   },
-  
+
   helperTextDark: {
     color: Colors.dark.textSecondary,
   },

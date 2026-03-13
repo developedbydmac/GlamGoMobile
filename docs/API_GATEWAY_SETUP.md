@@ -8,6 +8,7 @@
 ## 📋 What Was Created
 
 ### 1. Lambda Authorizer (`amplify/functions/authorizer/`)
+
 - **Purpose:** Validates Cognito JWT tokens and enforces role-based access
 - **How it works:**
   1. Extracts JWT from `Authorization: Bearer <token>` header
@@ -21,6 +22,7 @@
   5. Returns `Allow` or `Deny` IAM policy
 
 ### 2. API Gateway Stack (`amplify/functions/api-gateway/`)
+
 - **Purpose:** CDK infrastructure for REST API with role-based routes
 - **Features:**
   - Four route prefixes: `/customer`, `/vendor`, `/driver`, `/admin`
@@ -31,6 +33,7 @@
   - Request throttling (100 req/s, burst 200)
 
 ### 3. API Client Service (`services/apiClient.ts`)
+
 - **Purpose:** React Native service to call API Gateway endpoints
 - **Features:**
   - Automatically adds JWT token to all requests
@@ -264,6 +267,7 @@ After deployment, verify:
 ### Issue: "Cannot find module 'axios'"
 
 **Solution:**
+
 ```bash
 npm install axios
 ```
@@ -271,6 +275,7 @@ npm install axios
 ### Issue: "API Gateway URL not found"
 
 **Solution:**
+
 1. Check `amplify_outputs.json` → `custom.apiGatewayUrl`
 2. If missing, redeploy: `npx ampx sandbox --once`
 3. Manually set URL: `apiClient.setBaseURL("https://your-api-url.com/prod")`
@@ -278,11 +283,13 @@ npm install axios
 ### Issue: Health check returns 401 Unauthorized
 
 **Causes:**
+
 - JWT token expired (re-sign in)
 - No token in request (check `fetchAuthSession()` is working)
 - User not authenticated
 
 **Solution:**
+
 ```typescript
 // Check if user is authenticated
 import { fetchAuthSession } from "aws-amplify/auth";
@@ -294,10 +301,12 @@ console.log("Token:", session.tokens?.idToken?.toString());
 ### Issue: Health check returns 403 Forbidden
 
 **Causes:**
+
 - User doesn't have required Cognito group
 - Trying to access wrong route (e.g., customer accessing `/vendor`)
 
 **Solution:**
+
 1. Check Cognito user has correct group:
    - AWS Console → Cognito → Users → Select user → Group memberships
 2. Verify route matches user role
@@ -306,10 +315,12 @@ console.log("Token:", session.tokens?.idToken?.toString());
 ### Issue: Lambda authorizer times out
 
 **Causes:**
+
 - JWKS fetch failing (network issue)
 - JWT verification taking too long
 
 **Solution:**
+
 1. Check Lambda CloudWatch logs
 2. Increase timeout: Edit `resource.ts` → `timeoutSeconds: 15`
 3. Check network connectivity from Lambda to Cognito
@@ -320,30 +331,30 @@ console.log("Token:", session.tokens?.idToken?.toString());
 
 ### Customer User Tests:
 
-| Endpoint | Expected Result |
-|----------|----------------|
+| Endpoint               | Expected Result                |
+| ---------------------- | ------------------------------ |
 | `GET /customer/health` | ✅ 200 OK - "role": "CUSTOMER" |
-| `GET /vendor/health` | ❌ 403 Forbidden |
-| `GET /driver/health` | ❌ 403 Forbidden |
-| `GET /admin/health` | ❌ 403 Forbidden |
+| `GET /vendor/health`   | ❌ 403 Forbidden               |
+| `GET /driver/health`   | ❌ 403 Forbidden               |
+| `GET /admin/health`    | ❌ 403 Forbidden               |
 
 ### Vendor User Tests:
 
-| Endpoint | Expected Result |
-|----------|----------------|
-| `GET /customer/health` | ❌ 403 Forbidden |
-| `GET /vendor/health` | ✅ 200 OK - "role": "VENDOR" |
-| `GET /driver/health` | ❌ 403 Forbidden |
-| `GET /admin/health` | ❌ 403 Forbidden |
+| Endpoint               | Expected Result              |
+| ---------------------- | ---------------------------- |
+| `GET /customer/health` | ❌ 403 Forbidden             |
+| `GET /vendor/health`   | ✅ 200 OK - "role": "VENDOR" |
+| `GET /driver/health`   | ❌ 403 Forbidden             |
+| `GET /admin/health`    | ❌ 403 Forbidden             |
 
 ### Admin User Tests:
 
-| Endpoint | Expected Result |
-|----------|----------------|
-| `GET /customer/health` | ❌ 403 Forbidden |
-| `GET /vendor/health` | ❌ 403 Forbidden |
-| `GET /driver/health` | ❌ 403 Forbidden |
-| `GET /admin/health` | ✅ 200 OK - "role": "ADMIN" |
+| Endpoint               | Expected Result             |
+| ---------------------- | --------------------------- |
+| `GET /customer/health` | ❌ 403 Forbidden            |
+| `GET /vendor/health`   | ❌ 403 Forbidden            |
+| `GET /driver/health`   | ❌ 403 Forbidden            |
+| `GET /admin/health`    | ✅ 200 OK - "role": "ADMIN" |
 
 ---
 

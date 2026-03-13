@@ -41,6 +41,7 @@
 ## ⚠️ Reality Check: This is 3+ Actions Worth of Work
 
 What you've requested spans:
+
 - **Action 3:** Business Onboarding (stores, products)
 - **Action 4:** Shopping & Orders (catalog, cart, checkout)
 - **Action 5:** Delivery System (drivers, dispatch, tracking)
@@ -54,20 +55,24 @@ What you've requested spans:
 Instead of building everything at once, let's do this strategically:
 
 ### Phase 1: Foundation (Tonight - 2 hours)
+
 **Goal:** Set up infrastructure for role-based APIs
 
 ✅ **Create:**
+
 1. API Gateway stack with route prefixes
 2. Lambda authorizer for role validation
 3. Basic health-check endpoints for each role
 4. Test authorizer with existing users
 
-**Why First:** 
+**Why First:**
+
 - Establishes security layer for all future APIs
 - Can test immediately with Action 2 users
 - Blocks unauthorized access from day 1
 
 **Deliverables:**
+
 - `amplify/functions/api-gateway/stack.ts`
 - `amplify/functions/authorizer/index.ts`
 - `amplify/functions/health/customer.ts` (test endpoint)
@@ -77,9 +82,11 @@ Instead of building everything at once, let's do this strategically:
 ---
 
 ### Phase 2: Action 2 Testing (Tomorrow Morning - 1 hour)
+
 **Goal:** Verify approval workflow works end-to-end
 
 ✅ **Test:**
+
 1. Sign in as admin
 2. Sign up as vendor → see pending screen
 3. Admin approves vendor
@@ -87,6 +94,7 @@ Instead of building everything at once, let's do this strategically:
 5. Call vendor health endpoint → verify authorized
 
 **Why Now:**
+
 - Validates that Action 2 + API Gateway work together
 - Confirms JWT authorizer extracts roles correctly
 - Proves route protection works
@@ -94,9 +102,11 @@ Instead of building everything at once, let's do this strategically:
 ---
 
 ### Phase 3: Catalog Service (Tomorrow Afternoon - 3 hours)
+
 **Goal:** Real product browsing
 
 ✅ **Create:**
+
 1. `services/catalogService.ts` (API client)
 2. Lambda functions:
    - `customer/get-stores.ts`
@@ -106,6 +116,7 @@ Instead of building everything at once, let's do this strategically:
 4. Loading states, error handling
 
 **Why Next:**
+
 - Customers need to browse products
 - Foundation for cart/orders
 - Vendor dashboard can reuse same data
@@ -113,15 +124,18 @@ Instead of building everything at once, let's do this strategically:
 ---
 
 ### Phase 4: Cart System (Tomorrow Evening - 2 hours)
+
 **Goal:** Add to cart, view cart, calculate totals
 
 ✅ **Create:**
+
 1. `contexts/CartContext.tsx` (Zustand)
 2. Update `app/(customer)/cart.tsx` with real state
 3. Persist cart to AsyncStorage
 4. Add "Add to Cart" buttons in browse
 
 **Why Next:**
+
 - Natural progression from catalog
 - Users can start shopping
 - Foundation for checkout
@@ -129,15 +143,18 @@ Instead of building everything at once, let's do this strategically:
 ---
 
 ### Phase 5: Order Creation (Day 3 Morning - 3 hours)
+
 **Goal:** Place orders, inventory management
 
 ✅ **Create:**
+
 1. `orders/create-order.ts` Lambda
 2. Inventory validation logic
 3. Delivery fee calculation
 4. Order confirmation screen
 
 **Why Next:**
+
 - Completes customer shopping flow
 - Creates orders for drivers to deliver
 - Ready to test full customer journey
@@ -145,15 +162,18 @@ Instead of building everything at once, let's do this strategically:
 ---
 
 ### Phase 6: Driver Dispatch (Day 3 Afternoon - 4 hours)
+
 **Goal:** Find nearby drivers for orders
 
 ✅ **Create:**
+
 1. Driver model with geospatial fields
 2. `dispatch/find-nearby-drivers.ts` Lambda
 3. Geohash indexing for efficient queries
 4. Driver dashboard showing available orders
 
 **Why Last:**
+
 - Most complex feature (geospatial queries)
 - Depends on orders existing
 - Separate concern from customer shopping
@@ -175,6 +195,7 @@ amplify/
 ```
 
 **What it does:**
+
 - Defines REST API with `/customer`, `/vendor`, `/driver`, `/admin` routes
 - Integrates Lambda authorizer on all routes
 - Sets up CORS for Expo app
@@ -190,6 +211,7 @@ amplify/
 ```
 
 **What it does:**
+
 - Decodes JWT from `Authorization: Bearer <token>` header
 - Extracts `cognito:groups` claim
 - Returns Allow/Deny based on route prefix
@@ -208,6 +230,7 @@ amplify/
 ```
 
 **What it does:**
+
 - Simple endpoints that return `{ message: "OK", role: "CUSTOMER" }`
 - Proves authorizer is working
 - Can test from Expo app immediately
@@ -220,6 +243,7 @@ services/
 ```
 
 **What it does:**
+
 - Automatically adds JWT to all requests
 - Handles 401/403 errors
 - Retries on network failures
@@ -255,19 +279,22 @@ Phase 6: Driver Dispatch (uses order data)
 ## 🚦 Decision Point: What Do You Want Tonight?
 
 ### Option A: Just Phase 1 (API Gateway Foundation) ⭐ Recommended
+
 **Time:** 2-3 hours  
 **Deliverables:** Working API Gateway with authorizer  
-**Tomorrow:** Test Action 2 + APIs, then build catalog  
+**Tomorrow:** Test Action 2 + APIs, then build catalog
 
 ### Option B: Phase 1 + Phase 3 (API + Catalog)
+
 **Time:** 5-6 hours  
 **Deliverables:** Working APIs + real product browsing  
-**Tomorrow:** Test everything, add cart system  
+**Tomorrow:** Test everything, add cart system
 
 ### Option C: Everything at Once (Not Recommended)
+
 **Time:** 15-20 hours  
 **Risk:** High - too much to debug at once  
-**Better:** Break into phases over 3 days  
+**Better:** Break into phases over 3 days
 
 ---
 
@@ -282,11 +309,13 @@ Phase 6: Driver Dispatch (uses order data)
 5. **Good Stopping Point:** Can deploy and sleep on it
 
 **Tomorrow morning:**
+
 - Test Action 2 with real APIs
 - Build catalog service (Phase 3)
 - Add cart system (Phase 4)
 
 **Tomorrow afternoon:**
+
 - Create orders (Phase 5)
 - Plan driver system (Phase 6)
 
@@ -307,22 +336,22 @@ Once you tell me which option, I'll:
 
 ## ❓ Quick Decision Matrix
 
-| Priority | Feature | Phase | Time | Dependencies |
-|----------|---------|-------|------|--------------|
-| 🔴 CRITICAL | API Gateway | 1 | 2-3h | None |
-| 🔴 CRITICAL | Authorizer | 1 | (included) | None |
-| 🟡 HIGH | Action 2 Test | 2 | 1h | Phase 1 |
-| 🟡 HIGH | Catalog Service | 3 | 3h | Phase 1, 2 |
-| 🟢 MEDIUM | Cart System | 4 | 2h | Phase 3 |
-| 🟢 MEDIUM | Orders | 5 | 3h | Phase 4 |
-| 🔵 LOW | Driver Dispatch | 6 | 4h | Phase 5 |
+| Priority    | Feature         | Phase | Time       | Dependencies |
+| ----------- | --------------- | ----- | ---------- | ------------ |
+| 🔴 CRITICAL | API Gateway     | 1     | 2-3h       | None         |
+| 🔴 CRITICAL | Authorizer      | 1     | (included) | None         |
+| 🟡 HIGH     | Action 2 Test   | 2     | 1h         | Phase 1      |
+| 🟡 HIGH     | Catalog Service | 3     | 3h         | Phase 1, 2   |
+| 🟢 MEDIUM   | Cart System     | 4     | 2h         | Phase 3      |
+| 🟢 MEDIUM   | Orders          | 5     | 3h         | Phase 4      |
+| 🔵 LOW      | Driver Dispatch | 6     | 4h         | Phase 5      |
 
 ---
 
-**What's your call?** 
+**What's your call?**
 
 A) Just Phase 1 tonight (API Gateway)  
 B) Phase 1 + Phase 3 (API + Catalog)  
-C) Something else (tell me what)  
+C) Something else (tell me what)
 
 Let me know and I'll start building! 🚀

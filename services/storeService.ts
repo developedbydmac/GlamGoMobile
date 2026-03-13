@@ -3,9 +3,9 @@
  * Vendor store management
  */
 
-import { generateClient } from 'aws-amplify/data';
-import type { Schema } from '@/amplify/data/resource';
-import { getCurrentUser } from 'aws-amplify/auth';
+import type { Schema } from "@/amplify/data/resource";
+import { getCurrentUser } from "aws-amplify/auth";
+import { generateClient } from "aws-amplify/data";
 
 const client = generateClient<Schema>();
 
@@ -36,8 +36,8 @@ export const getMyStore = async (): Promise<Store | null> => {
     const { data: stores, errors } = await client.models.Store.list();
 
     if (errors) {
-      console.error('❌ GraphQL errors:', errors);
-      throw new Error('Failed to fetch store');
+      console.error("❌ GraphQL errors:", errors);
+      throw new Error("Failed to fetch store");
     }
 
     if (stores.length === 0) {
@@ -64,7 +64,7 @@ export const getMyStore = async (): Promise<Store | null> => {
       updatedAt: store.updatedAt,
     };
   } catch (error) {
-    console.error('❌ Error fetching store:', error);
+    console.error("❌ Error fetching store:", error);
     throw error;
   }
 };
@@ -73,7 +73,17 @@ export const getMyStore = async (): Promise<Store | null> => {
  * Create a new store
  */
 export const createStore = async (
-  storeData: Omit<Store, 'id' | 'vendorId' | 'vendorName' | 'vendorEmail' | 'isActive' | 'rating' | 'createdAt' | 'updatedAt'>
+  storeData: Omit<
+    Store,
+    | "id"
+    | "vendorId"
+    | "vendorName"
+    | "vendorEmail"
+    | "isActive"
+    | "rating"
+    | "createdAt"
+    | "updatedAt"
+  >,
 ): Promise<Store> => {
   try {
     const user = await getCurrentUser();
@@ -81,13 +91,13 @@ export const createStore = async (
 
     const { data: newStore, errors } = await client.models.Store.create({
       name: storeData.name,
-      description: storeData.description || '',
+      description: storeData.description || "",
       address: storeData.address,
       city: storeData.city,
       state: storeData.state,
       zipCode: storeData.zipCode,
-      phoneNumber: storeData.phoneNumber || '',
-      imageKey: storeData.imageKey || '',
+      phoneNumber: storeData.phoneNumber || "",
+      imageKey: storeData.imageKey || "",
       vendorId: user.userId,
       vendorName: storeData.name, // Will be updated with real name later
       vendorEmail: userAttributes,
@@ -96,8 +106,8 @@ export const createStore = async (
     });
 
     if (errors || !newStore) {
-      console.error('❌ GraphQL errors:', errors);
-      throw new Error('Failed to create store');
+      console.error("❌ GraphQL errors:", errors);
+      throw new Error("Failed to create store");
     }
 
     return {
@@ -119,7 +129,7 @@ export const createStore = async (
       updatedAt: newStore.updatedAt,
     };
   } catch (error) {
-    console.error('❌ Error creating store:', error);
+    console.error("❌ Error creating store:", error);
     throw error;
   }
 };
@@ -132,19 +142,19 @@ export const updateStore = async (store: Store): Promise<Store> => {
     const { data: updatedStore, errors } = await client.models.Store.update({
       id: store.id,
       name: store.name,
-      description: store.description || '',
+      description: store.description || "",
       address: store.address,
       city: store.city,
       state: store.state,
       zipCode: store.zipCode,
-      phoneNumber: store.phoneNumber || '',
-      imageKey: store.imageKey || '',
+      phoneNumber: store.phoneNumber || "",
+      imageKey: store.imageKey || "",
       isActive: store.isActive,
     });
 
     if (errors || !updatedStore) {
-      console.error('❌ GraphQL errors:', errors);
-      throw new Error('Failed to update store');
+      console.error("❌ GraphQL errors:", errors);
+      throw new Error("Failed to update store");
     }
 
     return {
@@ -166,7 +176,7 @@ export const updateStore = async (store: Store): Promise<Store> => {
       updatedAt: updatedStore.updatedAt,
     };
   } catch (error) {
-    console.error('❌ Error updating store:', error);
+    console.error("❌ Error updating store:", error);
     throw error;
   }
 };
@@ -181,11 +191,11 @@ export const getAllStores = async (): Promise<Store[]> => {
     });
 
     if (errors) {
-      console.error('❌ GraphQL errors:', errors);
-      throw new Error('Failed to fetch stores');
+      console.error("❌ GraphQL errors:", errors);
+      throw new Error("Failed to fetch stores");
     }
 
-    return stores.map(store => ({
+    return stores.map((store) => ({
       id: store.id,
       name: store.name,
       description: store.description,
@@ -204,7 +214,7 @@ export const getAllStores = async (): Promise<Store[]> => {
       updatedAt: store.updatedAt,
     }));
   } catch (error) {
-    console.error('❌ Error fetching stores:', error);
+    console.error("❌ Error fetching stores:", error);
     throw error;
   }
 };

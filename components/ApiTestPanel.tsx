@@ -3,10 +3,15 @@
  * Add this to any dashboard to test API Gateway health checks
  */
 
-import React, { useState } from "react";
-import { View, Text, TouchableOpacity, StyleSheet, Alert } from "react-native";
-import { customerApi, vendorApi, driverApi, adminApi, apiClient } from "@/services/apiClient";
 import { Colors, Typography } from "@/constants/DesignSystem";
+import {
+    adminApi,
+    customerApi,
+    driverApi,
+    vendorApi
+} from "@/services/apiClient";
+import React, { useState } from "react";
+import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 interface TestResult {
   endpoint: string;
@@ -29,7 +34,7 @@ export default function ApiTestPanel() {
 
   const testHealthCheck = async (
     endpoint: string,
-    apiFn: () => Promise<any>
+    apiFn: () => Promise<any>,
   ) => {
     addResult({ endpoint, status: "pending", message: "Testing..." });
 
@@ -48,8 +53,8 @@ export default function ApiTestPanel() {
         statusCode === 403
           ? "🚫 Forbidden (Expected - wrong role)"
           : statusCode === 401
-          ? "🔒 Unauthorized (No token)"
-          : `❌ ${error.message}`;
+            ? "🔒 Unauthorized (No token)"
+            : `❌ ${error.message}`;
 
       addResult({
         endpoint,
@@ -76,11 +81,9 @@ export default function ApiTestPanel() {
     setTesting(false);
 
     // Summary alert
-    Alert.alert(
-      "Tests Complete",
-      "Check results below. ✅ = Pass, ❌ = Fail",
-      [{ text: "OK" }]
-    );
+    Alert.alert("Tests Complete", "Check results below. ✅ = Pass, ❌ = Fail", [
+      { text: "OK" },
+    ]);
   };
 
   return (

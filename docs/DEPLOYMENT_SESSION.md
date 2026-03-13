@@ -12,6 +12,7 @@
 **Command:** `npx ampx sandbox --once`
 
 **What's being deployed:**
+
 - ✅ Lambda authorizer function
 - ✅ API Gateway REST API
 - ✅ Health check endpoints
@@ -20,6 +21,7 @@
 **Expected time:** 3-5 minutes
 
 **Watching for:**
+
 - ✅ "Sandbox deployed successfully"
 - ✅ API Gateway URL output
 - ✅ No deployment errors
@@ -70,12 +72,14 @@
 ## ✅ Success Criteria
 
 **Deployment succeeds when:**
+
 - ✅ No error messages in deployment
 - ✅ API Gateway URL is output
 - ✅ Lambda functions deployed
 - ✅ CloudWatch logs accessible
 
 **Testing succeeds when:**
+
 - ✅ Customer can call customer API
 - ✅ Role enforcement returns 403
 - ✅ Admin can approve users
@@ -96,6 +100,7 @@
 ---
 
 **Next Steps After Success:**
+
 1. Document test results
 2. Plan catalog service implementation
 3. Build real product browsing

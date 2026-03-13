@@ -49,9 +49,8 @@ export const handler: PostConfirmationTriggerHandler = async (event) => {
       // CUSTOMER: Auto-approved (immediate access)
       // VENDOR/DRIVER: Pending approval (admin must approve)
       // ADMIN: Auto-approved (rarely created, needs existing admin)
-      const initialStatus = role === "CUSTOMER" || role === "ADMIN" 
-        ? "APPROVED" 
-        : "PENDING";
+      const initialStatus =
+        role === "CUSTOMER" || role === "ADMIN" ? "APPROVED" : "PENDING";
 
       // Create UserProfile using Amplify Data API
       // Note: This requires the Lambda to have permissions to write to DynamoDB
@@ -67,8 +66,13 @@ export const handler: PostConfirmationTriggerHandler = async (event) => {
 
       // TODO: Add DynamoDB client to create UserProfile record
       // For now, log the profile that should be created
-      console.log(`📝 UserProfile to create:`, JSON.stringify(userProfile, null, 2));
-      console.log(`ℹ️  Status: ${initialStatus} (${role === "CUSTOMER" ? "auto-approved" : role === "ADMIN" ? "auto-approved" : "pending admin approval"})`);
+      console.log(
+        `📝 UserProfile to create:`,
+        JSON.stringify(userProfile, null, 2),
+      );
+      console.log(
+        `ℹ️  Status: ${initialStatus} (${role === "CUSTOMER" ? "auto-approved" : role === "ADMIN" ? "auto-approved" : "pending admin approval"})`,
+      );
 
       // Note: You'll need to add @aws-sdk/client-dynamodb and create the record
       // Example implementation:
@@ -77,7 +81,6 @@ export const handler: PostConfirmationTriggerHandler = async (event) => {
       //   TableName: process.env.USER_PROFILE_TABLE_NAME,
       //   Item: marshall(userProfile)
       // }));
-
     } catch (error) {
       console.error(`❌ Error creating UserProfile:`, error);
       // Don't throw - allow signup to complete even if profile creation fails

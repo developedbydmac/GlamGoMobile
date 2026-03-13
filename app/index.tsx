@@ -1,47 +1,53 @@
 /**
  * GlamGo Landing Page - Luxury Welcome Experience
- * 
+ *
  * Design: Featuring the actual GlamGo logo with elegant script
  * Colors: Soft purple gradient background matching logo aesthetic
  * Typography: Large, readable, luxury-focused
  * Layout: Clean, spacious, easy to navigate
  */
 
-import { Colors, Typography, Spacing, BorderRadius, Shadows } from "@/constants/DesignSystem";
+import GlamGoLogo from "@/components/GlamGoLogo";
+import {
+    BorderRadius,
+    Shadows,
+    Spacing,
+    Typography
+} from "@/constants/DesignSystem";
+import { getCurrentCognitoUser } from "@/services/cognitoAuth";
 import { Ionicons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
 import {
-  Animated,
-  Dimensions,
-  Platform,
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
+    Alert,
+    Animated,
+    Dimensions,
+    Platform,
+    ScrollView,
+    StatusBar,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View
 } from "react-native";
-import { getCurrentCognitoUser } from "@/services/cognitoAuth";
-import GlamGoLogo from "@/components/GlamGoLogo";
 
 const { width, height } = Dimensions.get("window");
 
 export default function LandingPage() {
   const router = useRouter();
   const [userRole, setUserRole] = useState<string | null>(null);
-  
+
   // Animation values
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(50)).current;
   const scaleAnim = useRef(new Animated.Value(0.9)).current;
-  
+
   useEffect(() => {
     // Check if user is authenticated
     checkAuth();
-    
+
     // Staggered entrance animation
     Animated.parallel([
       Animated.timing(fadeAnim, {
@@ -75,6 +81,30 @@ export default function LandingPage() {
     }
   };
 
+  const handleClearCache = async () => {
+    Alert.alert(
+      "Clear Cache",
+      "This will clear all cached login data. You'll need to sign in again.",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Clear",
+          style: "destructive",
+          onPress: async () => {
+            await AsyncStorage.multiRemove([
+              "cognitoUser",
+              "idToken",
+              "accessToken",
+              "refreshToken",
+            ]);
+            setUserRole(null);
+            Alert.alert("Success", "Cache cleared! Please sign in again.");
+          },
+        },
+      ],
+    );
+  };
+
   const handleGoToDashboard = () => {
     if (userRole) {
       const roleLower = userRole.toLowerCase();
@@ -91,39 +121,34 @@ export default function LandingPage() {
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" />
-      
+
       {/* Soft Purple Gradient Background */}
       <LinearGradient
-        colors={['#E8D5E8', '#F5E6F5', '#FFFFFF']}
+        colors={["#E8D5E8", "#F5E6F5", "#FFFFFF"]}
         style={styles.gradientBackground}
       >
-        <ScrollView 
+        <ScrollView
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
           {/* Hero Section with Logo */}
-          <Animated.View 
+          <Animated.View
             style={[
               styles.heroSection,
               {
                 opacity: fadeAnim,
-                transform: [
-                  { translateY: slideAnim },
-                  { scale: scaleAnim }
-                ]
-              }
+                transform: [{ translateY: slideAnim }, { scale: scaleAnim }],
+              },
             ]}
           >
             {/* GlamGo Logo Component */}
             <View style={styles.logoWrapper}>
               <GlamGoLogo size="large" />
             </View>
-            
+
             {/* Main Tagline - Matching logo aesthetic */}
-            <Text style={styles.mainTagline}>
-              Beauty Delivered
-            </Text>
-            
+            <Text style={styles.mainTagline}>Beauty Delivered</Text>
+
             {/* Subtitle - Clear & Simple */}
             <Text style={styles.subtitle}>
               Premium beauty products and services,{"\n"}
@@ -132,24 +157,21 @@ export default function LandingPage() {
           </Animated.View>
 
           {/* Feature Cards - Elegant & Spacious */}
-          <Animated.View 
-            style={[
-              styles.featuresSection,
-              { opacity: fadeAnim }
-            ]}
+          <Animated.View
+            style={[styles.featuresSection, { opacity: fadeAnim }]}
           >
             <FeatureCard
               icon="sparkles"
               title="Curated Selection"
               description="Premium beauty products from top-rated professionals"
             />
-            
+
             <FeatureCard
               icon="flash"
               title="Fast Delivery"
               description="Get your beauty essentials delivered in under an hour"
             />
-            
+
             <FeatureCard
               icon="shield-checkmark"
               title="Quality Guaranteed"
@@ -158,12 +180,7 @@ export default function LandingPage() {
           </Animated.View>
 
           {/* Call-to-Action Section */}
-          <Animated.View 
-            style={[
-              styles.ctaSection,
-              { opacity: fadeAnim }
-            ]}
-          >
+          <Animated.View style={[styles.ctaSection, { opacity: fadeAnim }]}>
             {/* If authenticated, show dashboard button */}
             {userRole && (
               <TouchableOpacity
@@ -172,7 +189,7 @@ export default function LandingPage() {
                 activeOpacity={0.85}
               >
                 <LinearGradient
-                  colors={['#C8A870', '#B8985A']}
+                  colors={["#C8A870", "#B8985A"]}
                   style={styles.buttonGradient}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 0 }}
@@ -191,12 +208,14 @@ export default function LandingPage() {
             >
               {userRole ? (
                 <View style={styles.secondaryButtonContent}>
-                  <Text style={styles.secondaryButtonText}>Explore Products</Text>
+                  <Text style={styles.secondaryButtonText}>
+                    Explore Products
+                  </Text>
                   <Ionicons name="arrow-forward" size={22} color="#6B4C8A" />
                 </View>
               ) : (
                 <LinearGradient
-                  colors={['#C8A870', '#B8985A']}
+                  colors={["#C8A870", "#B8985A"]}
                   style={styles.buttonGradient}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 0 }}
@@ -216,7 +235,9 @@ export default function LandingPage() {
                   activeOpacity={0.85}
                 >
                   <View style={styles.secondaryButtonContent}>
-                    <Text style={styles.secondaryButtonText}>Create Account</Text>
+                    <Text style={styles.secondaryButtonText}>
+                      Create Account
+                    </Text>
                     <Ionicons name="person-add" size={20} color="#6B4C8A" />
                   </View>
                 </TouchableOpacity>
@@ -227,10 +248,25 @@ export default function LandingPage() {
                   activeOpacity={0.7}
                 >
                   <Text style={styles.signInText}>
-                    Already have an account? <Text style={styles.signInTextBold}>Sign In →</Text>
+                    Already have an account?{" "}
+                    <Text style={styles.signInTextBold}>Sign In →</Text>
                   </Text>
                 </TouchableOpacity>
               </>
+            )}
+
+            {/* Debug/Dev: Clear Cache Button (Remove after demo) */}
+            {userRole && (
+              <TouchableOpacity
+                onPress={handleClearCache}
+                style={styles.clearCacheButton}
+                activeOpacity={0.7}
+              >
+                <Ionicons name="trash-outline" size={16} color="#999" />
+                <Text style={styles.clearCacheText}>
+                  Clear Cache (Dev Only)
+                </Text>
+              </TouchableOpacity>
             )}
           </Animated.View>
 
@@ -266,14 +302,15 @@ function FeatureCard({ icon, title, description }: FeatureCardProps) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: "#FFFFFF",
   },
   gradientBackground: {
     flex: 1,
   },
   scrollContent: {
     flexGrow: 1,
-    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight || 0 : Spacing["2xl"],
+    paddingTop:
+      Platform.OS === "android" ? StatusBar.currentHeight || 0 : Spacing["2xl"],
   },
   heroSection: {
     alignItems: "center",
@@ -284,20 +321,20 @@ const styles = StyleSheet.create({
   logoWrapper: {
     marginBottom: Spacing["2xl"],
     alignItems: "center",
-    width: '100%',
+    width: "100%",
   },
   mainTagline: {
     fontSize: 32,
     fontWeight: Typography.fontWeight.semibold as any,
-    color: '#6B4C8A', // Purple from logo
+    color: "#6B4C8A", // Purple from logo
     textAlign: "center",
     marginBottom: Spacing.lg,
     letterSpacing: 1,
-    textTransform: 'uppercase',
+    textTransform: "uppercase",
   },
   subtitle: {
     fontSize: Typography.fontSize.lg,
-    color: '#5A5A5A',
+    color: "#5A5A5A",
     textAlign: "center",
     lineHeight: Typography.fontSize.lg * 1.6,
     paddingHorizontal: Spacing.md,
@@ -309,18 +346,18 @@ const styles = StyleSheet.create({
   },
   featureCard: {
     flexDirection: "row",
-    backgroundColor: '#FFFFFF',
+    backgroundColor: "#FFFFFF",
     borderRadius: BorderRadius.lg,
     padding: Spacing.xl,
     ...Shadows.light,
     borderWidth: 1,
-    borderColor: '#F0E6F5',
+    borderColor: "#F0E6F5",
   },
   featureIconContainer: {
     width: 64,
     height: 64,
     borderRadius: BorderRadius.lg,
-    backgroundColor: '#F5E6F5',
+    backgroundColor: "#F5E6F5",
     alignItems: "center",
     justifyContent: "center",
     marginRight: Spacing.lg,
@@ -332,12 +369,12 @@ const styles = StyleSheet.create({
   featureTitle: {
     fontSize: Typography.fontSize.xl,
     fontWeight: Typography.fontWeight.semibold as any,
-    color: '#2D2D2D',
+    color: "#2D2D2D",
     marginBottom: Spacing.xs,
   },
   featureDescription: {
     fontSize: Typography.fontSize.base,
-    color: '#6A6A6A',
+    color: "#6A6A6A",
     lineHeight: Typography.fontSize.base * 1.5,
   },
   ctaSection: {
@@ -361,17 +398,17 @@ const styles = StyleSheet.create({
   primaryButtonText: {
     fontSize: Typography.fontSize.xl,
     fontWeight: Typography.fontWeight.semibold as any,
-    color: '#FFFFFF',
+    color: "#FFFFFF",
     letterSpacing: 0.3,
   },
   secondaryButton: {
     borderRadius: BorderRadius.lg,
     paddingVertical: Spacing.lg + 2,
     paddingHorizontal: Spacing.xl,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: "#FFFFFF",
     alignItems: "center",
     borderWidth: 2,
-    borderColor: '#6B4C8A',
+    borderColor: "#6B4C8A",
     ...Shadows.subtle,
   },
   secondaryButtonContent: {
@@ -383,7 +420,7 @@ const styles = StyleSheet.create({
   secondaryButtonText: {
     fontSize: Typography.fontSize.xl,
     fontWeight: Typography.fontWeight.semibold as any,
-    color: '#6B4C8A',
+    color: "#6B4C8A",
     letterSpacing: 0.3,
   },
   signInLink: {
@@ -392,12 +429,28 @@ const styles = StyleSheet.create({
   },
   signInText: {
     fontSize: Typography.fontSize.lg,
-    color: '#5A5A5A',
+    color: "#5A5A5A",
     textAlign: "center",
   },
   signInTextBold: {
     fontWeight: Typography.fontWeight.bold as any,
-    color: '#6B4C8A',
+    color: "#6B4C8A",
+  },
+  clearCacheButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: Spacing.md,
+    paddingHorizontal: Spacing.lg,
+    backgroundColor: "#F5F5F5",
+    borderRadius: BorderRadius.md,
+    gap: Spacing.xs,
+    marginTop: Spacing.lg,
+  },
+  clearCacheText: {
+    fontSize: Typography.fontSize.sm,
+    color: "#999",
+    fontWeight: Typography.fontWeight.medium as any,
   },
   bottomSpacer: {
     height: Spacing["3xl"],

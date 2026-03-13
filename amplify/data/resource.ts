@@ -229,7 +229,9 @@ const schema = a.schema({
     .secondaryIndexes((index) => [
       // GSI for efficient queries by status and geohash
       index("status").queryField("listDriversByStatus"),
-      index("status").sortKeys(["geohash"]).queryField("listDriversByStatusAndGeohash"),
+      index("status")
+        .sortKeys(["geohash"])
+        .queryField("listDriversByStatusAndGeohash"),
     ]),
 });
 

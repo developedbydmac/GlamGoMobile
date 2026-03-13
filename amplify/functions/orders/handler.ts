@@ -50,7 +50,7 @@ async function validateInventory(items: OrderItem[]): Promise<{
 
   // In production, this would query DynamoDB via AppSync
   // For now, we'll simulate the validation
-  
+
   // TODO: Replace with actual DynamoDB/AppSync query
   // const response = await fetch(process.env.API_ENDPOINT!, {
   //   method: 'POST',
@@ -85,7 +85,7 @@ async function validateInventory(items: OrderItem[]): Promise<{
     // Validate inventory
     if (product.inventoryCount < item.quantity) {
       errors.push(
-        `Insufficient inventory for ${product.name}. Available: ${product.inventoryCount}, Requested: ${item.quantity}`
+        `Insufficient inventory for ${product.name}. Available: ${product.inventoryCount}, Requested: ${item.quantity}`,
       );
       continue;
     }
@@ -107,7 +107,7 @@ async function createOrderRecord(
   request: CreateOrderRequest,
   products: Product[],
   orderTotal: number,
-  deliveryFee: number
+  deliveryFee: number,
 ): Promise<string> {
   const orderId = `order_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
@@ -155,7 +155,7 @@ async function createOrderRecord(
  * Main handler for creating orders
  */
 export const handler = async (
-  event: APIGatewayProxyEvent
+  event: APIGatewayProxyEvent,
 ): Promise<APIGatewayProxyResult> => {
   console.log("📦 Create Order - Request received", {
     path: event.path,
@@ -224,10 +224,13 @@ export const handler = async (
     }
 
     // Calculate order total
-    const orderTotal = inventoryCheck.products.reduce((total, product, index) => {
-      const quantity = request.items[index].quantity;
-      return total + product.price * quantity;
-    }, 0);
+    const orderTotal = inventoryCheck.products.reduce(
+      (total, product, index) => {
+        const quantity = request.items[index].quantity;
+        return total + product.price * quantity;
+      },
+      0,
+    );
 
     // Calculate delivery fee (10% of total, min $5)
     const deliveryFee = calculateDeliveryFee(orderTotal);
@@ -237,7 +240,7 @@ export const handler = async (
       request,
       inventoryCheck.products,
       orderTotal,
-      deliveryFee
+      deliveryFee,
     );
 
     // Return success response

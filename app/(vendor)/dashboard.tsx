@@ -1,40 +1,118 @@
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Dimensions } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
-import { Colors, Typography, Spacing, BorderRadius, Shadows } from '@/constants/DesignSystem';
-import { LinearGradient } from 'expo-linear-gradient';
-import { useRouter } from 'expo-router';
+import {
+    BorderRadius,
+    Colors,
+    Shadows,
+    Spacing,
+    Typography,
+} from "@/constants/DesignSystem";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
+import { useRouter } from "expo-router";
+import React from "react";
+import {
+    Dimensions,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-const { width } = Dimensions.get('window');
+const { width } = Dimensions.get("window");
 const cardWidth = (width - Spacing.xl * 3) / 2;
 
 export default function VendorDashboardScreen() {
   const router = useRouter();
 
   const stats = [
-    { label: "Today's Revenue", value: '$0', change: '+0%', icon: 'cash', color: Colors.semantic.success },
-    { label: 'Active Orders', value: '0', change: '+0%', icon: 'cart', color: Colors.primary.deepPlum },
-    { label: 'Total Products', value: '0', change: '+0%', icon: 'cube', color: Colors.secondary.softGold },
-    { label: 'New Customers', value: '0', change: '+0%', icon: 'people', color: Colors.primary.lavender },
+    {
+      label: "Today's Revenue",
+      value: "$0",
+      change: "+0%",
+      icon: "cash",
+      color: Colors.semantic.success,
+    },
+    {
+      label: "Active Orders",
+      value: "0",
+      change: "+0%",
+      icon: "cart",
+      color: Colors.primary.deepPlum,
+    },
+    {
+      label: "Total Products",
+      value: "0",
+      change: "+0%",
+      icon: "cube",
+      color: Colors.secondary.softGold,
+    },
+    {
+      label: "New Customers",
+      value: "0",
+      change: "+0%",
+      icon: "people",
+      color: Colors.primary.lavender,
+    },
   ];
 
   const quickActions = [
-    { title: 'Add Product', icon: 'add-circle', route: '/add-product', gradient: [Colors.primary.lightPlum, Colors.primary.deepPlum] as const },
-    { title: 'View Orders', icon: 'receipt', route: '/(vendor)/orders', gradient: [Colors.secondary.darkGold, Colors.secondary.champagneGold] as const },
-    { title: 'Inventory', icon: 'layers', route: '/(vendor)/products', gradient: [Colors.primary.lavender, Colors.primary.deepPlum] as const },
-    { title: 'Analytics', icon: 'analytics', route: '/(vendor)/dashboard', gradient: [Colors.secondary.softGold, Colors.secondary.darkGold] as const },
+    {
+      title: "Add Product",
+      icon: "add-circle",
+      route: "/add-product",
+      gradient: [Colors.primary.lightPlum, Colors.primary.deepPlum] as const,
+    },
+    {
+      title: "View Orders",
+      icon: "receipt",
+      route: "/(vendor)/orders",
+      gradient: [
+        Colors.secondary.darkGold,
+        Colors.secondary.champagneGold,
+      ] as const,
+    },
+    {
+      title: "Inventory",
+      icon: "layers",
+      route: "/(vendor)/products",
+      gradient: [Colors.primary.lavender, Colors.primary.deepPlum] as const,
+    },
+    {
+      title: "Analytics",
+      icon: "analytics",
+      route: "/(vendor)/dashboard",
+      gradient: [Colors.secondary.softGold, Colors.secondary.darkGold] as const,
+    },
   ];
 
   const recentActivity = [
-    { id: '1', text: 'New order #1234 received', time: '2 min ago', icon: 'notifications', color: Colors.semantic.success },
-    { id: '2', text: 'Product "Luxury Serum" is low on stock', time: '1 hour ago', icon: 'warning', color: Colors.semantic.warning },
-    { id: '3', text: 'Payment of $250 processed', time: '3 hours ago', icon: 'checkmark-circle', color: Colors.semantic.success },
+    {
+      id: "1",
+      text: "New order #1234 received",
+      time: "2 min ago",
+      icon: "notifications",
+      color: Colors.semantic.success,
+    },
+    {
+      id: "2",
+      text: 'Product "Luxury Serum" is low on stock',
+      time: "1 hour ago",
+      icon: "warning",
+      color: Colors.semantic.warning,
+    },
+    {
+      id: "3",
+      text: "Payment of $250 processed",
+      time: "3 hours ago",
+      icon: "checkmark-circle",
+      color: Colors.semantic.success,
+    },
   ];
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
-      <ScrollView 
+    <SafeAreaView style={styles.container} edges={["top"]}>
+      <ScrollView
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
@@ -45,7 +123,11 @@ export default function VendorDashboardScreen() {
             <Text style={styles.title}>Your Beauty Business</Text>
           </View>
           <TouchableOpacity style={styles.notificationButton}>
-            <Ionicons name="notifications" size={24} color={Colors.primary.deepPlum} />
+            <Ionicons
+              name="notifications"
+              size={24}
+              color={Colors.primary.deepPlum}
+            />
             <View style={styles.notificationBadge} />
           </TouchableOpacity>
         </View>
@@ -54,12 +136,30 @@ export default function VendorDashboardScreen() {
         <View style={styles.statsContainer}>
           {stats.map((stat, index) => (
             <View key={index} style={styles.statCard}>
-              <View style={[styles.statIconContainer, { backgroundColor: stat.color + '20' }]}>
-                <Ionicons name={stat.icon as any} size={24} color={stat.color} />
+              <View
+                style={[
+                  styles.statIconContainer,
+                  { backgroundColor: stat.color + "20" },
+                ]}
+              >
+                <Ionicons
+                  name={stat.icon as any}
+                  size={24}
+                  color={stat.color}
+                />
               </View>
               <Text style={styles.statValue}>{stat.value}</Text>
               <Text style={styles.statLabel}>{stat.label}</Text>
-              <Text style={[styles.statChange, { color: stat.change.startsWith('+') ? Colors.semantic.success : Colors.semantic.error }]}>
+              <Text
+                style={[
+                  styles.statChange,
+                  {
+                    color: stat.change.startsWith("+")
+                      ? Colors.semantic.success
+                      : Colors.semantic.error,
+                  },
+                ]}
+              >
                 {stat.change}
               </Text>
             </View>
@@ -83,7 +183,11 @@ export default function VendorDashboardScreen() {
                   end={{ x: 1, y: 1 }}
                   style={styles.actionGradient}
                 >
-                  <Ionicons name={action.icon as any} size={32} color={Colors.neutral.white} />
+                  <Ionicons
+                    name={action.icon as any}
+                    size={32}
+                    color={Colors.neutral.white}
+                  />
                   <Text style={styles.actionTitle}>{action.title}</Text>
                 </LinearGradient>
               </TouchableOpacity>
@@ -97,8 +201,17 @@ export default function VendorDashboardScreen() {
           <View style={styles.activityContainer}>
             {recentActivity.map((activity) => (
               <View key={activity.id} style={styles.activityItem}>
-                <View style={[styles.activityIcon, { backgroundColor: activity.color + '20' }]}>
-                  <Ionicons name={activity.icon as any} size={20} color={activity.color} />
+                <View
+                  style={[
+                    styles.activityIcon,
+                    { backgroundColor: activity.color + "20" },
+                  ]}
+                >
+                  <Ionicons
+                    name={activity.icon as any}
+                    size={20}
+                    color={activity.color}
+                  />
                 </View>
                 <View style={styles.activityContent}>
                   <Text style={styles.activityText}>{activity.text}</Text>
@@ -113,9 +226,15 @@ export default function VendorDashboardScreen() {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Sales Overview</Text>
           <View style={styles.chartCard}>
-            <MaterialCommunityIcons name="chart-line" size={48} color={Colors.neutral.mediumGrey} />
+            <MaterialCommunityIcons
+              name="chart-line"
+              size={48}
+              color={Colors.neutral.mediumGrey}
+            />
             <Text style={styles.chartText}>No sales data yet</Text>
-            <Text style={styles.chartSubtext}>Start selling to see your performance</Text>
+            <Text style={styles.chartSubtext}>
+              Start selling to see your performance
+            </Text>
           </View>
         </View>
       </ScrollView>
@@ -130,12 +249,12 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     flexGrow: 1,
-    paddingBottom: Spacing['3xl'],
+    paddingBottom: Spacing["3xl"],
   },
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     paddingHorizontal: Spacing.xl,
     paddingVertical: Spacing.lg,
   },
@@ -146,7 +265,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.xs,
   },
   title: {
-    fontSize: Typography.fontSize['3xl'],
+    fontSize: Typography.fontSize["3xl"],
     fontWeight: Typography.fontWeight.bold,
     color: Colors.primary.deepPlum,
     fontFamily: Typography.fontFamily.heading,
@@ -156,12 +275,12 @@ const styles = StyleSheet.create({
     height: 48,
     borderRadius: BorderRadius.pill,
     backgroundColor: Colors.neutral.white,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     ...Shadows.subtle,
   },
   notificationBadge: {
-    position: 'absolute',
+    position: "absolute",
     top: 8,
     right: 8,
     width: 10,
@@ -172,8 +291,8 @@ const styles = StyleSheet.create({
     borderColor: Colors.neutral.white,
   },
   statsContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexDirection: "row",
+    flexWrap: "wrap",
     paddingHorizontal: Spacing.xl,
     gap: Spacing.base,
     marginBottom: Spacing.xl,
@@ -189,12 +308,12 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: BorderRadius.md,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     marginBottom: Spacing.sm,
   },
   statValue: {
-    fontSize: Typography.fontSize['2xl'],
+    fontSize: Typography.fontSize["2xl"],
     fontWeight: Typography.fontWeight.bold,
     color: Colors.neutral.darkText,
     fontFamily: Typography.fontFamily.bodySemiBold,
@@ -223,21 +342,21 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.base,
   },
   actionsGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexDirection: "row",
+    flexWrap: "wrap",
     gap: Spacing.base,
   },
   actionCard: {
     width: cardWidth,
     height: 120,
     borderRadius: BorderRadius.lg,
-    overflow: 'hidden',
+    overflow: "hidden",
     ...Shadows.subtle,
   },
   actionGradient: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     padding: Spacing.base,
   },
   actionTitle: {
@@ -246,7 +365,7 @@ const styles = StyleSheet.create({
     color: Colors.neutral.white,
     fontFamily: Typography.fontFamily.bodySemiBold,
     marginTop: Spacing.sm,
-    textAlign: 'center',
+    textAlign: "center",
   },
   activityContainer: {
     backgroundColor: Colors.neutral.white,
@@ -255,8 +374,8 @@ const styles = StyleSheet.create({
     ...Shadows.subtle,
   },
   activityItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     paddingVertical: Spacing.base,
     borderBottomWidth: 1,
     borderBottomColor: Colors.neutral.lightGrey,
@@ -265,8 +384,8 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: BorderRadius.md,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     marginRight: Spacing.base,
   },
   activityContent: {
@@ -286,9 +405,9 @@ const styles = StyleSheet.create({
   chartCard: {
     backgroundColor: Colors.neutral.white,
     borderRadius: BorderRadius.lg,
-    padding: Spacing['2xl'],
-    alignItems: 'center',
-    justifyContent: 'center',
+    padding: Spacing["2xl"],
+    alignItems: "center",
+    justifyContent: "center",
     minHeight: 200,
     ...Shadows.subtle,
   },
@@ -304,6 +423,6 @@ const styles = StyleSheet.create({
     color: Colors.neutral.mediumGrey,
     fontFamily: Typography.fontFamily.body,
     marginTop: Spacing.xs,
-    textAlign: 'center',
+    textAlign: "center",
   },
 });

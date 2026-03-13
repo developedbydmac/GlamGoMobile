@@ -4,12 +4,12 @@ import ModernInput from "@/components/ModernInput";
 import {
     BorderRadius,
     Colors,
+    Shadows,
     Spacing,
     Typography,
-    Shadows,
 } from "@/constants/DesignSystem";
+import { logger } from "@/utils/logger";
 import { Ionicons } from "@expo/vector-icons";
-import { signInWithCognito } from "../../services/cognitoAuth";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
@@ -24,8 +24,9 @@ import {
     Text,
     TouchableOpacity,
     View,
-    useColorScheme
+    useColorScheme,
 } from "react-native";
+import { signInWithCognito } from "../../services/cognitoAuth";
 
 const { width } = Dimensions.get("window");
 const isWeb = Platform.OS === "web";
@@ -61,43 +62,31 @@ export default function SignInScreen() {
     setLoading(true);
 
     try {
-      console.log("=== DIRECT COGNITO SIGN-IN START ===");
-      console.log("Attempting sign-in for:", email.trim().toLowerCase());
+      logger.authDebug("Sign-in attempt started");
 
       // Use direct Cognito SDK
       const user = await signInWithCognito(
         email.trim().toLowerCase(),
-        password
+        password,
       );
 
-      console.log("✅ Sign-in successful!");
-      console.log("User ID:", user.userId);
-      console.log("Role:", user.role);
+      logger.authDebug("Sign-in successful", { email, role: user.role });
 
       // Navigate based on role to correct dashboard
       const roleUpper = user.role?.toUpperCase();
-      
-      if (roleUpper === 'VENDOR') {
-        console.log("🏪 Navigating to vendor dashboard...");
+
+      if (roleUpper === "VENDOR") {
+        logger.debug("Navigating to vendor dashboard");
         router.replace("/(vendor)/dashboard" as any);
-      } else if (roleUpper === 'DRIVER') {
-        console.log("🚗 Navigating to driver dashboard...");
+      } else if (roleUpper === "DRIVER") {
+        logger.debug("Navigating to driver dashboard");
         router.replace("/(driver)/dashboard" as any);
       } else {
-        console.log("🛍️ Navigating to customer shop...");
+        logger.debug("Navigating to customer shop");
         router.replace("/(customer)/shop" as any);
       }
-
-      console.log("✅ Navigation completed for role:", user.role);
-      console.log("=== DIRECT COGNITO SIGN-IN END ===");
     } catch (error: any) {
-      console.error("=== SIGN-IN ERROR START ===");
-      console.error("Error type:", typeof error);
-      console.error("Error name:", error?.name);
-      console.error("Error code:", error?.code);
-      console.error("Error message:", error?.message);
-      console.error("Full error:", error);
-      console.error("=== SIGN-IN ERROR END ===");
+      logger.error("Sign-in failed", error);
 
       // User-friendly error messages
       let errorMessage = "Something went wrong. Please try again.";
@@ -239,42 +228,46 @@ export default function SignInScreen() {
               />
             </View>
 
-            {/* Demo Quick-Fill Buttons */}
-            <View style={styles.demoSection}>
-              <Text style={styles.demoTitle}>🧪 Demo Accounts</Text>
-              <View style={styles.demoButtonsGrid}>
-                <TouchableOpacity
-                  style={[styles.demoButton, styles.demoButtonCustomer]}
-                  onPress={() => {
-                    setEmail('customer@test.com');
-                    setPassword('Test1234!');
-                  }}
-                  disabled={loading}
-                >
-                  <Text style={styles.demoButtonText}>Customer</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={[styles.demoButton, styles.demoButtonVendor]}
-                  onPress={() => {
-                    setEmail('vendor@test.com');
-                    setPassword('Test1234!');
-                  }}
-                  disabled={loading}
-                >
-                  <Text style={styles.demoButtonText}>Vendor</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={[styles.demoButton, styles.demoButtonDriver]}
-                  onPress={() => {
-                    setEmail('driver@test.com');
-                    setPassword('Test1234!');
-                  }}
-                  disabled={loading}
-                >
-                  <Text style={styles.demoButtonText}>Driver</Text>
-                </TouchableOpacity>
+            {/* Demo Quick-Fill Buttons (Dev Only) */}
+            {__DEV__ && (
+              <View style={styles.demoSection}>
+                <Text style={styles.demoTitle}>
+                  🧪 Demo Accounts (Dev Only)
+                </Text>
+                <View style={styles.demoButtonsGrid}>
+                  <TouchableOpacity
+                    style={[styles.demoButton, styles.demoButtonCustomer]}
+                    onPress={() => {
+                      setEmail("customer@test.com");
+                      setPassword("Test1234!");
+                    }}
+                    disabled={loading}
+                  >
+                    <Text style={styles.demoButtonText}>Customer</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[styles.demoButton, styles.demoButtonVendor]}
+                    onPress={() => {
+                      setEmail("vendor@test.com");
+                      setPassword("Test1234!");
+                    }}
+                    disabled={loading}
+                  >
+                    <Text style={styles.demoButtonText}>Vendor</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[styles.demoButton, styles.demoButtonDriver]}
+                    onPress={() => {
+                      setEmail("driver@test.com");
+                      setPassword("Test1234!");
+                    }}
+                    disabled={loading}
+                  >
+                    <Text style={styles.demoButtonText}>Driver</Text>
+                  </TouchableOpacity>
+                </View>
               </View>
-            </View>
+            )}
 
             {/* Sign Up Link */}
             <TouchableOpacity
@@ -295,7 +288,7 @@ export default function SignInScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.neutral.blushCream,  // #FFF8F5
+    backgroundColor: Colors.neutral.blushCream, // #FFF8F5
   },
   keyboardView: {
     flex: 1,
@@ -306,7 +299,7 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     paddingHorizontal: Spacing.xl,
-    paddingTop: Platform.OS === "ios" ? Spacing['3xl'] : Spacing['4xl'],
+    paddingTop: Platform.OS === "ios" ? Spacing["3xl"] : Spacing["4xl"],
   },
   contentMobileWeb: {
     maxWidth: 480,
@@ -316,14 +309,14 @@ const styles = StyleSheet.create({
   tagline: {
     fontSize: Typography.fontSize.xs,
     letterSpacing: Typography.letterSpacing.wider,
-    textTransform: 'uppercase',
+    textTransform: "uppercase",
     color: Colors.secondary.softGold,
     marginTop: Spacing.sm,
     marginBottom: Spacing.lg,
     fontFamily: Typography.fontFamily.bodyMedium,
   },
   backButton: {
-    marginBottom: Spacing['3xl'],
+    marginBottom: Spacing["3xl"],
     marginTop: Spacing.sm,
   },
   backButtonContent: {
@@ -333,13 +326,13 @@ const styles = StyleSheet.create({
   },
   backButtonText: {
     fontSize: Typography.fontSize.sm,
-    color: Colors.secondary.softGold,  // #BF9553
+    color: Colors.secondary.softGold, // #BF9553
     fontWeight: Typography.fontWeight.medium,
     letterSpacing: Typography.letterSpacing.relaxed,
     fontFamily: Typography.fontFamily.body,
   },
   header: {
-    marginBottom: Spacing['4xl'],  // Generous breathing room
+    marginBottom: Spacing["4xl"], // Generous breathing room
   },
   errorContainer: {
     backgroundColor: "#FFF9F9",
@@ -356,28 +349,28 @@ const styles = StyleSheet.create({
     fontWeight: Typography.fontWeight.medium,
   },
   title: {
-    fontSize: Typography.fontSize['4xl'],  // 32px+
+    fontSize: Typography.fontSize["4xl"], // 32px+
     fontWeight: Typography.fontWeight.semibold,
-    color: Colors.primary.deepPlum,  // #522888
+    color: Colors.primary.deepPlum, // #522888
     marginBottom: Spacing.base,
     letterSpacing: Typography.letterSpacing.relaxed,
-    fontFamily: Typography.fontFamily.heading,  // Serif
+    fontFamily: Typography.fontFamily.heading, // Serif
   },
   subtitle: {
     fontSize: Typography.fontSize.sm,
-    color: Colors.neutral.mutedText,  // #8C7A9A
+    color: Colors.neutral.mutedText, // #8C7A9A
     lineHeight: Typography.lineHeight.relaxed,
     fontWeight: Typography.fontWeight.normal,
     fontFamily: Typography.fontFamily.body,
   },
   form: {
     gap: Spacing.lg,
-    marginBottom: Spacing['3xl'],
+    marginBottom: Spacing["3xl"],
   },
   signUpContainer: {
     alignItems: "center",
-    paddingBottom: Platform.OS === "ios" ? Spacing['3xl'] : Spacing.xl,
-    marginTop: Spacing['3xl'],
+    paddingBottom: Platform.OS === "ios" ? Spacing["3xl"] : Spacing.xl,
+    marginTop: Spacing["3xl"],
   },
   signUpText: {
     fontSize: Typography.fontSize.sm,
@@ -386,13 +379,13 @@ const styles = StyleSheet.create({
     fontFamily: Typography.fontFamily.body,
   },
   signUpLink: {
-    color: Colors.secondary.softGold,  // #BF9553
+    color: Colors.secondary.softGold, // #BF9553
     fontWeight: Typography.fontWeight.medium,
   },
   demoSection: {
-    marginTop: Spacing['3xl'],
+    marginTop: Spacing["3xl"],
     padding: Spacing.lg,
-    backgroundColor: Colors.neutral.softBlush,  // #F5EDE8
+    backgroundColor: Colors.neutral.softBlush, // #F5EDE8
     borderRadius: BorderRadius.lg,
     ...Shadows.subtle,
   },
@@ -401,21 +394,21 @@ const styles = StyleSheet.create({
     fontWeight: Typography.fontWeight.medium as any,
     color: Colors.primary.deepPlum,
     marginBottom: Spacing.md,
-    textAlign: 'center',
+    textAlign: "center",
     letterSpacing: Typography.letterSpacing.wide,
-    textTransform: 'uppercase',
+    textTransform: "uppercase",
     fontFamily: Typography.fontFamily.body,
   },
   demoButtonsGrid: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     gap: Spacing.sm,
   },
   demoButton: {
     flex: 1,
     padding: Spacing.md,
     borderRadius: BorderRadius.sm,
-    alignItems: 'center',
+    alignItems: "center",
     ...Shadows.subtle,
   },
   demoButtonCustomer: {
@@ -425,7 +418,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.secondary.softGold,
   },
   demoButtonDriver: {
-    backgroundColor: '#6B9BD1',
+    backgroundColor: "#6B9BD1",
   },
   demoButtonText: {
     color: Colors.neutral.white,

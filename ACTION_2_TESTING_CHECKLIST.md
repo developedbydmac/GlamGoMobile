@@ -22,6 +22,7 @@
 **Goal:** Verify admin can sign in and see admin dashboard
 
 **Steps:**
+
 1. Open Expo Go app on your device
 2. If signed in as customer, tap profile → Sign Out
 3. Go to Sign In screen
@@ -31,12 +32,14 @@
 5. Tap "Sign In"
 
 **Expected Results:**
+
 - ✅ Sign in succeeds
 - ✅ Redirected to Admin Dashboard
 - ✅ See "User Approval Management" header
 - ✅ See "All Caught Up!" (no pending users yet)
 
 **If it fails:**
+
 - Check error message in app
 - Try signing out completely first
 - Verify Amplify sandbox is running
@@ -48,6 +51,7 @@
 **Goal:** Create a vendor with PENDING status
 
 **Steps:**
+
 1. Sign out from admin account
 2. Tap "Sign Up"
 3. Select role: **Vendor (💅)**
@@ -61,6 +65,7 @@
 6. Sign in
 
 **Expected Results:**
+
 - ✅ Sign up succeeds
 - ✅ Email verification sent
 - ✅ After verification, see **Pending Approval Screen** ⏳
@@ -70,6 +75,7 @@
 - ✅ Can only sign out
 
 **If you see vendor dashboard instead:**
+
 - This means navigation guard isn't working
 - Check that getUserProfile service is being called
 - Check terminal logs for errors
@@ -81,6 +87,7 @@
 **Goal:** Admin reviews and approves the pending vendor
 
 **Steps:**
+
 1. Sign out from vendor account
 2. Sign in as admin@glamgo.com
 3. Should see Admin Dashboard
@@ -90,6 +97,7 @@
 7. Confirm in dialog
 
 **Expected Results:**
+
 - ✅ See vendor card with:
   - 💅 Icon
   - Name: Test Vendor
@@ -102,6 +110,7 @@
 - ✅ See "All Caught Up!" message
 
 **If vendor doesn't appear:**
+
 - Check DynamoDB - vendor profile should exist with status: PENDING
 - Pull to refresh on admin dashboard
 - Check terminal logs for GraphQL errors
@@ -113,11 +122,13 @@
 **Goal:** Verify approved vendor can now use the platform
 
 **Steps:**
+
 1. Sign out from admin account
 2. Sign in as vendor-test@glamgo.com
 3. Enter password: TestPass123!
 
 **Expected Results:**
+
 - ✅ Sign in succeeds
 - ✅ **NO pending screen shown** (because status is APPROVED)
 - ✅ Redirected to Vendor Dashboard
@@ -132,6 +143,7 @@
 **Goal:** Test driver signup → pending flow
 
 **Steps:**
+
 1. Sign out
 2. Sign up as Driver (🚗)
 3. Fill form:
@@ -144,6 +156,7 @@
 5. Sign in
 
 **Expected Results:**
+
 - ✅ After verification, see **Pending Approval Screen** ⏳
 - ✅ Screen shows "Thanks for signing up as a Driver!"
 - ✅ Cannot access driver dashboard
@@ -155,17 +168,20 @@
 **Goal:** Test suspension workflow
 
 **Steps:**
+
 1. Sign out, sign in as admin
 2. See "Test Driver" in pending list
 3. Tap "✕ Suspend" button
 4. Confirm in dialog
 
 **Expected Results:**
+
 - ✅ Confirmation dialog with warning message
 - ✅ After confirm → "User suspended" message
 - ✅ Driver disappears from pending list
 
 **Then test suspended user:**
+
 1. Sign out, try to sign in as driver-test@glamgo.com
 2. **Expected:** Should be blocked or redirected to browse
 3. Cannot access driver dashboard
@@ -177,6 +193,7 @@
 **Goal:** Verify customers don't see pending screen
 
 **Steps:**
+
 1. Sign out
 2. Sign up as Customer (✨)
 3. Fill form:
@@ -189,6 +206,7 @@
 5. Sign in
 
 **Expected Results:**
+
 - ✅ **NO pending screen shown**
 - ✅ Immediately redirected to Customer Shop
 - ✅ Can browse products
@@ -201,15 +219,18 @@
 After all tests, sign in as admin and verify:
 
 **In Admin Dashboard:**
+
 - [ ] No pending users (all approved/suspended)
 - [ ] Can pull to refresh successfully
 
 **In AWS Console → Cognito:**
+
 - [ ] 4 users exist: admin, vendor-test, driver-test, customer2-test
 - [ ] All in correct groups
 - [ ] All have "Confirmed" status
 
 **In AWS Console → DynamoDB → UserProfile table:**
+
 - [ ] 4 records exist
 - [ ] customer2-test: status = APPROVED
 - [ ] vendor-test: status = APPROVED, approvedBy = <admin-sub>
@@ -220,28 +241,36 @@ After all tests, sign in as admin and verify:
 ## 🐛 Common Issues & Solutions
 
 ### Issue: Admin doesn't see pending users
-**Solution:** 
+
+**Solution:**
+
 - Check Amplify sandbox is running
 - Pull to refresh
 - Check terminal for GraphQL errors
 - Verify DynamoDB table exists and has PENDING records
 
 ### Issue: Vendor can access dashboard even with PENDING status
+
 **Solution:**
+
 - Sign out completely and back in
 - Check `_layout.tsx` navigation guard is checking status
 - Verify `getUserProfile` is being called on sign-in
 - Check terminal logs: should see "⏳ VENDOR has PENDING status"
 
 ### Issue: Admin approval doesn't work
+
 **Solution:**
+
 - Check admin user has ADMIN group membership
 - Verify GraphQL mutation permissions
 - Check terminal for permission errors
 - Ensure UserProfile record has an `id` field
 
 ### Issue: Can't sign in as admin
+
 **Solution:**
+
 - Password is: `AdminPass123!` (case-sensitive)
 - Username is: `admin@glamgo.com`
 - If locked out, reset in AWS Console
@@ -252,6 +281,7 @@ After all tests, sign in as admin and verify:
 ## 🎬 Testing Complete!
 
 Once all tests pass:
+
 1. Take screenshots of:
    - Pending approval screen
    - Admin dashboard with pending users

@@ -22,7 +22,7 @@ function calculateHaversineDistance(
   lat1: number,
   lon1: number,
   lat2: number,
-  lon2: number
+  lon2: number,
 ): number {
   const R = 3959; // Earth's radius in miles
   const dLat = toRadians(lat2 - lat1);
@@ -52,7 +52,11 @@ function toRadians(degrees: number): number {
  * Calculate geohash for a given lat/lng (simplified 6-character implementation)
  * In production, use a proper geohash library like 'ngeohash'
  */
-function calculateGeohash(lat: number, lng: number, precision: number = 6): string {
+function calculateGeohash(
+  lat: number,
+  lng: number,
+  precision: number = 6,
+): string {
   // This is a simplified geohash implementation
   // For production, use: npm install ngeohash
   const latRange = [-90, 90];
@@ -69,7 +73,7 @@ function calculateGeohash(lat: number, lng: number, precision: number = 6): stri
     if (isEven) {
       mid = (lngRange[0] + lngRange[1]) / 2;
       if (lng > mid) {
-        ch |= (1 << (4 - bit));
+        ch |= 1 << (4 - bit);
         lngRange[0] = mid;
       } else {
         lngRange[1] = mid;
@@ -77,7 +81,7 @@ function calculateGeohash(lat: number, lng: number, precision: number = 6): stri
     } else {
       mid = (latRange[0] + latRange[1]) / 2;
       if (lat > mid) {
-        ch |= (1 << (4 - bit));
+        ch |= 1 << (4 - bit);
         latRange[0] = mid;
       } else {
         latRange[1] = mid;
@@ -175,7 +179,7 @@ async function queryAvailableDrivers(): Promise<Driver[]> {
  * Main handler for finding nearby drivers
  */
 export const handler = async (
-  event: APIGatewayProxyEvent
+  event: APIGatewayProxyEvent,
 ): Promise<APIGatewayProxyResult> => {
   console.log("🚗 Find Nearby Drivers - Request received", {
     path: event.path,
@@ -225,7 +229,8 @@ export const handler = async (
         },
         body: JSON.stringify({
           error: "Invalid coordinates",
-          message: "Latitude must be between -90 and 90, longitude between -180 and 180",
+          message:
+            "Latitude must be between -90 and 90, longitude between -180 and 180",
         }),
       };
     }
@@ -245,22 +250,26 @@ export const handler = async (
         deliveryLat,
         deliveryLng,
         driver.currentLat,
-        driver.currentLng
+        driver.currentLng,
       ),
     }));
 
     // Filter drivers within max distance (default 10 miles)
     const nearbyDrivers = driversWithDistance.filter(
-      (driver) => driver.distance! <= maxDistanceMiles
+      (driver) => driver.distance! <= maxDistanceMiles,
     );
 
     // Sort by distance (ascending)
-    const sortedDrivers = nearbyDrivers.sort((a, b) => a.distance! - b.distance!);
+    const sortedDrivers = nearbyDrivers.sort(
+      (a, b) => a.distance! - b.distance!,
+    );
 
     // Return top 10 drivers
     const top10Drivers = sortedDrivers.slice(0, 10);
 
-    console.log(`✅ Found ${top10Drivers.length} drivers within ${maxDistanceMiles} miles`);
+    console.log(
+      `✅ Found ${top10Drivers.length} drivers within ${maxDistanceMiles} miles`,
+    );
 
     return {
       statusCode: 200,

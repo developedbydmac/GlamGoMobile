@@ -6,7 +6,7 @@ import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
  * separate Lambda functions for each endpoint.
  */
 export const handler = async (
-  event: APIGatewayProxyEvent
+  event: APIGatewayProxyEvent,
 ): Promise<APIGatewayProxyResult> => {
   console.log("API Gateway handler invoked", {
     path: event.path,

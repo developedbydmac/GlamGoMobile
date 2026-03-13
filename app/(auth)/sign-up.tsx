@@ -1,5 +1,11 @@
 import GlamGoLogo from "@/components/GlamGoLogo";
-import { Colors, Typography, Spacing, BorderRadius, Shadows } from "@/constants/DesignSystem";
+import {
+    BorderRadius,
+    Colors,
+    Shadows,
+    Spacing,
+    Typography,
+} from "@/constants/DesignSystem";
 import { Ionicons } from "@expo/vector-icons";
 import { autoSignIn, confirmSignUp, signUp } from "aws-amplify/auth";
 import { useLocalSearchParams, useRouter } from "expo-router";
@@ -101,12 +107,6 @@ export default function SignUpScreen() {
         },
       });
 
-      console.log("Sign up successful:", {
-        isSignUpComplete,
-        userId,
-        nextStep,
-      });
-
       if (nextStep.signUpStep === "CONFIRM_SIGN_UP") {
         setStep("confirm");
         Alert.alert(
@@ -118,7 +118,6 @@ export default function SignUpScreen() {
         router.replace("/(tabs)" as any);
       }
     } catch (error: any) {
-      console.error("Sign up error:", error);
       Alert.alert("Sign Up Error", error.message || "Failed to create account");
     } finally {
       setLoading(false);
@@ -139,8 +138,6 @@ export default function SignUpScreen() {
         confirmationCode: confirmationCode.trim(),
       });
 
-      console.log("Confirmation successful:", { isSignUpComplete, nextStep });
-
       if (isSignUpComplete) {
         // Try auto sign in
         try {
@@ -148,16 +145,11 @@ export default function SignUpScreen() {
           Alert.alert("Success", "Account verified! Welcome to GlamGo!");
           router.replace("/(tabs)" as any);
         } catch (autoSignInError) {
-          console.log(
-            "Auto sign-in failed, redirecting to sign-in:",
-            autoSignInError,
-          );
           Alert.alert("Success", "Account verified! Please sign in.");
           router.replace("/(auth)/sign-in" as any);
         }
       }
     } catch (error: any) {
-      console.error("Confirmation error:", error);
       Alert.alert(
         "Verification Error",
         error.message || "Invalid verification code",
@@ -281,12 +273,18 @@ export default function SignUpScreen() {
 
             {/* Header */}
             <TouchableOpacity
-              onPress={() => router.push('/(auth)/role-selection' as any)}
+              onPress={() => router.push("/(auth)/role-selection" as any)}
               style={styles.backButton}
             >
               <View style={styles.backButtonContent}>
-                <Ionicons name="chevron-back" size={24} color={Colors.primary.deepPlum} />
-                <Text style={styles.backButtonText}>Back to Role Selection</Text>
+                <Ionicons
+                  name="chevron-back"
+                  size={24}
+                  color={Colors.primary.deepPlum}
+                />
+                <Text style={styles.backButtonText}>
+                  Back to Role Selection
+                </Text>
               </View>
             </TouchableOpacity>
 
@@ -394,7 +392,7 @@ export default function SignUpScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.neutral.blushCream,  // #FFF8F5
+    backgroundColor: Colors.neutral.blushCream, // #FFF8F5
   },
   keyboardView: {
     flex: 1,
@@ -405,7 +403,7 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     paddingHorizontal: Spacing.xl,
-    paddingTop: Platform.OS === "ios" ? Spacing.xl : Spacing['3xl'],
+    paddingTop: Platform.OS === "ios" ? Spacing.xl : Spacing["3xl"],
   },
   contentMobileWeb: {
     maxWidth: 480,
@@ -413,23 +411,23 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   backButton: {
-    marginBottom: Spacing['3xl'],
+    marginBottom: Spacing["3xl"],
     marginTop: Spacing.sm,
   },
   backButtonContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: Spacing.xs,
   },
   backButtonText: {
     fontSize: Typography.fontSize.sm,
-    color: Colors.secondary.softGold,  // #BF9553
+    color: Colors.secondary.softGold, // #BF9553
     fontWeight: Typography.fontWeight.medium,
     letterSpacing: Typography.letterSpacing.relaxed,
     fontFamily: Typography.fontFamily.body,
   },
   header: {
-    marginBottom: Spacing['4xl'],
+    marginBottom: Spacing["4xl"],
   },
   roleIndicator: {
     flexDirection: "row",
@@ -441,7 +439,7 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.pill,
     alignSelf: "flex-start",
     borderWidth: 1,
-    borderColor: Colors.neutral.lightGrey,  // #E7D9EA
+    borderColor: Colors.neutral.lightGrey, // #E7D9EA
     ...Shadows.subtle,
   },
   roleEmoji: {
@@ -451,7 +449,7 @@ const styles = StyleSheet.create({
   tagline: {
     fontSize: Typography.fontSize.xs,
     letterSpacing: Typography.letterSpacing.wider,
-    textTransform: 'uppercase',
+    textTransform: "uppercase",
     color: Colors.secondary.softGold,
     marginTop: Spacing.sm,
     marginBottom: Spacing.lg,
@@ -465,26 +463,26 @@ const styles = StyleSheet.create({
     textTransform: "uppercase",
   },
   title: {
-    fontSize: Typography.fontSize['4xl'],
+    fontSize: Typography.fontSize["4xl"],
     fontWeight: Typography.fontWeight.semibold,
-    color: Colors.primary.deepPlum,  // #522888
+    color: Colors.primary.deepPlum, // #522888
     marginBottom: Spacing.base,
     letterSpacing: Typography.letterSpacing.relaxed,
-    fontFamily: Typography.fontFamily.heading,  // Serif
+    fontFamily: Typography.fontFamily.heading, // Serif
   },
   subtitle: {
     fontSize: Typography.fontSize.sm,
-    color: Colors.neutral.mutedText,  // #8C7A9A
+    color: Colors.neutral.mutedText, // #8C7A9A
     lineHeight: Typography.lineHeight.relaxed,
     fontWeight: Typography.fontWeight.normal,
     fontFamily: Typography.fontFamily.body,
   },
   emailText: {
     fontWeight: Typography.fontWeight.semibold,
-    color: Colors.secondary.softGold,  // #BF9553
+    color: Colors.secondary.softGold, // #BF9553
   },
   form: {
-    marginBottom: Spacing['3xl'],
+    marginBottom: Spacing["3xl"],
   },
   inputContainer: {
     marginBottom: Spacing.lg,
@@ -495,18 +493,18 @@ const styles = StyleSheet.create({
     color: Colors.neutral.mutedText,
     marginBottom: Spacing.sm,
     letterSpacing: Typography.letterSpacing.wide,
-    textTransform: 'uppercase',
+    textTransform: "uppercase",
     fontFamily: Typography.fontFamily.body,
   },
   input: {
-    backgroundColor: Colors.neutral.surface,  // #FFFDFC
+    backgroundColor: Colors.neutral.surface, // #FFFDFC
     borderRadius: BorderRadius.md,
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.sm,
     fontSize: Typography.fontSize.base,
-    color: Colors.neutral.darkText,  // #2E2335
+    color: Colors.neutral.darkText, // #2E2335
     borderWidth: 1,
-    borderColor: Colors.neutral.lightGrey,  // #E7D9EA
+    borderColor: Colors.neutral.lightGrey, // #E7D9EA
     fontFamily: Typography.fontFamily.body,
     ...Shadows.subtle,
   },
@@ -523,7 +521,7 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.md,
     alignItems: "center",
     marginTop: Spacing.base,
-    shadowColor: '#3B1B64',
+    shadowColor: "#3B1B64",
     shadowOpacity: 0.25,
     shadowRadius: 12,
     shadowOffset: { width: 0, height: 6 },
@@ -542,7 +540,7 @@ const styles = StyleSheet.create({
   },
   signInContainer: {
     alignItems: "center",
-    paddingBottom: Spacing['3xl'],
+    paddingBottom: Spacing["3xl"],
     marginTop: Spacing.xl,
   },
   signInText: {
@@ -552,7 +550,7 @@ const styles = StyleSheet.create({
     fontFamily: Typography.fontFamily.body,
   },
   signInLink: {
-    color: Colors.secondary.softGold,  // #BF9553
+    color: Colors.secondary.softGold, // #BF9553
     fontWeight: Typography.fontWeight.medium,
   },
   resendContainer: {
@@ -567,7 +565,7 @@ const styles = StyleSheet.create({
     fontFamily: Typography.fontFamily.body,
   },
   resendLink: {
-    color: Colors.secondary.softGold,  // #BF9553
+    color: Colors.secondary.softGold, // #BF9553
     fontWeight: Typography.fontWeight.medium,
   },
 });

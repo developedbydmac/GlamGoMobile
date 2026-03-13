@@ -14,6 +14,7 @@
 **Navigate to:** AWS Console → Cognito → User Pools → `us-east-1_ZMKLKcE8r`
 
 **Check:**
+
 - [ ] **Groups tab** → Should see 4 groups:
   - `CUSTOMER` (precedence 0)
   - `VENDOR` (precedence 1)
@@ -34,6 +35,7 @@
 **Find table:** `UserProfile-*` (name includes random suffix)
 
 **Check Schema:**
+
 - [ ] **Partition Key:** `userId` (String)
 - [ ] **Attributes:** Should include:
   - `userId`, `email`, `name`, `phone`
@@ -52,6 +54,7 @@
 **Find function:** `postconfirmation-*` (name includes random suffix)
 
 **Check:**
+
 - [ ] **Code source:** Should see handler logic with:
   - Cognito group assignment (lines ~40-50)
   - UserProfile creation logic (lines ~60-80)
@@ -70,6 +73,7 @@
 **Find API:** Look for `amplify-glamgomobile-*`
 
 **Check:**
+
 - [ ] **Schema:** Should include:
   - `UserProfile` type with all fields
   - Queries: `getUserProfile`, `listUserProfiles`
@@ -85,13 +89,13 @@
 
 Before proceeding to signup tests, confirm:
 
-| Resource | Expected State | Status |
-|----------|---------------|---------|
-| Cognito Groups | 4 groups (CUSTOMER, VENDOR, DRIVER, ADMIN) | ⬜ |
-| Cognito Lambda Trigger | Post-confirmation assigned | ⬜ |
-| DynamoDB UserProfile Table | Created with correct schema | ⬜ |
-| Lambda Function | Deployed with updated code | ⬜ |
-| AppSync API | Schema includes UserProfile | ⬜ |
+| Resource                   | Expected State                             | Status |
+| -------------------------- | ------------------------------------------ | ------ |
+| Cognito Groups             | 4 groups (CUSTOMER, VENDOR, DRIVER, ADMIN) | ⬜     |
+| Cognito Lambda Trigger     | Post-confirmation assigned                 | ⬜     |
+| DynamoDB UserProfile Table | Created with correct schema                | ⬜     |
+| Lambda Function            | Deployed with updated code                 | ⬜     |
+| AppSync API                | Schema includes UserProfile                | ⬜     |
 
 ---
 
@@ -110,6 +114,7 @@ Once you've verified the resources above, you're ready to:
 ## 🔧 Troubleshooting
 
 ### If AWS CLI didn't work:
+
 ```bash
 # Configure AWS CLI
 aws configure
@@ -125,6 +130,7 @@ aws configure
 ```
 
 ### If you can't access AWS Console:
+
 - You can proceed directly to signup tests
 - App will fail if resources aren't deployed correctly
 - Check your terminal where `npx ampx sandbox` is running for deployment status

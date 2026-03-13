@@ -1,13 +1,13 @@
 /**
  * UserProfile Service
- * 
+ *
  * Handles CRUD operations for UserProfile data in DynamoDB via AppSync.
  * Used for approval workflow and status management.
  */
 
-import { generateClient } from 'aws-amplify/data';
-import type { Schema } from '@/amplify/data/resource';
-import type { ApprovalStatus } from '@/types/user';
+import type { Schema } from "@/amplify/data/resource";
+import type { ApprovalStatus } from "@/types/user";
+import { generateClient } from "aws-amplify/data";
 
 const client = generateClient<Schema>();
 
@@ -16,7 +16,7 @@ export interface UserProfileData {
   email: string;
   name?: string;
   phone?: string;
-  role: 'CUSTOMER' | 'VENDOR' | 'DRIVER' | 'ADMIN';
+  role: "CUSTOMER" | "VENDOR" | "DRIVER" | "ADMIN";
   status: ApprovalStatus;
   approvedBy?: string;
   approvedAt?: string;
@@ -27,20 +27,22 @@ export interface UserProfileData {
 /**
  * Fetch a user profile by userId (Cognito sub)
  */
-export async function getUserProfile(userId: string): Promise<UserProfileData | null> {
+export async function getUserProfile(
+  userId: string,
+): Promise<UserProfileData | null> {
   try {
     const { data: profiles } = await client.models.UserProfile.list({
-      filter: { userId: { eq: userId } }
+      filter: { userId: { eq: userId } },
     });
 
     if (!profiles || profiles.length === 0) {
-      console.log('No UserProfile found for userId:', userId);
+      console.log("No UserProfile found for userId:", userId);
       return null;
     }
 
     return profiles[0] as UserProfileData;
   } catch (error) {
-    console.error('Error fetching UserProfile:', error);
+    console.error("Error fetching UserProfile:", error);
     return null;
   }
 }
@@ -49,7 +51,9 @@ export async function getUserProfile(userId: string): Promise<UserProfileData | 
  * Create a new user profile
  * Called by Lambda post-confirmation trigger
  */
-export async function createUserProfile(data: Omit<UserProfileData, 'createdAt' | 'updatedAt'>): Promise<UserProfileData | null> {
+export async function createUserProfile(
+  data: Omit<UserProfileData, "createdAt" | "updatedAt">,
+): Promise<UserProfileData | null> {
   try {
     const { data: profile, errors } = await client.models.UserProfile.create({
       userId: data.userId,
@@ -63,13 +67,13 @@ export async function createUserProfile(data: Omit<UserProfileData, 'createdAt' 
     });
 
     if (errors) {
-      console.error('Error creating UserProfile:', errors);
+      console.error("Error creating UserProfile:", errors);
       return null;
     }
 
     return profile as UserProfileData;
   } catch (error) {
-    console.error('Error creating UserProfile:', error);
+    console.error("Error creating UserProfile:", error);
     return null;
   }
 }
@@ -80,7 +84,7 @@ export async function createUserProfile(data: Omit<UserProfileData, 'createdAt' 
 export async function updateUserProfileStatus(
   profileId: string,
   status: ApprovalStatus,
-  adminUserId: string
+  adminUserId: string,
 ): Promise<boolean> {
   try {
     const { data: profile, errors } = await client.models.UserProfile.update({
@@ -92,13 +96,13 @@ export async function updateUserProfileStatus(
     });
 
     if (errors) {
-      console.error('Error updating UserProfile status:', errors);
+      console.error("Error updating UserProfile status:", errors);
       return false;
     }
 
     return true;
   } catch (error) {
-    console.error('Error updating UserProfile status:', error);
+    console.error("Error updating UserProfile status:", error);
     return false;
   }
 }
@@ -110,7 +114,7 @@ export async function updateUserProfileStatus(
 export async function listPendingUsers(): Promise<UserProfileData[]> {
   try {
     const { data: profiles } = await client.models.UserProfile.list({
-      filter: { status: { eq: 'PENDING' } }
+      filter: { status: { eq: "PENDING" } },
     });
 
     if (!profiles || profiles.length === 0) {
@@ -119,7 +123,7 @@ export async function listPendingUsers(): Promise<UserProfileData[]> {
 
     return profiles as UserProfileData[];
   } catch (error) {
-    console.error('Error fetching pending users:', error);
+    console.error("Error fetching pending users:", error);
     return [];
   }
 }
@@ -128,7 +132,7 @@ export async function listPendingUsers(): Promise<UserProfileData[]> {
  * List all user profiles with optional filters (Admin only)
  */
 export async function listAllUsers(filters?: {
-  role?: 'CUSTOMER' | 'VENDOR' | 'DRIVER' | 'ADMIN';
+  role?: "CUSTOMER" | "VENDOR" | "DRIVER" | "ADMIN";
   status?: ApprovalStatus;
 }): Promise<UserProfileData[]> {
   try {
@@ -142,7 +146,8 @@ export async function listAllUsers(filters?: {
     }
 
     const { data: profiles } = await client.models.UserProfile.list({
-      filter: Object.keys(filterConditions).length > 0 ? filterConditions : undefined
+      filter:
+        Object.keys(filterConditions).length > 0 ? filterConditions : undefined,
     });
 
     if (!profiles || profiles.length === 0) {
@@ -151,7 +156,7 @@ export async function listAllUsers(filters?: {
 
     return profiles as UserProfileData[];
   } catch (error) {
-    console.error('Error fetching users:', error);
+    console.error("Error fetching users:", error);
     return [];
   }
 }

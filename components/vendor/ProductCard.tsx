@@ -1,8 +1,19 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Platform } from 'react-native';
-import { Colors, Spacing, Typography, BorderRadius } from '@/constants/DesignSystem';
-import { Ionicons } from '@expo/vector-icons';
-import StockBadge from './StockBadge';
+import {
+    BorderRadius,
+    Colors,
+    Spacing,
+    Typography,
+} from "@/constants/DesignSystem";
+import { Ionicons } from "@expo/vector-icons";
+import React from "react";
+import {
+    Platform,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
+} from "react-native";
+import StockBadge from "./StockBadge";
 
 interface ProductCardProps {
   product: {
@@ -21,16 +32,23 @@ export default function ProductCard({ product, onEdit }: ProductCardProps) {
     <View style={styles.card}>
       <View style={styles.header}>
         <View style={styles.titleRow}>
-          <Text style={styles.name} numberOfLines={1}>{product.name}</Text>
+          <Text style={styles.name} numberOfLines={1}>
+            {product.name}
+          </Text>
           <StockBadge inStock={product.isAvailable} />
         </View>
         <Text style={styles.price}>${product.price.toFixed(2)}</Text>
       </View>
 
       <View style={styles.inventoryRow}>
-        <Ionicons name="cube-outline" size={16} color={Colors.neutral.mediumGrey} />
+        <Ionicons
+          name="cube-outline"
+          size={16}
+          color={Colors.neutral.mediumGrey}
+        />
         <Text style={styles.inventoryText}>
-          {product.inventoryCount} unit{product.inventoryCount !== 1 ? 's' : ''} in stock
+          {product.inventoryCount} unit{product.inventoryCount !== 1 ? "s" : ""}{" "}
+          in stock
         </Text>
       </View>
 
@@ -41,7 +59,11 @@ export default function ProductCard({ product, onEdit }: ProductCardProps) {
       ) : null}
 
       <TouchableOpacity style={styles.editButton} onPress={onEdit}>
-        <Ionicons name="create-outline" size={18} color={Colors.primary.deepPlum} />
+        <Ionicons
+          name="create-outline"
+          size={18}
+          color={Colors.primary.deepPlum}
+        />
         <Text style={styles.editButtonText}>Edit Product</Text>
       </TouchableOpacity>
     </View>
@@ -56,7 +78,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.md,
     ...Platform.select({
       ios: {
-        shadowColor: '#000',
+        shadowColor: "#000",
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
         shadowRadius: 4,
@@ -67,9 +89,9 @@ const styles = StyleSheet.create({
     }),
   },
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
     marginBottom: Spacing.sm,
   },
   titleRow: {
@@ -88,8 +110,8 @@ const styles = StyleSheet.create({
     color: Colors.primary.deepPlum,
   },
   inventoryRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: Spacing.xs,
     marginBottom: Spacing.sm,
   },
@@ -104,16 +126,16 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.md,
   },
   editButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     gap: Spacing.xs,
     paddingVertical: Spacing.sm,
     paddingHorizontal: Spacing.md,
     borderWidth: 1,
     borderColor: Colors.primary.deepPlum,
     borderRadius: BorderRadius.lg,
-    alignSelf: 'flex-start',
+    alignSelf: "flex-start",
   },
   editButtonText: {
     fontSize: Typography.fontSize.sm,

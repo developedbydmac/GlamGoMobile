@@ -1,25 +1,41 @@
-import React from 'react';
 import {
-  View,
-  Text,
-  StyleSheet,
-  FlatList,
-  TouchableOpacity,
-  Image,
-  Alert,
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRouter } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
-import { Colors, Spacing, Typography, BorderRadius } from '@/constants/DesignSystem';
-import useCartStore, { CartItem } from '@/contexts/CartContext';
+    BorderRadius,
+    Colors,
+    Spacing,
+    Typography,
+} from "@/constants/DesignSystem";
+import useCartStore, { CartItem } from "@/contexts/CartContext";
+import { createOrder } from "@/services/orderService";
+import { Ionicons } from "@expo/vector-icons";
+import { getCurrentUser } from "aws-amplify/auth";
+import { useRouter } from "expo-router";
+import React, { useState } from "react";
+import {
+    ActivityIndicator,
+    Alert,
+    FlatList,
+    Image,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function CustomerCartScreen() {
   const router = useRouter();
-  const { items, updateQuantity, removeItem, getTotal, getItemCount, clearCart } = useCartStore();
+  const {
+    items,
+    updateQuantity,
+    removeItem,
+    getTotal,
+    getItemCount,
+    clearCart,
+  } = useCartStore();
+  const [placingOrder, setPlacingOrder] = useState(false);
 
   const handleUpdateQuantity = (productId: string, change: number) => {
-    const item = items.find(i => i.product.id === productId);
+    const item = items.find((i) => i.product.id === productId);
     if (item) {
       const newQuantity = item.quantity + change;
       if (newQuantity > 0) {
@@ -31,18 +47,14 @@ export default function CustomerCartScreen() {
   };
 
   const handleRemoveItem = (productId: string) => {
-    Alert.alert(
-      'Remove from cart?',
-      'This will remove the item',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Remove',
-          style: 'destructive',
-          onPress: () => removeItem(productId),
-        },
-      ]
-    );
+    Alert.alert("Remove from cart?", "This will remove the item", [
+      { text: "Cancel", style: "cancel" },
+      {
+        text: "Remove",
+        style: "destructive",
+        onPress: () => removeItem(productId),
+      },
+    ]);
   };
 
   const subtotal = getTotal();
@@ -50,25 +62,78 @@ export default function CustomerCartScreen() {
   const total = subtotal + serviceFee;
   const itemCount = getItemCount();
 
-  const handleCheckout = () => {
-    router.push('../booking');
+  const handleCheckout = async () => {
+    if (items.length === 0) {
+      Alert.alert("Cart Empty", "Add items to your cart first");
+      return;
+    }
+
+    try {
+      setPlacingOrder(true);
+
+      // Get current user
+      const user = await getCurrentUser();
+      const userEmail = user.signInDetails?.loginId || user.userId;
+
+      // Create order with items
+      const order = await createOrder({
+        customerEmail: userEmail,
+        customerName: "Demo Customer", // TODO: Get from user profile
+        deliveryAddress: "123 Demo Street",
+        deliveryCity: "Los Angeles",
+        deliveryState: "CA",
+        deliveryZipCode: "90001",
+        deliveryPhoneNumber: "(555) 123-4567",
+        totalAmount: total,
+      });
+
+      // Show success
+      Alert.alert(
+        "🎉 Order Placed!",
+        `Order #${order.id.slice(0, 8).toUpperCase()} created successfully!\n\nTotal: $${total.toFixed(2)}`,
+        [
+          {
+            text: "View Orders",
+            onPress: () => {
+              clearCart();
+              router.push("/(customer)/orders");
+            },
+          },
+        ],
+      );
+    } catch (error) {
+      Alert.alert("Order Failed", "Unable to place order. Please try again.", [
+        { text: "OK" },
+      ]);
+    } finally {
+      setPlacingOrder(false);
+    }
   };
 
   const renderCartItem = ({ item }: { item: CartItem }) => (
     <View style={styles.cartItem}>
       <View style={styles.itemImageContainer}>
         {item.product.imageUrl ? (
-          <Image source={{ uri: item.product.imageUrl }} style={styles.itemImage} />
+          <Image
+            source={{ uri: item.product.imageUrl }}
+            style={styles.itemImage}
+          />
         ) : (
           <View style={[styles.itemImage, styles.placeholderImage]}>
-            <Ionicons name="sparkles" size={24} color={Colors.secondary.champagneGold} />
+            <Ionicons
+              name="sparkles"
+              size={24}
+              color={Colors.secondary.champagneGold}
+            />
           </View>
         )}
       </View>
 
       <View style={styles.itemDetails}>
         <Text style={styles.itemName}>{item.product.name}</Text>
-        <Text style={styles.storeName}>from {item.product.storeName || 'Store'}</Text>
+        <Text style={styles.storeName}>
+          from {item.product.storeName || "Store"}
+        </Text>
         <Text style={styles.itemPrice}>${item.product.price.toFixed(2)}</Text>
       </View>
 
@@ -89,7 +154,11 @@ export default function CustomerCartScreen() {
           </TouchableOpacity>
         </View>
         <TouchableOpacity onPress={() => handleRemoveItem(item.product.id)}>
-          <Ionicons name="trash-outline" size={20} color={Colors.semantic.error} />
+          <Ionicons
+            name="trash-outline"
+            size={20}
+            color={Colors.semantic.error}
+          />
         </TouchableOpacity>
       </View>
     </View>
@@ -97,14 +166,18 @@ export default function CustomerCartScreen() {
 
   const renderEmptyCart = () => (
     <View style={styles.emptyContainer}>
-      <Ionicons name="cart-outline" size={80} color={Colors.neutral.mediumGrey} />
+      <Ionicons
+        name="cart-outline"
+        size={80}
+        color={Colors.neutral.mediumGrey}
+      />
       <Text style={styles.emptyTitle}>Your cart's looking lonely</Text>
       <Text style={styles.emptyText}>
         Browse our beauty pros and add services you love
       </Text>
       <TouchableOpacity
         style={styles.browseButton}
-        onPress={() => router.push('../browse')}
+        onPress={() => router.push("../browse")}
       >
         <Text style={styles.browseButtonText}>Start Shopping</Text>
       </TouchableOpacity>
@@ -113,7 +186,7 @@ export default function CustomerCartScreen() {
 
   if (items.length === 0) {
     return (
-      <SafeAreaView style={styles.container} edges={['top']}>
+      <SafeAreaView style={styles.container} edges={["top"]}>
         <View style={styles.header}>
           <Text style={styles.headerTitle}>Cart</Text>
         </View>
@@ -123,16 +196,18 @@ export default function CustomerCartScreen() {
   }
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
+    <SafeAreaView style={styles.container} edges={["top"]}>
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Your Cart</Text>
-        <Text style={styles.itemCount}>{itemCount} {itemCount === 1 ? 'item' : 'items'}</Text>
+        <Text style={styles.itemCount}>
+          {itemCount} {itemCount === 1 ? "item" : "items"}
+        </Text>
       </View>
 
       <FlatList
         data={items}
         renderItem={renderCartItem}
-        keyExtractor={item => item.product.id}
+        keyExtractor={(item) => item.product.id}
         contentContainerStyle={styles.listContent}
         ItemSeparatorComponent={() => <View style={styles.separator} />}
       />
@@ -152,9 +227,27 @@ export default function CustomerCartScreen() {
           <Text style={styles.totalValue}>${total.toFixed(2)}</Text>
         </View>
 
-        <TouchableOpacity style={styles.checkoutButton} onPress={handleCheckout}>
-          <Text style={styles.checkoutButtonText}>Pick a Time</Text>
-          <Ionicons name="arrow-forward" size={20} color="#fff" />
+        <TouchableOpacity
+          style={[
+            styles.checkoutButton,
+            placingOrder && styles.checkoutButtonDisabled,
+          ]}
+          onPress={handleCheckout}
+          disabled={placingOrder || items.length === 0}
+        >
+          {placingOrder ? (
+            <>
+              <ActivityIndicator size="small" color="#fff" />
+              <Text style={styles.checkoutButtonText}>Placing Order...</Text>
+            </>
+          ) : (
+            <>
+              <Text style={styles.checkoutButtonText}>
+                Place Order • ${total.toFixed(2)}
+              </Text>
+              <Ionicons name="arrow-forward" size={20} color="#fff" />
+            </>
+          )}
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -174,7 +267,7 @@ const styles = StyleSheet.create({
     borderBottomColor: Colors.neutral.lightGrey,
   },
   headerTitle: {
-    fontSize: Typography.fontSize['2xl'],
+    fontSize: Typography.fontSize["2xl"],
     fontWeight: Typography.fontWeight.bold as any,
     color: Colors.neutral.darkText,
   },
@@ -187,11 +280,11 @@ const styles = StyleSheet.create({
     padding: Spacing.lg,
   },
   cartItem: {
-    flexDirection: 'row',
+    flexDirection: "row",
     backgroundColor: Colors.neutral.white,
     borderRadius: BorderRadius.lg,
     padding: Spacing.md,
-    alignItems: 'center',
+    alignItems: "center",
   },
   itemImageContainer: {
     marginRight: Spacing.md,
@@ -202,9 +295,9 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.md,
   },
   placeholderImage: {
-    backgroundColor: '#F3E8FF',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "#F3E8FF",
+    justifyContent: "center",
+    alignItems: "center",
   },
   itemDetails: {
     flex: 1,
@@ -226,12 +319,12 @@ const styles = StyleSheet.create({
     color: Colors.primary.deepPlum,
   },
   itemActions: {
-    alignItems: 'center',
+    alignItems: "center",
     gap: Spacing.md,
   },
   quantityControl: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: Spacing.sm,
   },
   quantityButton: {
@@ -240,15 +333,15 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.pill,
     borderWidth: 1,
     borderColor: Colors.primary.deepPlum,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   quantity: {
     fontSize: Typography.fontSize.base,
     fontWeight: Typography.fontWeight.semibold as any,
     color: Colors.neutral.darkText,
     minWidth: 24,
-    textAlign: 'center',
+    textAlign: "center",
   },
   separator: {
     height: Spacing.md,
@@ -260,8 +353,8 @@ const styles = StyleSheet.create({
     borderTopColor: Colors.neutral.lightGrey,
   },
   summaryRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     marginBottom: Spacing.sm,
   },
   summaryLabel: {
@@ -291,12 +384,15 @@ const styles = StyleSheet.create({
   },
   checkoutButton: {
     backgroundColor: Colors.primary.deepPlum,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     gap: Spacing.sm,
     padding: Spacing.lg,
     borderRadius: BorderRadius.lg,
+  },
+  checkoutButtonDisabled: {
+    opacity: 0.6,
   },
   checkoutButtonText: {
     color: Colors.neutral.white,
@@ -305,8 +401,8 @@ const styles = StyleSheet.create({
   },
   emptyContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     padding: Spacing.xl,
   },
   emptyTitle: {
@@ -319,7 +415,7 @@ const styles = StyleSheet.create({
   emptyText: {
     fontSize: Typography.fontSize.base,
     color: Colors.neutral.mediumGrey,
-    textAlign: 'center' as const,
+    textAlign: "center" as const,
     marginBottom: Spacing.xl,
     lineHeight: 22,
   },

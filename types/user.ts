@@ -1,6 +1,6 @@
 /**
  * User Types - Centralized type definitions for user roles and profiles
- * 
+ *
  * Design Decision: All roles in UPPERCASE to match AWS Cognito groups
  * and ensure consistency across the application
  */
@@ -9,13 +9,13 @@
  * Unified user role type
  * Matches Cognito groups exactly
  */
-export type UserRole = 'CUSTOMER' | 'VENDOR' | 'DRIVER' | 'ADMIN';
+export type UserRole = "CUSTOMER" | "VENDOR" | "DRIVER" | "ADMIN";
 
 /**
  * User approval status
  * Determines access to role-specific features
  */
-export type ApprovalStatus = 'PENDING' | 'APPROVED' | 'SUSPENDED';
+export type ApprovalStatus = "PENDING" | "APPROVED" | "SUSPENDED";
 
 /**
  * User profile from Cognito and DynamoDB
@@ -43,14 +43,16 @@ export interface CachedUserData {
  * Type guard to check if a string is a valid UserRole
  */
 export function isValidUserRole(role: string): role is UserRole {
-  return ['CUSTOMER', 'VENDOR', 'DRIVER', 'ADMIN'].includes(role.toUpperCase());
+  return ["CUSTOMER", "VENDOR", "DRIVER", "ADMIN"].includes(role.toUpperCase());
 }
 
 /**
  * Type guard to check if a status is valid
  */
-export function isValidApprovalStatus(status: string): status is ApprovalStatus {
-  return ['PENDING', 'APPROVED', 'SUSPENDED'].includes(status.toUpperCase());
+export function isValidApprovalStatus(
+  status: string,
+): status is ApprovalStatus {
+  return ["PENDING", "APPROVED", "SUSPENDED"].includes(status.toUpperCase());
 }
 
 /**

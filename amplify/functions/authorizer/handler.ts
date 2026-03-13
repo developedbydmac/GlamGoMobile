@@ -1,4 +1,7 @@
-import { APIGatewayTokenAuthorizerEvent, APIGatewayAuthorizerResult } from "aws-lambda";
+import {
+    APIGatewayAuthorizerResult,
+    APIGatewayTokenAuthorizerEvent,
+} from "aws-lambda";
 import * as jwt from "jsonwebtoken";
 import * as jwksClient from "jwks-rsa";
 
@@ -37,7 +40,7 @@ async function verifyToken(token: string): Promise<jwt.JwtPayload> {
         } else {
           resolve(decoded as jwt.JwtPayload);
         }
-      }
+      },
     );
   });
 }
@@ -47,10 +50,10 @@ async function verifyToken(token: string): Promise<jwt.JwtPayload> {
 function getRoutePrefix(methodArn: string): string | null {
   const parts = methodArn.split("/");
   if (parts.length < 4) return null;
-  
+
   // parts[3] is the first path segment after the stage
   const firstSegment = parts[3];
-  
+
   // Valid route prefixes
   const validPrefixes = ["customer", "vendor", "driver", "admin"];
   return validPrefixes.includes(firstSegment) ? firstSegment : null;
@@ -72,7 +75,7 @@ function generatePolicy(
   principalId: string,
   effect: "Allow" | "Deny",
   resource: string,
-  context?: Record<string, any>
+  context?: Record<string, any>,
 ): APIGatewayAuthorizerResult {
   return {
     principalId,
@@ -91,7 +94,7 @@ function generatePolicy(
 }
 
 export const handler = async (
-  event: APIGatewayTokenAuthorizerEvent
+  event: APIGatewayTokenAuthorizerEvent,
 ): Promise<APIGatewayAuthorizerResult> => {
   console.log("🔐 Authorizer invoked", {
     methodArn: event.methodArn,
@@ -101,7 +104,7 @@ export const handler = async (
   try {
     // Extract token from Authorization header
     const token = event.authorizationToken?.replace("Bearer ", "").trim();
-    
+
     if (!token) {
       console.error("❌ No token provided");
       throw new Error("Unauthorized");
@@ -134,7 +137,9 @@ export const handler = async (
 
     // Check if user has the required group
     const hasAccess = userGroups.includes(requiredGroup);
-    console.log(`${hasAccess ? "✅" : "❌"} Access ${hasAccess ? "granted" : "denied"}`);
+    console.log(
+      `${hasAccess ? "✅" : "❌"} Access ${hasAccess ? "granted" : "denied"}`,
+    );
 
     if (!hasAccess) {
       // User doesn't have required role - deny access

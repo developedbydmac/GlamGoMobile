@@ -1,6 +1,6 @@
-import { getCurrentCognitoUser, type AuthUser } from "../services/cognitoAuth";
+import type { UserRole } from "@/types/user";
 import React, { createContext, useContext, useEffect, useState } from "react";
-import type { UserRole, CachedUserData } from "@/types/user";
+import { getCurrentCognitoUser, type AuthUser } from "../services/cognitoAuth";
 
 interface AuthContextType {
   userRole: UserRole | null;
@@ -36,7 +36,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       // Check if user is authenticated using direct Cognito
       const user = await getCurrentCognitoUser();
-      
+
       if (!user) {
         console.log("👤 No user authenticated (normal for logged out state)");
         setUserRole(null);
@@ -67,7 +67,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <AuthContext.Provider
-      value={{ userRole, setUserRole, isLoading, refreshUserRole, cachedUser, setCachedUser }}
+      value={{
+        userRole,
+        setUserRole,
+        isLoading,
+        refreshUserRole,
+        cachedUser,
+        setCachedUser,
+      }}
     >
       {children}
     </AuthContext.Provider>

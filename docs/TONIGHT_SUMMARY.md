@@ -8,33 +8,40 @@
 ## ✅ Completed Tonight
 
 ### 1. Lambda Authorizer
+
 **File:** `amplify/functions/authorizer/handler.ts` (170 lines)
 
 **What it does:**
+
 ```
 JWT Token → Decode → Verify Signature → Extract Groups → Check Route → Allow/Deny
 ```
 
 **Route Protection:**
+
 - `/customer/*` → Requires CUSTOMER group
 - `/vendor/*` → Requires VENDOR group
 - `/driver/*` → Requires DRIVER group
 - `/admin/*` → Requires ADMIN group
 
 ### 2. API Gateway Stack
+
 **File:** `amplify/functions/api-gateway/stack.ts` (180 lines)
 
 **Created:**
+
 - REST API: "GlamGo Marketplace API"
 - 4 route prefixes: /customer, /vendor, /driver, /admin
-- Health endpoints: GET /*/health
+- Health endpoints: GET /\*/health
 - CORS enabled
 - CloudWatch logging
 
 ### 3. API Client Service
+
 **File:** `services/apiClient.ts` (165 lines)
 
 **Usage:**
+
 ```typescript
 import { customerApi, vendorApi, adminApi } from "@/services/apiClient";
 
@@ -43,6 +50,7 @@ const result = await customerApi.healthCheck();
 ```
 
 ### 4. Documentation
+
 - `API_GATEWAY_SETUP.md` - Full setup guide
 - `API_GATEWAY_COMPLETE.md` - Implementation summary
 - `TOMORROW_MORNING_PLAN.md` - Testing walkthrough
@@ -81,6 +89,7 @@ docs/
 ## 🚀 Tomorrow's Commands
 
 ### 1. Start Dev Environment
+
 ```bash
 # Terminal 1
 npx ampx sandbox
@@ -90,12 +99,14 @@ npm start
 ```
 
 ### 2. Test Customer API
+
 ```typescript
 import { customerApi } from "@/services/apiClient";
 const result = await customerApi.healthCheck();
 ```
 
 ### 3. Test Role Enforcement
+
 ```typescript
 import { apiClient } from "@/services/apiClient";
 // Customer tries vendor route - should fail with 403
@@ -103,6 +114,7 @@ await apiClient.get("/vendor/health");
 ```
 
 ### 4. Create Admin User
+
 ```bash
 aws cognito-idp admin-create-user \
   --user-pool-id us-east-1_ZMKLKcE8r \
@@ -130,7 +142,7 @@ aws cognito-idp admin-create-user \
 ### API Health Checks
 
 | User Role | /customer | /vendor | /driver | /admin |
-|-----------|-----------|---------|---------|--------|
+| --------- | --------- | ------- | ------- | ------ |
 | CUSTOMER  | ✅ 200    | ❌ 403  | ❌ 403  | ❌ 403 |
 | VENDOR    | ❌ 403    | ✅ 200  | ❌ 403  | ❌ 403 |
 | DRIVER    | ❌ 403    | ❌ 403  | ✅ 200  | ❌ 403 |
@@ -141,18 +153,22 @@ aws cognito-idp admin-create-user \
 ## 🐛 Quick Troubleshooting
 
 ### "API Gateway URL not found"
+
 → Check `amplify_outputs.json` custom section
 → Redeploy: `npx ampx sandbox --once`
 
 ### "401 Unauthorized"
+
 → Re-sign in to get fresh JWT token
 → Check: `fetchAuthSession().then(s => console.log(s.tokens))`
 
 ### "403 Forbidden" (wrong role)
+
 → Verify user has correct Cognito group
 → Check route matches role (/customer for CUSTOMER)
 
 ### "Pending screen not showing"
+
 → Sign out completely and back in
 → Check DynamoDB: UserProfile.status should be PENDING
 
@@ -171,16 +187,19 @@ aws cognito-idp admin-create-user \
 ## 🎉 What This Unlocks
 
 ### Immediate:
+
 - ✅ Secure JWT authentication
 - ✅ Role-based access control
 - ✅ Test Action 2 with real APIs
 
 ### Next (Catalog Service):
+
 - `GET /customer/stores`
 - `GET /customer/stores/{id}/products`
 - `GET /customer/products/search`
 
 ### Later (Full Features):
+
 - Orders, cart, checkout
 - Driver dispatch
 - Admin analytics

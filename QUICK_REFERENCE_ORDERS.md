@@ -3,10 +3,12 @@
 ## 📋 What Was Built
 
 ### New Lambda Functions
+
 1. **create-order** - `POST /customer/orders`
 2. **find-nearby-drivers** - `GET /driver/nearby`
 
 ### Database Changes
+
 - ✅ Driver model added with geohash GSI
 - ✅ Order model updated (lat/lng/deliveryFee)
 
@@ -24,6 +26,7 @@ npx ampx sandbox
 ## 🧪 Quick Test
 
 ### Test Create Order
+
 ```bash
 curl -X POST https://YOUR-API/prod/customer/orders \
   -H "Content-Type: application/json" \
@@ -32,6 +35,7 @@ curl -X POST https://YOUR-API/prod/customer/orders \
 ```
 
 ### Test Find Drivers
+
 ```bash
 curl -X GET "https://YOUR-API/prod/driver/nearby?lat=34.0522&lng=-118.2437" \
   -H "Authorization: Bearer TOKEN"
@@ -42,8 +46,9 @@ curl -X GET "https://YOUR-API/prod/driver/nearby?lat=34.0522&lng=-118.2437" \
 ## 📱 React Native Usage
 
 ### Create Order
+
 ```typescript
-import { customerApi } from '../services/apiClient';
+import { customerApi } from "../services/apiClient";
 
 const result = await customerApi.createOrder({
   customerId: "user-123",
@@ -52,23 +57,26 @@ const result = await customerApi.createOrder({
   deliveryAddress: "123 Main St",
   deliveryLat: 34.0522,
   deliveryLng: -118.2437,
-  items: [{
-    productId: "prod-1",
-    productName: "Test Product",
-    quantity: 2,
-    price: 25.99
-  }]
+  items: [
+    {
+      productId: "prod-1",
+      productName: "Test Product",
+      quantity: 2,
+      price: 25.99,
+    },
+  ],
 });
 ```
 
 ### Find Drivers
+
 ```typescript
-import { driverApi } from '../services/apiClient';
+import { driverApi } from "../services/apiClient";
 
 const result = await driverApi.findNearbyDrivers(
-  34.0522,   // lat
+  34.0522, // lat
   -118.2437, // lng
-  10         // radius in miles
+  10, // radius in miles
 );
 ```
 
@@ -77,28 +85,32 @@ const result = await driverApi.findNearbyDrivers(
 ## 📊 Expected Responses
 
 ### Create Order ✅
+
 ```json
 {
   "orderId": "order-abc123",
   "status": "PENDING",
   "totalAmount": 51.98,
-  "deliveryFee": 5.20,
+  "deliveryFee": 5.2,
   "grandTotal": 57.18,
   "itemCount": 2
 }
 ```
 
 ### Find Drivers ✅
+
 ```json
 {
   "nearbyDriversCount": 2,
-  "drivers": [{
-    "driverId": "driver1",
-    "name": "John Driver",
-    "distance": 1.23,
-    "rating": 4.8,
-    "totalDeliveries": 150
-  }]
+  "drivers": [
+    {
+      "driverId": "driver1",
+      "name": "John Driver",
+      "distance": 1.23,
+      "rating": 4.8,
+      "totalDeliveries": 150
+    }
+  ]
 }
 ```
 
@@ -106,10 +118,10 @@ const result = await driverApi.findNearbyDrivers(
 
 ## 🔐 Authorization
 
-| Endpoint | Role Required | Status |
-|----------|--------------|--------|
-| POST /customer/orders | CUSTOMER | ✅ |
-| GET /driver/nearby | DRIVER | ✅ |
+| Endpoint              | Role Required | Status |
+| --------------------- | ------------- | ------ |
+| POST /customer/orders | CUSTOMER      | ✅     |
+| GET /driver/nearby    | DRIVER        | ✅     |
 
 ---
 

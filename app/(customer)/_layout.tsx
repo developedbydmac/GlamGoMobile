@@ -1,7 +1,7 @@
-import { Tabs } from 'expo-router';
-import React from 'react';
-import { Ionicons } from '@expo/vector-icons';
-import { Colors } from '@/constants/DesignSystem';
+import { Colors } from "@/constants/DesignSystem";
+import { Ionicons } from "@expo/vector-icons";
+import { Tabs } from "expo-router";
+import React from "react";
 
 export default function CustomerLayout() {
   return (
@@ -20,7 +20,7 @@ export default function CustomerLayout() {
       <Tabs.Screen
         name="shop"
         options={{
-          title: 'Browse',
+          title: "Browse",
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="home" size={size} color={color} />
           ),
@@ -29,7 +29,7 @@ export default function CustomerLayout() {
       <Tabs.Screen
         name="orders"
         options={{
-          title: 'Orders',
+          title: "Orders",
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="receipt" size={size} color={color} />
           ),
@@ -38,7 +38,7 @@ export default function CustomerLayout() {
       <Tabs.Screen
         name="cart"
         options={{
-          title: 'Cart',
+          title: "Cart",
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="cart" size={size} color={color} />
           ),
@@ -47,7 +47,7 @@ export default function CustomerLayout() {
       <Tabs.Screen
         name="profile"
         options={{
-          title: 'Profile',
+          title: "Profile",
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="person" size={size} color={color} />
           ),

@@ -1,22 +1,27 @@
-import React, { useState, useEffect } from 'react';
 import {
-  View,
-  Text,
-  StyleSheet,
-  FlatList,
-  TouchableOpacity,
-  RefreshControl,
-  Alert,
-  Platform,
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
-import { Colors, Typography, Spacing, BorderRadius } from '@/constants/DesignSystem';
+    BorderRadius,
+    Colors,
+    Spacing,
+    Typography,
+} from "@/constants/DesignSystem";
+import { Ionicons } from "@expo/vector-icons";
+import React, { useEffect, useState } from "react";
+import {
+    Alert,
+    FlatList,
+    Platform,
+    RefreshControl,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 // import { getMyDeliveries, updateOrderStatus } from '@/services/orderService';
 
 interface ActiveDelivery {
   id: string;
-  status: 'PICKED_UP' | 'DELIVERED';
+  status: "PICKED_UP" | "DELIVERED";
   storeName: string;
   storeAddress: string;
   customerName: string;
@@ -30,15 +35,15 @@ export default function DriverActiveScreen() {
   const [deliveries, setDeliveries] = useState<ActiveDelivery[]>([
     // Mock data - will replace with getMyDeliveries()
     {
-      id: '1',
-      status: 'PICKED_UP',
-      storeName: 'Glam Studio',
-      storeAddress: '123 Sunset Blvd, Los Angeles',
-      customerName: 'Sarah Johnson',
-      deliveryAddress: '456 Palm Ave, Los Angeles, CA 90001',
-      deliveryFee: 12.50,
-      pickedUpAt: '2024-03-05T14:15:00',
-      items: ['Classic Blowout', 'Gel Manicure'],
+      id: "1",
+      status: "PICKED_UP",
+      storeName: "Glam Studio",
+      storeAddress: "123 Sunset Blvd, Los Angeles",
+      customerName: "Sarah Johnson",
+      deliveryAddress: "456 Palm Ave, Los Angeles, CA 90001",
+      deliveryFee: 12.5,
+      pickedUpAt: "2024-03-05T14:15:00",
+      items: ["Classic Blowout", "Gel Manicure"],
     },
   ]);
   const [refreshing, setRefreshing] = useState(false);
@@ -49,9 +54,8 @@ export default function DriverActiveScreen() {
       // const result = await getMyDeliveries();
       // Filter for only PICKED_UP status
       // setDeliveries(result.filter(d => d.status === 'PICKED_UP'));
-      console.log('Loading active deliveries...');
     } catch (error) {
-      console.error('Load deliveries error:', error);
+      // Error loading deliveries
     }
   };
 
@@ -67,40 +71,39 @@ export default function DriverActiveScreen() {
 
   const handleCompleteDelivery = (delivery: ActiveDelivery) => {
     Alert.alert(
-      'Mark as delivered?',
+      "Mark as delivered?",
       `Confirm delivery to ${delivery.customerName}`,
       [
-        { text: 'Not yet', style: 'cancel' },
+        { text: "Not yet", style: "cancel" },
         {
-          text: 'Delivered! ✓',
+          text: "Delivered! ✓",
           onPress: async () => {
             try {
               // TODO: Replace with real API call
               // await updateOrderStatus(delivery.id, 'DELIVERED');
-              
+
               // Remove from active list (simulate completion)
-              setDeliveries(prev => prev.filter(d => d.id !== delivery.id));
-              
+              setDeliveries((prev) => prev.filter((d) => d.id !== delivery.id));
+
               Alert.alert(
-                'Nice work! 🎉',
+                "Nice work! 🎉",
                 `You earned $${delivery.deliveryFee.toFixed(2)}`,
               );
             } catch (error) {
-              console.error('Complete delivery error:', error);
-              Alert.alert('Oops!', 'Something went wrong. Try again?');
+              Alert.alert("Oops!", "Something went wrong. Try again?");
             }
           },
         },
-      ]
+      ],
     );
   };
 
   const formatTime = (dateString?: string) => {
-    if (!dateString) return '';
+    if (!dateString) return "";
     const date = new Date(dateString);
-    return date.toLocaleTimeString('en-US', {
-      hour: 'numeric',
-      minute: '2-digit',
+    return date.toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
     });
   };
 
@@ -124,7 +127,9 @@ export default function DriverActiveScreen() {
             <Text style={styles.timelineName}>{item.storeName}</Text>
             <Text style={styles.timelineAddress}>{item.storeAddress}</Text>
             {item.pickedUpAt && (
-              <Text style={styles.timelineTime}>at {formatTime(item.pickedUpAt)}</Text>
+              <Text style={styles.timelineTime}>
+                at {formatTime(item.pickedUpAt)}
+              </Text>
             )}
           </View>
         </View>
@@ -147,10 +152,16 @@ export default function DriverActiveScreen() {
 
       {/* Items */}
       <View style={styles.itemsSection}>
-        <Text style={styles.itemsTitle}>Delivering ({item.items.length} items)</Text>
+        <Text style={styles.itemsTitle}>
+          Delivering ({item.items.length} items)
+        </Text>
         {item.items.map((itemName, index) => (
           <View key={index} style={styles.itemRow}>
-            <Ionicons name="ellipse" size={6} color={Colors.neutral.mediumGrey} />
+            <Ionicons
+              name="ellipse"
+              size={6}
+              color={Colors.neutral.mediumGrey}
+            />
             <Text style={styles.itemText}>{itemName}</Text>
           </View>
         ))}
@@ -187,7 +198,11 @@ export default function DriverActiveScreen() {
 
   const renderEmptyState = () => (
     <View style={styles.emptyContainer}>
-      <Ionicons name="bicycle-outline" size={80} color={Colors.neutral.mediumGrey} />
+      <Ionicons
+        name="bicycle-outline"
+        size={80}
+        color={Colors.neutral.mediumGrey}
+      />
       <Text style={styles.emptyTitle}>No active deliveries</Text>
       <Text style={styles.emptyText}>
         Head to Available tab to find delivery opportunities!
@@ -196,12 +211,13 @@ export default function DriverActiveScreen() {
   );
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
+    <SafeAreaView style={styles.container} edges={["top"]}>
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>On the Road</Text>
         <Text style={styles.headerSubtitle}>
-          {deliveries.length} {deliveries.length === 1 ? 'delivery' : 'deliveries'} in progress
+          {deliveries.length}{" "}
+          {deliveries.length === 1 ? "delivery" : "deliveries"} in progress
         </Text>
       </View>
 
@@ -209,9 +225,11 @@ export default function DriverActiveScreen() {
       <FlatList
         data={deliveries}
         renderItem={renderDelivery}
-        keyExtractor={item => item.id}
+        keyExtractor={(item) => item.id}
         contentContainerStyle={styles.listContent}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
         ListEmptyComponent={renderEmptyState}
       />
     </SafeAreaView>
@@ -231,7 +249,7 @@ const styles = StyleSheet.create({
     borderBottomColor: Colors.neutral.lightGrey,
   },
   headerTitle: {
-    fontSize: Typography.fontSize['2xl'],
+    fontSize: Typography.fontSize["2xl"],
     fontWeight: Typography.fontWeight.bold as any,
     color: Colors.neutral.darkText,
   },
@@ -250,7 +268,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.md,
     ...Platform.select({
       ios: {
-        shadowColor: '#000',
+        shadowColor: "#000",
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
         shadowRadius: 4,
@@ -261,10 +279,10 @@ const styles = StyleSheet.create({
     }),
   },
   statusBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    alignSelf: 'flex-start',
-    backgroundColor: '#E3F2FD',
+    flexDirection: "row",
+    alignItems: "center",
+    alignSelf: "flex-start",
+    backgroundColor: "#E3F2FD",
     paddingVertical: Spacing.xs,
     paddingHorizontal: Spacing.md,
     borderRadius: BorderRadius.pill,
@@ -286,7 +304,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.lg,
   },
   timelineStep: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: Spacing.md,
   },
   timelineIconComplete: {
@@ -294,16 +312,16 @@ const styles = StyleSheet.create({
     height: 32,
     borderRadius: 16,
     backgroundColor: Colors.semantic.success,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   timelineIconActive: {
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: '#E3F2FD',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "#E3F2FD",
+    justifyContent: "center",
+    alignItems: "center",
   },
   timelineContent: {
     flex: 1,
@@ -313,7 +331,7 @@ const styles = StyleSheet.create({
     fontSize: Typography.fontSize.xs,
     fontWeight: Typography.fontWeight.semibold as any,
     color: Colors.neutral.mediumGrey,
-    textTransform: 'uppercase' as const,
+    textTransform: "uppercase" as const,
     marginBottom: Spacing.xs,
   },
   timelineName: {
@@ -331,7 +349,7 @@ const styles = StyleSheet.create({
   timelineTime: {
     fontSize: Typography.fontSize.xs,
     color: Colors.neutral.mediumGrey,
-    fontStyle: 'italic' as const,
+    fontStyle: "italic" as const,
   },
   timelineLine: {
     width: 2,
@@ -353,8 +371,8 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.sm,
   },
   itemRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: Spacing.sm,
     marginBottom: Spacing.xs,
   },
@@ -363,11 +381,11 @@ const styles = StyleSheet.create({
     color: Colors.neutral.mediumGrey,
   },
   earningRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     marginBottom: Spacing.md,
-    backgroundColor: '#F0FDF4',
+    backgroundColor: "#F0FDF4",
     padding: Spacing.md,
     borderRadius: BorderRadius.md,
   },
@@ -383,9 +401,9 @@ const styles = StyleSheet.create({
   },
   completeButton: {
     backgroundColor: Colors.semantic.success,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     gap: Spacing.sm,
     padding: Spacing.md,
     borderRadius: BorderRadius.lg,
@@ -397,14 +415,14 @@ const styles = StyleSheet.create({
     fontWeight: Typography.fontWeight.bold as any,
   },
   quickActions: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: Spacing.sm,
   },
   actionButton: {
     flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     gap: Spacing.xs,
     paddingVertical: Spacing.sm,
     paddingHorizontal: Spacing.md,
@@ -419,9 +437,9 @@ const styles = StyleSheet.create({
   },
   emptyContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingVertical: Spacing['3xl'],
+    justifyContent: "center",
+    alignItems: "center",
+    paddingVertical: Spacing["3xl"],
   },
   emptyTitle: {
     fontSize: Typography.fontSize.xl,
@@ -433,7 +451,7 @@ const styles = StyleSheet.create({
   emptyText: {
     fontSize: Typography.fontSize.base,
     color: Colors.neutral.mediumGrey,
-    textAlign: 'center' as const,
+    textAlign: "center" as const,
     lineHeight: 22,
   },
 });

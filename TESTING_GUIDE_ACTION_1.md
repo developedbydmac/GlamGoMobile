@@ -6,6 +6,7 @@
 ---
 
 ## 📋 Table of Contents
+
 1. [Verify Deployment Completion](#1-verify-deployment-completion)
 2. [Check AWS Resources](#2-check-aws-resources)
 3. [Test Signup Flows](#3-test-signup-flows)
@@ -20,6 +21,7 @@
 ### ✅ Check Terminal Output
 
 **Look for this success message in your terminal:**
+
 ```
 ✔ Deployment complete
 
@@ -27,6 +29,7 @@
 ```
 
 **What this means:**
+
 - ✅ CloudFormation stack updated successfully
 - ✅ Cognito User Pool updated with ADMIN group
 - ✅ DynamoDB UserProfile table created
@@ -35,11 +38,11 @@
 
 ### 📊 Deployment Status Indicators
 
-| Status | Message | Action |
-|--------|---------|--------|
-| ✅ **Success** | `✔ Deployment complete` | Proceed to testing |
-| ⏳ **In Progress** | `⠋ Deployment in progress...` | Wait 2-4 more minutes |
-| ❌ **Failed** | Error message with stack trace | Check [Troubleshooting](#6-troubleshooting) |
+| Status             | Message                        | Action                                      |
+| ------------------ | ------------------------------ | ------------------------------------------- |
+| ✅ **Success**     | `✔ Deployment complete`        | Proceed to testing                          |
+| ⏳ **In Progress** | `⠋ Deployment in progress...`  | Wait 2-4 more minutes                       |
+| ❌ **Failed**      | Error message with stack trace | Check [Troubleshooting](#6-troubleshooting) |
 
 ---
 
@@ -97,18 +100,19 @@ aws lambda get-function --function-name postconfirmation-XXXXX --region us-east-
 
 ### 🧪 Test Plan Overview
 
-| Role | Expected Status | Expected Behavior |
-|------|----------------|-------------------|
-| **CUSTOMER** | `APPROVED` | Immediate access to app |
-| **VENDOR** | `PENDING` | See "pending approval" screen (Action 2) |
-| **DRIVER** | `PENDING` | See "pending approval" screen (Action 2) |
-| **ADMIN** | `APPROVED` | Immediate access to admin features |
+| Role         | Expected Status | Expected Behavior                        |
+| ------------ | --------------- | ---------------------------------------- |
+| **CUSTOMER** | `APPROVED`      | Immediate access to app                  |
+| **VENDOR**   | `PENDING`       | See "pending approval" screen (Action 2) |
+| **DRIVER**   | `PENDING`       | See "pending approval" screen (Action 2) |
+| **ADMIN**    | `APPROVED`      | Immediate access to admin features       |
 
 ---
 
 ### 📱 Test 1: Sign Up as CUSTOMER
 
 **Steps:**
+
 1. Open the GlamGo app (Expo Go or iOS Simulator)
 2. Tap **Sign Up**
 3. Fill in:
@@ -121,12 +125,14 @@ aws lambda get-function --function-name postconfirmation-XXXXX --region us-east-
 6. **Confirm account** via verification code
 
 **Expected Result:**
+
 - ✅ Account created successfully
 - ✅ User assigned to CUSTOMER Cognito group
 - ✅ UserProfile created with `status: "APPROVED"`
 - ✅ User can immediately access customer dashboard
 
 **Verification Steps:**
+
 1. Go to **AWS Console → Cognito → Users**
 2. Find `customer1@test.com`
 3. Check **Group memberships:** Should show `CUSTOMER`
@@ -149,6 +155,7 @@ aws lambda get-function --function-name postconfirmation-XXXXX --region us-east-
 ### 🏪 Test 2: Sign Up as VENDOR
 
 **Steps:**
+
 1. Open the GlamGo app
 2. Tap **Sign Up**
 3. Fill in:
@@ -160,6 +167,7 @@ aws lambda get-function --function-name postconfirmation-XXXXX --region us-east-
 5. **Verify email** and confirm account
 
 **Expected Result:**
+
 - ✅ Account created successfully
 - ✅ User assigned to VENDOR Cognito group
 - ✅ UserProfile created with `status: "PENDING"`
@@ -167,6 +175,7 @@ aws lambda get-function --function-name postconfirmation-XXXXX --region us-east-
 - 📋 **Future (Action 2):** User should see "Waiting for admin approval" screen
 
 **Verification Steps:**
+
 1. Go to **AWS Console → Cognito → Users**
 2. Find `vendor1@test.com`
 3. Check **Group memberships:** Should show `VENDOR`
@@ -191,6 +200,7 @@ aws lambda get-function --function-name postconfirmation-XXXXX --region us-east-
 ### 🚗 Test 3: Sign Up as DRIVER
 
 **Steps:**
+
 1. Open the GlamGo app
 2. Tap **Sign Up**
 3. Fill in:
@@ -202,6 +212,7 @@ aws lambda get-function --function-name postconfirmation-XXXXX --region us-east-
 5. **Verify email** and confirm account
 
 **Expected Result:**
+
 - ✅ Account created successfully
 - ✅ User assigned to DRIVER Cognito group
 - ✅ UserProfile created with `status: "PENDING"`
@@ -216,6 +227,7 @@ aws lambda get-function --function-name postconfirmation-XXXXX --region us-east-
 **Note:** Currently no UI to sign up as ADMIN. Must be assigned manually.
 
 **Steps:**
+
 1. Go to **AWS Console → Cognito → Users**
 2. Find an existing test user (e.g., `customer1@test.com`)
 3. Click on the user
@@ -225,6 +237,7 @@ aws lambda get-function --function-name postconfirmation-XXXXX --region us-east-
 7. Click **Add**
 
 **Expected Result:**
+
 - ✅ User now has both CUSTOMER and ADMIN groups
 - ✅ Can access admin features when implemented
 
@@ -237,6 +250,7 @@ aws lambda get-function --function-name postconfirmation-XXXXX --region us-east-
 ### 📊 Check CloudWatch Logs
 
 **Why check logs?**
+
 - Confirm Lambda is executing on signup
 - Verify UserProfile creation logic runs
 - See which status was assigned (APPROVED vs PENDING)
@@ -265,16 +279,17 @@ aws lambda get-function --function-name postconfirmation-XXXXX --region us-east-
 
 ### 🔍 What to Look For:
 
-| Role | Expected Log Message |
-|------|---------------------|
+| Role         | Expected Log Message   |
+| ------------ | ---------------------- |
 | **CUSTOMER** | `"status": "APPROVED"` |
-| **ADMIN** | `"status": "APPROVED"` |
-| **VENDOR** | `"status": "PENDING"` |
-| **DRIVER** | `"status": "PENDING"` |
+| **ADMIN**    | `"status": "APPROVED"` |
+| **VENDOR**   | `"status": "PENDING"`  |
+| **DRIVER**   | `"status": "PENDING"`  |
 
 ### ⚠️ Note About UserProfile Persistence
 
 Currently, the Lambda **logs** UserProfile data but doesn't persist to DynamoDB yet. You'll see:
+
 ```
 [INFO] 📝 UserProfile to create: {...}
 ```
@@ -315,6 +330,7 @@ query ListUserProfiles {
 ```
 
 **Expected Result:**
+
 - Admin users can see all profiles
 - Non-admin users get authorization error
 
@@ -335,6 +351,7 @@ query GetMyProfile {
 ```
 
 **Expected Result:**
+
 - ✅ User can see their own profile
 - ✅ Returns correct status (APPROVED or PENDING)
 
@@ -356,6 +373,7 @@ query ListPendingApprovals {
 ```
 
 **Expected Result:**
+
 - Shows all vendors and drivers with PENDING status
 - Only accessible by ADMIN group
 
@@ -367,8 +385,8 @@ Add this code temporarily to test queries:
 
 ```typescript
 // Example: Check current user's profile
-import { generateClient } from 'aws-amplify/api';
-import { getCurrentUser } from 'aws-amplify/auth';
+import { generateClient } from "aws-amplify/api";
+import { getCurrentUser } from "aws-amplify/auth";
 
 const client = generateClient();
 
@@ -388,17 +406,17 @@ async function checkMyProfile() {
           }
         }
       `,
-      variables: { userId: user.userId }
+      variables: { userId: user.userId },
     });
-    
-    console.log('My Profile:', profile.data.getUserProfile);
-    
-    if (profile.data.getUserProfile.status === 'PENDING') {
+
+    console.log("My Profile:", profile.data.getUserProfile);
+
+    if (profile.data.getUserProfile.status === "PENDING") {
       // Show "waiting for approval" screen (Action 2)
-      console.log('⚠️ Account pending approval');
+      console.log("⚠️ Account pending approval");
     }
   } catch (error) {
-    console.error('Error fetching profile:', error);
+    console.error("Error fetching profile:", error);
   }
 }
 ```
@@ -410,10 +428,12 @@ async function checkMyProfile() {
 ### ❌ Issue: Deployment Failed
 
 **Symptoms:**
+
 - Error message in terminal
 - Stack trace showing CloudFormation errors
 
 **Solutions:**
+
 1. **Check AWS credentials:** Run `aws sts get-caller-identity`
 2. **Check region:** Ensure you're deploying to correct region (us-east-1)
 3. **Re-run deployment:** `npx ampx sandbox --once`
@@ -424,10 +444,12 @@ async function checkMyProfile() {
 ### ❌ Issue: ADMIN Group Not Showing
 
 **Symptoms:**
+
 - Only 3 groups in Cognito (CUSTOMER, VENDOR, DRIVER)
 - ADMIN missing
 
 **Solutions:**
+
 1. **Verify deployment completed:** Check terminal for success message
 2. **Refresh AWS Console:** Hard refresh browser (Cmd+Shift+R)
 3. **Check amplify/auth/resource.ts:** Ensure ADMIN is in groups array
@@ -438,10 +460,12 @@ async function checkMyProfile() {
 ### ❌ Issue: UserProfile Table Not Created
 
 **Symptoms:**
+
 - No UserProfile table in DynamoDB
 - GraphQL queries fail with "Table not found"
 
 **Solutions:**
+
 1. **Check deployment:** Verify CloudFormation stack completed
 2. **Check region:** Tables created in us-east-1 by default
 3. **View CloudFormation outputs:** Look for UserProfile table name
@@ -452,17 +476,20 @@ async function checkMyProfile() {
 ### ❌ Issue: Lambda Not Creating UserProfile
 
 **Symptoms:**
+
 - Signup succeeds but no UserProfile in DynamoDB
 - Lambda logs show errors
 
 **Solutions:**
-1. **Check Lambda logs:** CloudWatch → /aws/lambda/postconfirmation-*
+
+1. **Check Lambda logs:** CloudWatch → /aws/lambda/postconfirmation-\*
 2. **Verify IAM permissions:** Lambda needs DynamoDB access (will add in future)
 3. **Check Lambda environment variables:** Should have table name
 4. **For now:** This is expected! Lambda logs UserProfile but doesn't persist yet
 
 **Workaround:**
 Manually create UserProfile via AWS Console:
+
 1. Go to DynamoDB → UserProfile table
 2. Click **Create item**
 3. Add:
@@ -482,10 +509,12 @@ Manually create UserProfile via AWS Console:
 ### ❌ Issue: Users Can't Sign Up
 
 **Symptoms:**
+
 - Signup form errors
 - "User already exists" message
 
 **Solutions:**
+
 1. **Delete existing test users:** AWS Console → Cognito → Users → Delete
 2. **Use different email:** Try `customer2@test.com`
 3. **Check Cognito settings:** Ensure email verification is enabled
@@ -516,6 +545,7 @@ Once all tests pass, verify:
 Once all tests pass, you're ready to proceed to **Action 2: Role-Aware Root Navigator**!
 
 **What Action 2 will add:**
+
 - Unified TypeScript types (`types/user.ts`)
 - Admin routing in `app/_layout.tsx`
 - Approval status checks on navigation
@@ -523,6 +553,7 @@ Once all tests pass, you're ready to proceed to **Action 2: Role-Aware Root Navi
 - Block pending vendors/drivers from accessing dashboards
 
 **Next Steps:**
+
 1. ✅ Confirm all Action 1 tests pass
 2. 📋 Review Action 2 requirements
 3. 🛠️ Begin implementing role-aware navigation

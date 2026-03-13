@@ -1,20 +1,24 @@
 import {
-  BorderRadius,
-  Colors,
-  Spacing,
-  Typography,
+    BorderRadius,
+    Colors,
+    Shadows,
+    Spacing,
+    Typography,
 } from "@/constants/DesignSystem";
+import useCartStore from "@/contexts/CartContext";
 import { FontAwesome, Ionicons } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import React from "react";
+import React, { useState } from "react";
 import {
-  Image,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
+    Alert,
+    Image,
+    Platform,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -90,15 +94,46 @@ export default function ProductDetailScreen() {
   const router = useRouter();
   const params = useLocalSearchParams();
   const productId = params.id as string;
-
-  // Debug logging
-  console.log("🔍 Product Detail Screen loaded");
-  console.log("📦 Params:", params);
-  console.log("🆔 Product ID:", productId);
+  const [isAdding, setIsAdding] = useState(false);
 
   // Get product details from mock data
   const product = mockProductDetails[productId] || mockProductDetails["1"];
-  console.log("✅ Product loaded:", product?.name);
+
+  // Cart functionality
+  const { addItem } = useCartStore();
+
+  const handleAddToCart = async () => {
+    try {
+      setIsAdding(true);
+      // Simulate network delay
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
+      addItem({
+        id: product.id,
+        name: product.name,
+        price: product.price,
+        imageUrl: product.image,
+        storeName: product.storeName,
+        storeId: product.id,
+      });
+
+      Alert.alert(
+        "✅ Added to Cart",
+        `${product.name} has been added to your cart!`,
+        [
+          { text: "Continue Shopping", onPress: () => router.back() },
+          {
+            text: "View Cart",
+            onPress: () => router.push("/(customer)/cart" as any),
+          },
+        ],
+      );
+    } catch (error) {
+      Alert.alert("Error", "Failed to add item to cart");
+    } finally {
+      setIsAdding(false);
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container} edges={["top"]}>
@@ -225,19 +260,27 @@ export default function ProductDetailScreen() {
       {/* Bottom Action Button */}
       <View style={styles.bottomBar}>
         <TouchableOpacity
-          style={styles.bookButton}
-          onPress={() => {
-            // For demo, just show a message
-            alert("Booking feature coming in Phase 3! 🎉");
-          }}
+          style={styles.addToCartButton}
+          onPress={handleAddToCart}
+          disabled={isAdding}
+          activeOpacity={0.8}
         >
-          <Text style={styles.bookButtonText}>Book Appointment</Text>
-          <Ionicons
-            name="calendar"
-            size={20}
-            color="#FFF"
-            style={styles.buttonIcon}
-          />
+          <LinearGradient
+            colors={[Colors.primary.lightPlum, Colors.primary.deepPlum] as any}
+            style={styles.addToCartGradient}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+          >
+            <Ionicons
+              name={isAdding ? "hourglass" : "cart"}
+              size={22}
+              color="#FFF"
+              style={styles.buttonIcon}
+            />
+            <Text style={styles.addToCartButtonText}>
+              {isAdding ? "Adding..." : "Add to Cart"}
+            </Text>
+          </LinearGradient>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -289,6 +332,7 @@ const styles = StyleSheet.create({
     fontWeight: Typography.fontWeight.bold,
     color: Colors.neutral.darkText,
     marginBottom: Spacing.sm,
+    lineHeight: Typography.lineHeight.tight,
   },
   storeRow: {
     flexDirection: "row",
@@ -438,28 +482,21 @@ const styles = StyleSheet.create({
     padding: Spacing.lg,
     borderTopWidth: 1,
     borderTopColor: Colors.neutral.lightGrey,
-    ...Platform.select({
-      ios: {
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: -2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-      },
-      android: {
-        elevation: 8,
-      },
-    }),
+    ...Shadows.medium,
   },
-  bookButton: {
-    backgroundColor: Colors.primary.deepPlum,
+  addToCartButton: {
+    overflow: "hidden",
+    borderRadius: BorderRadius.lg,
+  },
+  addToCartGradient: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
     paddingVertical: Spacing.lg,
-    borderRadius: BorderRadius.lg,
-    gap: Spacing.sm,
+    paddingHorizontal: Spacing["2xl"],
+    gap: Spacing.md,
   },
-  bookButtonText: {
+  addToCartButtonText: {
     fontSize: Typography.fontSize.lg,
     fontWeight: Typography.fontWeight.bold,
     color: Colors.neutral.white,

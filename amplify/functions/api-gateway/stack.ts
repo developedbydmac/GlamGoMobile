@@ -6,7 +6,6 @@ import { Construct } from "constructs";
 export interface ApiGatewayStackProps {
   authorizerFunction: lambda.IFunction;
   userPoolId: string;
-  region: string;
 }
 
 export class ApiGatewayStack extends Construct {
@@ -56,7 +55,7 @@ export class ApiGatewayStack extends Construct {
     // Pass environment variables to authorizer
     const authorizerFn = props.authorizerFunction as lambda.Function;
     authorizerFn.addEnvironment("USER_POOL_ID", props.userPoolId);
-    authorizerFn.addEnvironment("AWS_REGION", props.region);
+    // AWS_REGION is automatically provided by Lambda runtime - don't set it manually
 
     // Create route prefixes
     const customerResource = this.api.root.addResource("customer");
@@ -84,7 +83,10 @@ export class ApiGatewayStack extends Construct {
     });
   }
 
-  private addHealthCheckEndpoint(resource: apigateway.Resource, role: string): void {
+  private addHealthCheckEndpoint(
+    resource: apigateway.Resource,
+    role: string,
+  ): void {
     // Create /health endpoint under each role prefix
     const healthResource = resource.addResource("health");
 
@@ -120,23 +122,16 @@ export class ApiGatewayStack extends Construct {
     });
 
     // Add GET method with authorizer
-    healthResource.addMethod("GET", new apigateway.LambdaIntegration(healthCheckFn), {
-      authorizer: this.authorizer,
-      authorizationType: apigateway.AuthorizationType.CUSTOM,
-    });
+    healthResource.addMethod(
+      "GET",
+      new apigateway.LambdaIntegration(healthCheckFn),
+      {
+        authorizer: this.authorizer,
+        authorizationType: apigateway.AuthorizationType.CUSTOM,
+      },
+    );
 
-    // Add CORS preflight for health endpoint
-    healthResource.addCorsPreflight({
-      allowOrigins: ["*"],
-      allowMethods: ["GET", "OPTIONS"],
-      allowHeaders: [
-        "Content-Type",
-        "Authorization",
-        "X-Amz-Date",
-        "X-Api-Key",
-        "X-Amz-Security-Token",
-      ],
-    });
+    // CORS is handled by defaultCorsPreflightOptions on the API - no need to add manually
   }
 
   // Helper method to add custom endpoints later
@@ -144,7 +139,7 @@ export class ApiGatewayStack extends Construct {
     routePrefix: "customer" | "vendor" | "driver" | "admin",
     path: string,
     method: string,
-    handler: lambda.IFunction
+    handler: lambda.IFunction,
   ): void {
     const rootResource = this.api.root.getResource(routePrefix);
     if (!rootResource) {

@@ -3,9 +3,9 @@
  * Global state management for shopping cart
  */
 
-import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { create } from "zustand";
+import { createJSONStorage, persist } from "zustand/middleware";
 
 export interface CartProduct {
   id: string;
@@ -43,7 +43,7 @@ export const useCartStore = create<CartState>()(
       addItem: (product: CartProduct, quantity: number = 1) => {
         set((state) => {
           const existingItemIndex = state.items.findIndex(
-            (item) => item.product.id === product.id
+            (item) => item.product.id === product.id,
           );
 
           if (existingItemIndex >= 0) {
@@ -84,7 +84,7 @@ export const useCartStore = create<CartState>()(
 
         set((state) => {
           const existingItemIndex = state.items.findIndex(
-            (item) => item.product.id === productId
+            (item) => item.product.id === productId,
           );
 
           if (existingItemIndex >= 0) {
@@ -114,7 +114,7 @@ export const useCartStore = create<CartState>()(
         const state = get();
         return state.items.reduce(
           (total, item) => total + item.product.price * item.quantity,
-          0
+          0,
         );
       },
 
@@ -135,10 +135,10 @@ export const useCartStore = create<CartState>()(
       },
     }),
     {
-      name: 'glamgo-cart-storage',
+      name: "glamgo-cart-storage",
       storage: createJSONStorage(() => AsyncStorage),
-    }
-  )
+    },
+  ),
 );
 
 // Export hook for easy access

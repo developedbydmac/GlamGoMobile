@@ -2,11 +2,11 @@
 
 ## Test Credentials
 
-| Role | Email | Password | Expected Status |
-|------|-------|----------|-----------------|
-| CUSTOMER | customer1@test.com | TestPass123! | ✅ APPROVED |
-| VENDOR | vendor1@test.com | TestPass123! | ⏳ PENDING |
-| DRIVER | driver1@test.com | TestPass123! | ⏳ PENDING |
+| Role     | Email              | Password     | Expected Status |
+| -------- | ------------------ | ------------ | --------------- |
+| CUSTOMER | customer1@test.com | TestPass123! | ✅ APPROVED     |
+| VENDOR   | vendor1@test.com   | TestPass123! | ⏳ PENDING      |
+| DRIVER   | driver1@test.com   | TestPass123! | ⏳ PENDING      |
 
 ## Quick Commands
 
@@ -31,6 +31,7 @@ aws dynamodb scan --table-name UserProfile-<suffix> --region us-east-1
 ## What to Look For
 
 ### ✅ Success Indicators:
+
 - Email verification code arrives
 - No error alerts during signup
 - User redirected to appropriate dashboard
@@ -38,6 +39,7 @@ aws dynamodb scan --table-name UserProfile-<suffix> --region us-east-1
 - DynamoDB table populated (if persistence enabled)
 
 ### ❌ Failure Indicators:
+
 - "User already exists" error → Email already used
 - "Invalid password" → Check password requirements
 - "Network error" → Check Amplify Sandbox is running
@@ -47,12 +49,14 @@ aws dynamodb scan --table-name UserProfile-<suffix> --region us-east-1
 ## Current Known Behavior
 
 ### Action 1 (Current State):
+
 - ✅ Users can sign up
 - ✅ Cognito groups assigned correctly
 - ✅ Lambda creates UserProfile logic (logs only)
 - ⚠️ Vendors/Drivers can access dashboards even with PENDING status
 
 ### Action 2 (Coming Next):
+
 - 🎯 Block pending users from dashboard access
 - 🎯 Show "Waiting for Approval" screen
 - 🎯 Admin dashboard to approve users

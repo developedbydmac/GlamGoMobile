@@ -1,12 +1,12 @@
 /**
  * Inventory Service Layer
- * 
+ *
  * Wraps AWS AppSync GraphQL API calls for vendor product management.
  * Uses your existing Amplify DataStore schema from amplify/data/resource.ts
  */
 
-import { generateClient } from 'aws-amplify/data';
-import type { Schema } from '@/amplify/data/resource';
+import type { Schema } from "@/amplify/data/resource";
+import { generateClient } from "aws-amplify/data";
 
 const client = generateClient<Schema>();
 
@@ -31,21 +31,21 @@ export interface Product {
  */
 export const getInventory = async (): Promise<Product[]> => {
   try {
-    console.log('📦 Fetching vendor inventory from AppSync...');
-    
+    console.log("📦 Fetching vendor inventory from AppSync...");
+
     const { data: products, errors } = await client.models.Product.list({
       // This will automatically filter by owner (current authenticated user)
       // due to the authorization rules in your schema
     });
 
     if (errors) {
-      console.error('❌ GraphQL errors:', errors);
-      throw new Error('Failed to fetch inventory');
+      console.error("❌ GraphQL errors:", errors);
+      throw new Error("Failed to fetch inventory");
     }
 
     console.log(`✅ Fetched ${products.length} products`);
-    
-    return products.map(p => ({
+
+    return products.map((p) => ({
       id: p.id,
       name: p.name,
       price: p.price,
@@ -60,7 +60,7 @@ export const getInventory = async (): Promise<Product[]> => {
       updatedAt: p.updatedAt,
     }));
   } catch (error) {
-    console.error('❌ Error fetching inventory:', error);
+    console.error("❌ Error fetching inventory:", error);
     throw error;
   }
 };
@@ -70,30 +70,33 @@ export const getInventory = async (): Promise<Product[]> => {
  * Requires storeId - vendor must have a store first
  */
 export const addProduct = async (
-  product: Omit<Product, 'id' | 'createdAt' | 'updatedAt' | 'vendorId' | 'storeId'> & { storeId: string; vendorId: string }
+  product: Omit<
+    Product,
+    "id" | "createdAt" | "updatedAt" | "vendorId" | "storeId"
+  > & { storeId: string; vendorId: string },
 ): Promise<Product> => {
   try {
-    console.log('➕ Adding product to AppSync:', product.name);
+    console.log("➕ Adding product to AppSync:", product.name);
 
     const { data: newProduct, errors } = await client.models.Product.create({
       name: product.name,
       price: product.price,
-      description: product.description || '',
+      description: product.description || "",
       inventoryCount: product.inventoryCount,
       isAvailable: product.isAvailable,
       category: product.category,
-      imageKey: product.imageKey || '',
+      imageKey: product.imageKey || "",
       storeId: product.storeId,
       vendorId: product.vendorId,
     });
 
     if (errors || !newProduct) {
-      console.error('❌ GraphQL errors:', errors);
-      throw new Error('Failed to create product');
+      console.error("❌ GraphQL errors:", errors);
+      throw new Error("Failed to create product");
     }
 
-    console.log('✅ Product created:', newProduct.id);
-    
+    console.log("✅ Product created:", newProduct.id);
+
     return {
       id: newProduct.id,
       name: newProduct.name,
@@ -109,7 +112,7 @@ export const addProduct = async (
       updatedAt: newProduct.updatedAt,
     };
   } catch (error) {
-    console.error('❌ Error adding product:', error);
+    console.error("❌ Error adding product:", error);
     throw error;
   }
 };
@@ -120,26 +123,28 @@ export const addProduct = async (
  */
 export const updateProduct = async (product: Product): Promise<Product> => {
   try {
-    console.log('✏️ Updating product in AppSync:', product.id);
+    console.log("✏️ Updating product in AppSync:", product.id);
 
-    const { data: updatedProduct, errors } = await client.models.Product.update({
-      id: product.id,
-      name: product.name,
-      price: product.price,
-      description: product.description || '',
-      inventoryCount: product.inventoryCount,
-      isAvailable: product.isAvailable,
-      category: product.category,
-      imageKey: product.imageKey || '',
-    });
+    const { data: updatedProduct, errors } = await client.models.Product.update(
+      {
+        id: product.id,
+        name: product.name,
+        price: product.price,
+        description: product.description || "",
+        inventoryCount: product.inventoryCount,
+        isAvailable: product.isAvailable,
+        category: product.category,
+        imageKey: product.imageKey || "",
+      },
+    );
 
     if (errors || !updatedProduct) {
-      console.error('❌ GraphQL errors:', errors);
-      throw new Error('Failed to update product');
+      console.error("❌ GraphQL errors:", errors);
+      throw new Error("Failed to update product");
     }
 
-    console.log('✅ Product updated:', updatedProduct.id);
-    
+    console.log("✅ Product updated:", updatedProduct.id);
+
     return {
       id: updatedProduct.id,
       name: updatedProduct.name,
@@ -155,7 +160,7 @@ export const updateProduct = async (product: Product): Promise<Product> => {
       updatedAt: updatedProduct.updatedAt,
     };
   } catch (error) {
-    console.error('❌ Error updating product:', error);
+    console.error("❌ Error updating product:", error);
     throw error;
   }
 };
@@ -165,20 +170,20 @@ export const updateProduct = async (product: Product): Promise<Product> => {
  */
 export const deleteProduct = async (productId: string): Promise<void> => {
   try {
-    console.log('🗑️ Deleting product from AppSync:', productId);
+    console.log("🗑️ Deleting product from AppSync:", productId);
 
     const { data, errors } = await client.models.Product.delete({
       id: productId,
     });
 
     if (errors) {
-      console.error('❌ GraphQL errors:', errors);
-      throw new Error('Failed to delete product');
+      console.error("❌ GraphQL errors:", errors);
+      throw new Error("Failed to delete product");
     }
 
-    console.log('✅ Product deleted');
+    console.log("✅ Product deleted");
   } catch (error) {
-    console.error('❌ Error deleting product:', error);
+    console.error("❌ Error deleting product:", error);
     throw error;
   }
 };
@@ -192,17 +197,17 @@ export const getVendorStore = async (): Promise<any> => {
     const { data: stores, errors } = await client.models.Store.list();
 
     if (errors) {
-      console.error('❌ GraphQL errors:', errors);
-      throw new Error('Failed to fetch store');
+      console.error("❌ GraphQL errors:", errors);
+      throw new Error("Failed to fetch store");
     }
 
     if (stores.length === 0) {
-      throw new Error('NO_STORE_FOUND');
+      throw new Error("NO_STORE_FOUND");
     }
 
     return stores[0];
   } catch (error) {
-    console.error('❌ Error fetching store:', error);
+    console.error("❌ Error fetching store:", error);
     throw error;
   }
 };

@@ -3,12 +3,14 @@
 ## ✅ What Was Created
 
 ### 1. **Create Order Lambda** (`amplify/functions/orders/`)
+
 - **Handler**: `handler.ts` (280 lines)
 - **Purpose**: Create customer orders with inventory validation
 - **Route**: `POST /customer/orders`
 - **Authorization**: CUSTOMER role only
 
 **Key Features:**
+
 - ✅ Validates customer data (ID, name, email, delivery address)
 - ✅ Validates order items (productId, quantity, price)
 - ✅ Checks inventory availability (TODO: integrate with DynamoDB)
@@ -19,6 +21,7 @@
 - ✅ CORS headers on all responses
 
 **Request Format:**
+
 ```typescript
 POST /customer/orders
 Content-Type: application/json
@@ -44,12 +47,13 @@ Authorization: Bearer <customer-jwt-token>
 ```
 
 **Response Format:**
+
 ```json
 {
   "orderId": "order-abc123",
   "status": "PENDING",
   "totalAmount": 31.98,
-  "deliveryFee": 5.00,
+  "deliveryFee": 5.0,
   "grandTotal": 36.98,
   "itemCount": 2,
   "message": "Order created successfully"
@@ -59,12 +63,14 @@ Authorization: Bearer <customer-jwt-token>
 ---
 
 ### 2. **Find Nearby Drivers Lambda** (`amplify/functions/dispatch/`)
+
 - **Handler**: `handler.ts` (320 lines)
 - **Purpose**: Find available drivers within radius using geospatial queries
 - **Route**: `GET /driver/nearby?lat=34.0522&lng=-118.2437`
 - **Authorization**: DRIVER role only
 
 **Key Features:**
+
 - ✅ Accepts lat/lng query parameters
 - ✅ Validates coordinates (-90 to 90, -180 to 180)
 - ✅ Queries Driver table for AVAILABLE status (TODO: integrate GSI)
@@ -76,17 +82,20 @@ Authorization: Bearer <customer-jwt-token>
 - ✅ Full error handling and CORS
 
 **Request Format:**
+
 ```
 GET /driver/nearby?lat=34.0522&lng=-118.2437&maxDistance=10
 Authorization: Bearer <driver-jwt-token>
 ```
 
 **Query Parameters:**
+
 - `lat` (required): Delivery latitude
 - `lng` (required): Delivery longitude
 - `maxDistance` (optional): Search radius in miles (default: 10)
 
 **Response Format:**
+
 ```json
 {
   "deliveryLocation": {
@@ -118,6 +127,7 @@ Authorization: Bearer <driver-jwt-token>
 ---
 
 ### 3. **Driver Model** (Added to `amplify/data/resource.ts`)
+
 ```typescript
 Driver: a.model({
   driverId: a.string().required(),
@@ -134,24 +144,26 @@ Driver: a.model({
   vehiclePlate: a.string(),
   lastLocationUpdate: a.datetime(),
 })
-.authorization((allow) => [
-  allow.owner(),
-  allow.authenticated().to(["read"]),
-])
-.secondaryIndexes((index) => [
-  index("status").queryField("listDriversByStatus"),
-  index("status").sortKeys(["geohash"]).queryField("listDriversByStatusAndGeohash"),
-])
+  .authorization((allow) => [allow.owner(), allow.authenticated().to(["read"])])
+  .secondaryIndexes((index) => [
+    index("status").queryField("listDriversByStatus"),
+    index("status")
+      .sortKeys(["geohash"])
+      .queryField("listDriversByStatusAndGeohash"),
+  ]);
 ```
 
 **Secondary Indexes:**
+
 - `listDriversByStatus`: Query all drivers by status (AVAILABLE/BUSY/OFFLINE)
 - `listDriversByStatusAndGeohash`: Efficient geospatial queries using status + geohash
 
 ---
 
 ### 4. **Order Model Updates** (Modified in `amplify/data/resource.ts`)
+
 Added fields:
+
 - `deliveryLat: a.float()` - Delivery latitude
 - `deliveryLng: a.float()` - Delivery longitude
 - `deliveryFee: a.float().default(0)` - Delivery fee amount
@@ -159,20 +171,21 @@ Added fields:
 ---
 
 ### 5. **API Gateway Integration** (Updated `amplify/backend.ts`)
+
 ```typescript
 // New endpoints added to API Gateway
 apiGatewayStack.addCustomEndpoint(
-  'customer',
-  'orders',
-  'POST',
-  backend.createOrder.resources.lambda
+  "customer",
+  "orders",
+  "POST",
+  backend.createOrder.resources.lambda,
 );
 
 apiGatewayStack.addCustomEndpoint(
-  'driver',
-  'nearby',
-  'GET',
-  backend.findNearbyDrivers.resources.lambda
+  "driver",
+  "nearby",
+  "GET",
+  backend.findNearbyDrivers.resources.lambda,
 );
 ```
 
@@ -181,6 +194,7 @@ apiGatewayStack.addCustomEndpoint(
 ## 📋 Deployment Checklist
 
 ### Pre-Deployment
+
 - [x] Driver model added to schema
 - [x] Order model updated with lat/lng/deliveryFee
 - [x] create-order Lambda function complete
@@ -191,6 +205,7 @@ apiGatewayStack.addCustomEndpoint(
 - [x] Dependencies installed
 
 ### Deploy
+
 ```bash
 # Deploy all infrastructure and functions
 npx ampx sandbox
@@ -206,6 +221,7 @@ npx ampx sandbox
 ### 1. Test Create Order Endpoint
 
 **As Customer User:**
+
 ```bash
 # Get your JWT token from Expo app (customer@test.com)
 # Copy the idToken from AsyncStorage or API client
@@ -233,12 +249,13 @@ curl -X POST https://YOUR-API-URL/prod/customer/orders \
 ```
 
 **Expected Response (200):**
+
 ```json
 {
   "orderId": "order-xxx",
   "status": "PENDING",
   "totalAmount": 51.98,
-  "deliveryFee": 5.20,
+  "deliveryFee": 5.2,
   "grandTotal": 57.18,
   "itemCount": 2,
   "message": "Order created successfully"
@@ -246,6 +263,7 @@ curl -X POST https://YOUR-API-URL/prod/customer/orders \
 ```
 
 **Test Missing Fields (400):**
+
 ```bash
 curl -X POST https://YOUR-API-URL/prod/customer/orders \
   -H "Authorization: Bearer YOUR-CUSTOMER-JWT-TOKEN" \
@@ -259,6 +277,7 @@ Expected: `400 Bad Request` with validation errors
 ### 2. Test Find Nearby Drivers Endpoint
 
 **As Driver User:**
+
 ```bash
 # First, create a driver user and sign in
 # Get JWT token from driver@test.com
@@ -268,6 +287,7 @@ curl -X GET "https://YOUR-API-URL/prod/driver/nearby?lat=34.0522&lng=-118.2437&m
 ```
 
 **Expected Response (200):**
+
 ```json
 {
   "deliveryLocation": {
@@ -297,6 +317,7 @@ curl -X GET "https://YOUR-API-URL/prod/driver/nearby?lat=34.0522&lng=-118.2437&m
 ```
 
 **Test Missing Coordinates (400):**
+
 ```bash
 curl -X GET "https://YOUR-API-URL/prod/driver/nearby" \
   -H "Authorization: Bearer YOUR-DRIVER-JWT-TOKEN"
@@ -309,6 +330,7 @@ Expected: `400 Bad Request` with error message about missing lat/lng
 ### 3. Test Role Authorization
 
 **Customer tries to access driver endpoint (should fail):**
+
 ```bash
 curl -X GET "https://YOUR-API-URL/prod/driver/nearby?lat=34.0522&lng=-118.2437" \
   -H "Authorization: Bearer YOUR-CUSTOMER-JWT-TOKEN"
@@ -317,6 +339,7 @@ curl -X GET "https://YOUR-API-URL/prod/driver/nearby?lat=34.0522&lng=-118.2437" 
 Expected: `403 Forbidden` (Lambda authorizer denies access)
 
 **Driver tries to create order (should fail):**
+
 ```bash
 curl -X POST https://YOUR-API-URL/prod/customer/orders \
   -H "Authorization: Bearer YOUR-DRIVER-JWT-TOKEN" \
@@ -337,7 +360,7 @@ Add these methods to the API client:
 // Customer API
 export const customerApi = {
   healthCheck: () => apiClient.healthCheck("customer"),
-  
+
   // NEW: Create order
   createOrder: async (orderData: {
     customerId: string;
@@ -361,15 +384,15 @@ export const customerApi = {
 // Driver API
 export const driverApi = {
   healthCheck: () => apiClient.healthCheck("driver"),
-  
+
   // NEW: Find nearby drivers
   findNearbyDrivers: async (
     lat: number,
     lng: number,
-    maxDistance: number = 10
+    maxDistance: number = 10,
   ) => {
     return apiClient.get(
-      `/driver/nearby?lat=${lat}&lng=${lng}&maxDistance=${maxDistance}`
+      `/driver/nearby?lat=${lat}&lng=${lng}&maxDistance=${maxDistance}`,
     );
   },
 };
@@ -384,11 +407,12 @@ Both Lambda functions currently use **mock data**. To integrate with DynamoDB:
 ### For Create Order Lambda (`orders/handler.ts`):
 
 Replace `validateInventory()`:
+
 ```typescript
 async function validateInventory(items: OrderItem[]): Promise<void> {
   const response = await fetch(process.env.API_ENDPOINT!, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       query: `query GetProduct($id: ID!) {
         getProduct(id: $id) {
@@ -397,16 +421,17 @@ async function validateInventory(items: OrderItem[]): Promise<void> {
           isAvailable
         }
       }`,
-      variables: { id: items[0].productId }
-    })
+      variables: { id: items[0].productId },
+    }),
   });
-  
+
   const data = await response.json();
   // Validate stock levels
 }
 ```
 
 Replace `createOrderRecord()`:
+
 ```typescript
 async function createOrderRecord(...): Promise<string> {
   const response = await fetch(process.env.API_ENDPOINT!, {
@@ -422,7 +447,7 @@ async function createOrderRecord(...): Promise<string> {
       variables: { input: { /* order data */ } }
     })
   });
-  
+
   const data = await response.json();
   return data.data.createOrder.id;
 }
@@ -433,11 +458,12 @@ async function createOrderRecord(...): Promise<string> {
 ### For Find Nearby Drivers Lambda (`dispatch/handler.ts`):
 
 Replace `queryAvailableDrivers()`:
+
 ```typescript
 async function queryAvailableDrivers(): Promise<Driver[]> {
   const response = await fetch(process.env.API_ENDPOINT!, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       query: `query ListDriversByStatus($status: DriverStatus!) {
         listDriversByStatus(status: $status) {
@@ -455,10 +481,10 @@ async function queryAvailableDrivers(): Promise<Driver[]> {
           }
         }
       }`,
-      variables: { status: 'AVAILABLE' }
-    })
+      variables: { status: "AVAILABLE" },
+    }),
   });
-  
+
   const data = await response.json();
   return data.data.listDriversByStatus.items;
 }
@@ -469,6 +495,7 @@ async function queryAvailableDrivers(): Promise<Driver[]> {
 ## 🚀 Next Steps
 
 1. **Deploy to Sandbox**
+
    ```bash
    npx ampx sandbox
    ```
@@ -504,21 +531,24 @@ async function queryAvailableDrivers(): Promise<Driver[]> {
 ## 🔍 Troubleshooting
 
 ### Order Creation Fails
+
 - Check JWT token is valid customer token
 - Verify all required fields present
 - Check Lambda logs: `amplify/functions/orders/handler.ts`
 
 ### Driver Search Returns Empty
+
 - Verify drivers exist in DynamoDB with status=AVAILABLE
 - Check lat/lng coordinates valid
 - Verify maxDistance parameter (default 10 miles)
 - Check GSI created: `listDriversByStatusAndGeohash`
 
 ### Authorization Errors (403)
+
 - Verify JWT token in Authorization header
 - Check user is in correct Cognito group
-- Customer can only access /customer/* routes
-- Driver can only access /driver/* routes
+- Customer can only access /customer/\* routes
+- Driver can only access /driver/\* routes
 
 ---
 
@@ -533,6 +563,7 @@ async function queryAvailableDrivers(): Promise<Driver[]> {
 ## ✅ Summary
 
 **Created:**
+
 - ✅ Create Order Lambda (POST /customer/orders)
 - ✅ Find Nearby Drivers Lambda (GET /driver/nearby)
 - ✅ Driver model with geospatial GSI
@@ -541,6 +572,7 @@ async function queryAvailableDrivers(): Promise<Driver[]> {
 - ✅ Full error handling and CORS
 
 **Ready to Deploy:**
+
 ```bash
 npx ampx sandbox
 ```

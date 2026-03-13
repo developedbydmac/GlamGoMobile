@@ -2,16 +2,19 @@ import type { Schema } from "@/amplify/data/resource";
 import {
     BorderRadius,
     Colors,
+    Shadows,
     Spacing,
     Typography,
-    Shadows,
 } from "@/constants/DesignSystem";
-import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { getCurrentCognitoUser } from "@/services/cognitoAuth";
+import { Ionicons } from "@expo/vector-icons";
 import { generateClient } from "aws-amplify/data";
+import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
     ActivityIndicator,
+    Dimensions,
     Image,
     ScrollView,
     StyleSheet,
@@ -19,13 +22,10 @@ import {
     TextInput,
     TouchableOpacity,
     View,
-    Dimensions,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { LinearGradient } from "expo-linear-gradient";
-import { getCurrentCognitoUser } from "@/services/cognitoAuth";
 
-const { width } = Dimensions.get('window');
+const { width } = Dimensions.get("window");
 
 const client = generateClient<Schema>();
 
@@ -119,7 +119,7 @@ const mockServices = [
     id: "8",
     name: "Luxury Perfume Gift Set",
     storeName: "Fragrance Boutique",
-    price: 120.00,
+    price: 120.0,
     rating: 4.9,
     category: "Fragrances",
     image:
@@ -151,7 +151,7 @@ export default function CustomerShopScreen() {
       const currentUser = await getCurrentCognitoUser();
       setUser(currentUser);
     } catch (error) {
-      console.log('Could not fetch user:', error);
+      // User not logged in yet - normal during initial load
     }
   }
 
@@ -161,7 +161,6 @@ export default function CustomerShopScreen() {
 
       // DEMO MODE: Use mock data immediately
       if (DEMO_MODE) {
-        console.log("🎬 DEMO MODE: Using mock services");
         setServices(mockServices);
         setFilteredServices(mockServices);
         setUseMockData(true);
@@ -190,7 +189,7 @@ export default function CustomerShopScreen() {
                 });
                 storeName = storeResult.data?.name || "Store";
               } catch (error) {
-                console.log("Could not fetch store details:", error);
+                // Store details fetch failed - use default name
               }
             }
 
@@ -211,12 +210,10 @@ export default function CustomerShopScreen() {
         setUseMockData(false);
       } else {
         // No products in database, use mock data
-        console.log("No products found, using mock data");
         setServices(mockServices);
         setUseMockData(true);
       }
     } catch (error) {
-      console.error("Error fetching products:", error);
       // Fallback to mock data on error
       setServices(mockServices);
       setUseMockData(true);
@@ -290,12 +287,12 @@ export default function CustomerShopScreen() {
             <View>
               <Text style={styles.welcomeText}>Welcome back!</Text>
               <Text style={styles.userName}>
-                {user?.email?.split('@')[0] || 'Customer'} 🛍️
+                {user?.email?.split("@")[0] || "Customer"} 🛍️
               </Text>
             </View>
-            <TouchableOpacity 
+            <TouchableOpacity
               style={styles.profileButton}
-              onPress={() => router.push('/(customer)/profile' as any)}
+              onPress={() => router.push("/(customer)/profile" as any)}
             >
               <LinearGradient
                 colors={[Colors.primary.lightPlum, Colors.primary.deepPlum]}
@@ -304,7 +301,7 @@ export default function CustomerShopScreen() {
                 end={{ x: 1, y: 1 }}
               >
                 <Text style={styles.profileInitial}>
-                  {(user?.email?.charAt(0) || 'C').toUpperCase()}
+                  {(user?.email?.charAt(0) || "C").toUpperCase()}
                 </Text>
               </LinearGradient>
             </TouchableOpacity>
@@ -314,14 +311,22 @@ export default function CustomerShopScreen() {
           <View style={styles.statsContainer}>
             <View style={styles.statCard}>
               <View style={styles.statIconContainer}>
-                <Ionicons name="cart" size={20} color={Colors.primary.deepPlum} />
+                <Ionicons
+                  name="cart"
+                  size={20}
+                  color={Colors.primary.deepPlum}
+                />
               </View>
               <Text style={styles.statValue}>0</Text>
               <Text style={styles.statLabel}>Cart Items</Text>
             </View>
             <View style={styles.statCard}>
               <View style={styles.statIconContainer}>
-                <Ionicons name="receipt" size={20} color={Colors.secondary.softGold} />
+                <Ionicons
+                  name="receipt"
+                  size={20}
+                  color={Colors.secondary.softGold}
+                />
               </View>
               <Text style={styles.statValue}>0</Text>
               <Text style={styles.statLabel}>Active Orders</Text>
@@ -412,7 +417,9 @@ export default function CustomerShopScreen() {
                 key={service.id}
                 style={styles.serviceCard}
                 activeOpacity={0.7}
-                onPress={() => router.push(`/product-detail?id=${service.id}` as any)}
+                onPress={() =>
+                  router.push(`/product-detail?id=${service.id}` as any)
+                }
               >
                 <Image
                   source={{ uri: service.image }}
@@ -635,9 +642,9 @@ const styles = StyleSheet.create({
     borderBottomColor: Colors.neutral.lightGrey,
   },
   welcomeHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     marginBottom: Spacing.lg,
   },
   welcomeText: {
@@ -646,7 +653,7 @@ const styles = StyleSheet.create({
     fontFamily: Typography.fontFamily.body,
   },
   userName: {
-    fontSize: Typography.fontSize['2xl'],
+    fontSize: Typography.fontSize["2xl"],
     fontWeight: Typography.fontWeight.bold,
     color: Colors.neutral.darkText,
     fontFamily: Typography.fontFamily.heading,
@@ -660,8 +667,8 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 25,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   profileInitial: {
     fontSize: Typography.fontSize.xl,
@@ -670,7 +677,7 @@ const styles = StyleSheet.create({
     fontFamily: Typography.fontFamily.heading,
   },
   statsContainer: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: Spacing.sm,
   },
   statCard: {
@@ -678,7 +685,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.neutral.blushCream,
     borderRadius: BorderRadius.lg,
     padding: Spacing.md,
-    alignItems: 'center',
+    alignItems: "center",
     borderWidth: 1,
     borderColor: Colors.neutral.lightGrey,
   },
@@ -687,8 +694,8 @@ const styles = StyleSheet.create({
     height: 36,
     borderRadius: 18,
     backgroundColor: Colors.neutral.white,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     marginBottom: Spacing.xs,
     ...Shadows.subtle,
   },
@@ -703,7 +710,7 @@ const styles = StyleSheet.create({
     fontSize: Typography.fontSize.xs,
     color: Colors.neutral.mediumGrey,
     fontFamily: Typography.fontFamily.body,
-    textAlign: 'center',
+    textAlign: "center",
     marginTop: Spacing.xs,
   },
 });

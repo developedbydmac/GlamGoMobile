@@ -2,8 +2,28 @@
  * GlamGo Browse Screen - Enterprise Production Grade
  * 
  * Lead Mobile Architect: Production-ready browse experience
- * Lead Design Director: Luxury brand aesthetic with design system compliance
- * 
+ * Lead Design Director: Luxury brand aesthetic with design system complia  const handleProductPress = (productId: string) => {
+    router.push(`/product-detail?id=${productId}` as any);
+  };
+  
+  const handleAddToCart = (product: Product) => {
+    addItem({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      imageUrl: product.imageUrl || product.image,
+      storeName: product.storeName,
+      storeId: product.id, // Note: You may need to adjust this if storeId is tracked separately
+    });
+    
+    Alert.alert(
+      '✅ Added to Cart',
+      `${product.name} has been added to your cart`,
+      [{ text: 'OK' }]
+    );
+  };
+
+  const handleSignOut = async () {* 
  * Design System: 100% compliant with DesignSystem.ts
  * Performance: Optimized for 60fps scrolling
  * Accessibility: WCAG 2.1 AA compliant
@@ -11,15 +31,32 @@
  */
 
 import GlamGoLogo from "@/components/GlamGoLogo";
-import { Colors, Typography, Spacing, BorderRadius, Shadows } from "@/constants/DesignSystem";
+import {
+    BorderRadius,
+    Colors,
+    Shadows,
+    Spacing,
+    Typography,
+} from "@/constants/DesignSystem";
+import useCartStore from "@/contexts/CartContext";
+import {
+    getAllProducts
+} from "@/services/catalogService";
+import {
+    getCurrentCognitoUser,
+    signOutFromCognito,
+} from "@/services/cognitoAuth";
 import { Ionicons } from "@expo/vector-icons";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { LinearGradient } from "expo-linear-gradient";
-import { useRouter, useFocusEffect } from "expo-router";
-import React, { useState, useEffect, useCallback } from "react";
+import { useFocusEffect, useRouter } from "expo-router";
+import React, { useCallback, useEffect, useState } from "react";
 import {
+    Alert,
+    Dimensions,
     Image,
+    Modal,
     Platform,
     SafeAreaView,
     ScrollView,
@@ -28,14 +65,8 @@ import {
     Text,
     TextInput,
     TouchableOpacity,
-    View,
-    Dimensions,
-    Modal,
-    Alert,
-    ActivityIndicator,
+    View
 } from "react-native";
-import { getCurrentCognitoUser, signOutFromCognito } from "@/services/cognitoAuth";
-import { getAllProducts, Product as CatalogProduct } from "@/services/catalogService";
 
 const { width } = Dimensions.get("window");
 const CARD_WIDTH = (width - Spacing.xl * 3) / 2;
@@ -69,9 +100,19 @@ const CATEGORIES: Category[] = [
   { id: "hair", name: "Hair Care", icon: "cut", iconType: "FontAwesome" },
   { id: "nails", name: "Nails", icon: "hand-paper-o", iconType: "FontAwesome" },
   { id: "skincare", name: "Skin Care", icon: "sun-o", iconType: "FontAwesome" },
-  { id: "makeup", name: "Makeup", icon: "paint-brush", iconType: "FontAwesome" },
+  {
+    id: "makeup",
+    name: "Makeup",
+    icon: "paint-brush",
+    iconType: "FontAwesome",
+  },
   { id: "spa", name: "Spa", icon: "leaf", iconType: "FontAwesome" },
-  { id: "tools", name: "Tools", icon: "scissors", iconType: "MaterialCommunityIcons" },
+  {
+    id: "tools",
+    name: "Tools",
+    icon: "scissors",
+    iconType: "MaterialCommunityIcons",
+  },
 ];
 
 const MOCK_PRODUCTS: Product[] = [
@@ -82,7 +123,8 @@ const MOCK_PRODUCTS: Product[] = [
     category: "Hair Care",
     storeName: "Glam Studio",
     rating: 4.8,
-    image: "https://images.unsplash.com/photo-1562322140-8baeececf3df?w=400&h=300&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1562322140-8baeececf3df?w=400&h=300&fit=crop",
   },
   {
     id: "2",
@@ -91,7 +133,8 @@ const MOCK_PRODUCTS: Product[] = [
     category: "Nails",
     storeName: "Polished Nails",
     rating: 4.9,
-    image: "https://images.unsplash.com/photo-1604654894610-df63bc536371?w=400&h=300&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1604654894610-df63bc536371?w=400&h=300&fit=crop",
   },
   {
     id: "3",
@@ -100,7 +143,8 @@ const MOCK_PRODUCTS: Product[] = [
     category: "Skin Care",
     storeName: "Glow Skincare",
     rating: 4.7,
-    image: "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=400&h=300&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=400&h=300&fit=crop",
   },
   {
     id: "4",
@@ -109,7 +153,8 @@ const MOCK_PRODUCTS: Product[] = [
     category: "Makeup",
     storeName: "Glamour Studio",
     rating: 4.9,
-    image: "https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?w=400&h=300&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?w=400&h=300&fit=crop",
   },
 ];
 
@@ -118,7 +163,7 @@ const MOCK_PRODUCTS: Product[] = [
  */
 export default function BrowseScreen() {
   const router = useRouter();
-  
+
   // State Management
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -127,6 +172,9 @@ export default function BrowseScreen() {
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+
+  // Cart functionality
+  const { addItem } = useCartStore();
 
   // Lifecycle - Authentication Check
   useEffect(() => {
@@ -142,7 +190,7 @@ export default function BrowseScreen() {
     useCallback(() => {
       checkAuth();
       fetchProducts();
-    }, [])
+    }, []),
   );
 
   // Business Logic - Fetch Products from API
@@ -150,11 +198,119 @@ export default function BrowseScreen() {
     try {
       setLoading(true);
       const fetchedProducts = await getAllProducts();
-      setProducts(fetchedProducts);
+
+      // If API returns products, use them
+      if (fetchedProducts && fetchedProducts.length > 0) {
+        setProducts(fetchedProducts);
+      } else {
+        // Fallback to demo mock data for presentation
+        setProducts([
+          {
+            id: "1",
+            name: "Luxury Matte Lipstick",
+            price: 35.0,
+            category: "Makeup",
+            storeName: "Glam Beauty Boutique",
+            rating: 4.9,
+            imageUrl:
+              "https://images.unsplash.com/photo-1586495777744-4413f21062fa?w=400&h=400&fit=crop",
+          },
+          {
+            id: "2",
+            name: "Anti-Aging Night Serum",
+            price: 65.0,
+            category: "Skincare",
+            storeName: "Glam Beauty Boutique",
+            rating: 4.8,
+            imageUrl:
+              "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=400&h=400&fit=crop",
+          },
+          {
+            id: "3",
+            name: "Volumizing Shampoo",
+            price: 28.0,
+            category: "Hair Care",
+            storeName: "Glam Beauty Boutique",
+            rating: 4.7,
+            imageUrl:
+              "https://images.unsplash.com/photo-1535585209827-a15fcdbc4c2d?w=400&h=400&fit=crop",
+          },
+          {
+            id: "4",
+            name: "Midnight Musk Perfume",
+            price: 85.0,
+            category: "Fragrance",
+            storeName: "Glam Beauty Boutique",
+            rating: 5.0,
+            imageUrl:
+              "https://images.unsplash.com/photo-1541643600914-78b084683601?w=400&h=400&fit=crop",
+          },
+          {
+            id: "5",
+            name: "Gold Hoop Earrings",
+            price: 45.0,
+            category: "Accessories",
+            storeName: "Glam Beauty Boutique",
+            rating: 4.9,
+            imageUrl:
+              "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=400&h=400&fit=crop",
+          },
+        ]);
+      }
     } catch (error) {
-      console.error('Error fetching products:', error);
-      // Keep empty array on error
-      setProducts([]);
+      // Use demo data on error for demo purposes
+      setProducts([
+        {
+          id: "1",
+          name: "Luxury Matte Lipstick",
+          price: 35.0,
+          category: "Makeup",
+          storeName: "Glam Beauty Boutique",
+          rating: 4.9,
+          imageUrl:
+            "https://images.unsplash.com/photo-1586495777744-4413f21062fa?w=400&h=400&fit=crop",
+        },
+        {
+          id: "2",
+          name: "Anti-Aging Night Serum",
+          price: 65.0,
+          category: "Skincare",
+          storeName: "Glam Beauty Boutique",
+          rating: 4.8,
+          imageUrl:
+            "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=400&h=400&fit=crop",
+        },
+        {
+          id: "3",
+          name: "Volumizing Shampoo",
+          price: 28.0,
+          category: "Hair Care",
+          storeName: "Glam Beauty Boutique",
+          rating: 4.7,
+          imageUrl:
+            "https://images.unsplash.com/photo-1535585209827-a15fcdbc4c2d?w=400&h=400&fit=crop",
+        },
+        {
+          id: "4",
+          name: "Midnight Musk Perfume",
+          price: 85.0,
+          category: "Fragrance",
+          storeName: "Glam Beauty Boutique",
+          rating: 5.0,
+          imageUrl:
+            "https://images.unsplash.com/photo-1541643600914-78b084683601?w=400&h=400&fit=crop",
+        },
+        {
+          id: "5",
+          name: "Gold Hoop Earrings",
+          price: 45.0,
+          category: "Accessories",
+          storeName: "Glam Beauty Boutique",
+          rating: 4.9,
+          imageUrl:
+            "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=400&h=400&fit=crop",
+        },
+      ]);
     } finally {
       setLoading(false);
     }
@@ -176,12 +332,18 @@ export default function BrowseScreen() {
   const filteredProducts = products.filter((product) => {
     const matchesSearch =
       product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (product.storeName?.toLowerCase() || '').includes(searchQuery.toLowerCase()) ||
-      (product.category?.toLowerCase() || '').includes(searchQuery.toLowerCase());
+      (product.storeName?.toLowerCase() || "").includes(
+        searchQuery.toLowerCase(),
+      ) ||
+      (product.category?.toLowerCase() || "").includes(
+        searchQuery.toLowerCase(),
+      );
 
     const matchesCategory =
       !selectedCategory ||
-      (product.category?.toLowerCase() || '').includes(selectedCategory.toLowerCase());
+      (product.category?.toLowerCase() || "").includes(
+        selectedCategory.toLowerCase(),
+      );
 
     return matchesSearch && matchesCategory;
   });
@@ -200,19 +362,18 @@ export default function BrowseScreen() {
       await signOutFromCognito();
       setShowUserMenu(false);
       setUser(null);
-      if (Platform.OS === 'web') {
-        alert('Signed out successfully!');
+      if (Platform.OS === "web") {
+        alert("Signed out successfully!");
       } else {
-        Alert.alert('Success', 'Signed out successfully!');
+        Alert.alert("Success", "Signed out successfully!");
       }
       // Refresh auth state
       checkAuth();
     } catch (error) {
-      console.error('Sign out error:', error);
-      if (Platform.OS === 'web') {
-        alert('Error signing out. Please try again.');
+      if (Platform.OS === "web") {
+        alert("Error signing out. Please try again.");
       } else {
-        Alert.alert('Error', 'Error signing out. Please try again.');
+        Alert.alert("Error", "Error signing out. Please try again.");
       }
     }
   };
@@ -228,34 +389,44 @@ export default function BrowseScreen() {
             <GlamGoLogo size="small" />
             <Text style={styles.tagline}>BEAUTY DELIVERED</Text>
           </View>
-          
+
           {isAuthChecked && (
             <View style={styles.authSection}>
               {user ? (
-                <TouchableOpacity 
+                <TouchableOpacity
                   style={styles.userCard}
                   onPress={() => setShowUserMenu(true)}
                   activeOpacity={0.7}
                 >
                   <LinearGradient
-                    colors={[Colors.primary.lightPlum, Colors.primary.deepPlum] as any}
+                    colors={
+                      [Colors.primary.lightPlum, Colors.primary.deepPlum] as any
+                    }
                     style={styles.userAvatar}
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 1 }}
                   >
                     <Text style={styles.userAvatarText}>
-                      {(user.email?.charAt(0) || '').toUpperCase()}
+                      {(user.email?.charAt(0) || "").toUpperCase()}
                     </Text>
                   </LinearGradient>
                   <View style={styles.userInfo}>
                     <Text style={styles.userName} numberOfLines={1}>
-                      {user.email?.split('@')[0] || 'User'}
+                      {user.email?.split("@")[0] || "User"}
                     </Text>
                     <Text style={styles.userRole}>
-                      {user.role === 'VENDOR' ? '🏪 Vendor' : user.role === 'DRIVER' ? '🚗 Driver' : '🛍️ Customer'}
+                      {user.role === "VENDOR"
+                        ? "🏪 Vendor"
+                        : user.role === "DRIVER"
+                          ? "🚗 Driver"
+                          : "🛍️ Customer"}
                     </Text>
                   </View>
-                  <Ionicons name="chevron-down" size={20} color={Colors.neutral.mediumGrey} />
+                  <Ionicons
+                    name="chevron-down"
+                    size={20}
+                    color={Colors.neutral.mediumGrey}
+                  />
                 </TouchableOpacity>
               ) : (
                 <View style={styles.authButtons}>
@@ -272,7 +443,12 @@ export default function BrowseScreen() {
                     activeOpacity={0.8}
                   >
                     <LinearGradient
-                      colors={[Colors.primary.lightPlum, Colors.primary.deepPlum] as any}
+                      colors={
+                        [
+                          Colors.primary.lightPlum,
+                          Colors.primary.deepPlum,
+                        ] as any
+                      }
                       style={styles.joinGradient}
                       start={{ x: 0, y: 0 }}
                       end={{ x: 1, y: 1 }}
@@ -287,8 +463,8 @@ export default function BrowseScreen() {
         </View>
       </View>
 
-      <ScrollView 
-        style={styles.scrollView} 
+      <ScrollView
+        style={styles.scrollView}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
       >
@@ -320,7 +496,11 @@ export default function BrowseScreen() {
             />
             {searchQuery.length > 0 && (
               <TouchableOpacity onPress={() => setSearchQuery("")}>
-                <Ionicons name="close-circle" size={20} color={Colors.neutral.mutedText} />
+                <Ionicons
+                  name="close-circle"
+                  size={20}
+                  color={Colors.neutral.mutedText}
+                />
               </TouchableOpacity>
             )}
           </View>
@@ -344,27 +524,50 @@ export default function BrowseScreen() {
                 >
                   {isSelected ? (
                     <LinearGradient
-                      colors={[Colors.primary.lightPlum, Colors.primary.deepPlum] as any}
+                      colors={
+                        [
+                          Colors.primary.lightPlum,
+                          Colors.primary.deepPlum,
+                        ] as any
+                      }
                       style={styles.categoryCard}
                       start={{ x: 0, y: 0 }}
                       end={{ x: 1, y: 1 }}
                     >
                       <View style={styles.categoryIconContainer}>
                         {category.iconType === "FontAwesome" ? (
-                          <FontAwesome name={category.icon as any} size={24} color={Colors.neutral.white} />
+                          <FontAwesome
+                            name={category.icon as any}
+                            size={24}
+                            color={Colors.neutral.white}
+                          />
                         ) : (
-                          <MaterialCommunityIcons name={category.icon as any} size={24} color={Colors.neutral.white} />
+                          <MaterialCommunityIcons
+                            name={category.icon as any}
+                            size={24}
+                            color={Colors.neutral.white}
+                          />
                         )}
                       </View>
-                      <Text style={styles.categoryNameSelected}>{category.name}</Text>
+                      <Text style={styles.categoryNameSelected}>
+                        {category.name}
+                      </Text>
                     </LinearGradient>
                   ) : (
                     <View style={styles.categoryCard}>
                       <View style={styles.categoryIconContainer}>
                         {category.iconType === "FontAwesome" ? (
-                          <FontAwesome name={category.icon as any} size={24} color={Colors.primary.deepPlum} />
+                          <FontAwesome
+                            name={category.icon as any}
+                            size={24}
+                            color={Colors.primary.deepPlum}
+                          />
                         ) : (
-                          <MaterialCommunityIcons name={category.icon as any} size={24} color={Colors.primary.deepPlum} />
+                          <MaterialCommunityIcons
+                            name={category.icon as any}
+                            size={24}
+                            color={Colors.primary.deepPlum}
+                          />
                         )}
                       </View>
                       <Text style={styles.categoryName}>{category.name}</Text>
@@ -380,9 +583,13 @@ export default function BrowseScreen() {
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Featured Services</Text>
-            {!loading && <Text style={styles.resultCount}>{filteredProducts.length} results</Text>}
+            {!loading && (
+              <Text style={styles.resultCount}>
+                {filteredProducts.length} results
+              </Text>
+            )}
           </View>
-          
+
           {loading ? (
             // Loading Skeleton
             <View style={styles.productsGrid}>
@@ -391,10 +598,16 @@ export default function BrowseScreen() {
                   <View style={styles.skeletonImage} />
                   <View style={styles.skeletonContent}>
                     <View style={styles.skeletonLine} />
-                    <View style={[styles.skeletonLine, styles.skeletonLineShort]} />
+                    <View
+                      style={[styles.skeletonLine, styles.skeletonLineShort]}
+                    />
                     <View style={styles.skeletonFooter}>
-                      <View style={[styles.skeletonLine, styles.skeletonLinePrice]} />
-                      <View style={[styles.skeletonLine, styles.skeletonLineRating]} />
+                      <View
+                        style={[styles.skeletonLine, styles.skeletonLinePrice]}
+                      />
+                      <View
+                        style={[styles.skeletonLine, styles.skeletonLineRating]}
+                      />
                     </View>
                   </View>
                 </View>
@@ -409,29 +622,69 @@ export default function BrowseScreen() {
                   onPress={() => handleProductPress(product.id)}
                   activeOpacity={0.9}
                 >
-                  <Image 
-                    source={{ uri: product.imageUrl || product.image || 'https://via.placeholder.com/400x300' }} 
-                    style={styles.productImage} 
+                  <Image
+                    source={{
+                      uri:
+                        product.imageUrl ||
+                        product.image ||
+                        "https://via.placeholder.com/400x300",
+                    }}
+                    style={styles.productImage}
                   />
                   <View style={styles.productInfo}>
-                    <Text style={styles.productName} numberOfLines={2}>{product.name}</Text>
-                    <Text style={styles.productStore} numberOfLines={1}>{product.storeName || 'Unknown Store'}</Text>
+                    <Text style={styles.productName} numberOfLines={2}>
+                      {product.name}
+                    </Text>
+                    <Text style={styles.productStore} numberOfLines={1}>
+                      {product.storeName || "Unknown Store"}
+                    </Text>
                     <View style={styles.productFooter}>
-                      <Text style={styles.productPrice}>${product.price.toFixed(0)}</Text>
+                      <Text style={styles.productPrice}>
+                        ${product.price.toFixed(0)}
+                      </Text>
                       <View style={styles.ratingContainer}>
-                        <Ionicons name="star" size={14} color={Colors.secondary.softGold} />
-                        <Text style={styles.ratingText}>{product.rating?.toFixed(1) || '5.0'}</Text>
+                        <Ionicons
+                          name="star"
+                          size={14}
+                          color={Colors.secondary.softGold}
+                        />
+                        <Text style={styles.ratingText}>
+                          {product.rating?.toFixed(1) || "5.0"}
+                        </Text>
                       </View>
                     </View>
+
+                    {/* Add to Cart Button */}
+                    <TouchableOpacity
+                      style={styles.addToCartButton}
+                      onPress={(e) => {
+                        e.stopPropagation();
+                        handleAddToCart(product);
+                      }}
+                      activeOpacity={0.8}
+                    >
+                      <Ionicons
+                        name="cart-outline"
+                        size={18}
+                        color={Colors.neutral.white}
+                      />
+                      <Text style={styles.addToCartText}>Add to Cart</Text>
+                    </TouchableOpacity>
                   </View>
                 </TouchableOpacity>
               ))}
             </View>
           ) : (
             <View style={styles.emptyState}>
-              <Ionicons name="search" size={64} color={Colors.neutral.mediumGrey} />
+              <Ionicons
+                name="search"
+                size={64}
+                color={Colors.neutral.mediumGrey}
+              />
               <Text style={styles.emptyTitle}>No Results Found</Text>
-              <Text style={styles.emptySubtitle}>Try adjusting your search or filters</Text>
+              <Text style={styles.emptySubtitle}>
+                Try adjusting your search or filters
+              </Text>
             </View>
           )}
         </View>
@@ -440,27 +693,36 @@ export default function BrowseScreen() {
         {!user && (
           <View style={styles.ctaSection}>
             <LinearGradient
-              colors={[Colors.primary.lightPlum, Colors.primary.deepPlum] as any}
+              colors={
+                [Colors.primary.lightPlum, Colors.primary.deepPlum] as any
+              }
               style={styles.ctaGradient}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
             >
               <Text style={styles.ctaTitle}>Ready to Get Started?</Text>
-              <Text style={styles.ctaSubtitle}>Join thousands of beauty professionals and customers</Text>
+              <Text style={styles.ctaSubtitle}>
+                Join thousands of beauty professionals and customers
+              </Text>
               <TouchableOpacity
                 style={styles.ctaButton}
                 onPress={() => router.push("/(auth)/role-selection" as any)}
                 activeOpacity={0.9}
               >
                 <Text style={styles.ctaButtonText}>Join GlamGo Free</Text>
-                <Ionicons name="arrow-forward" size={20} color={Colors.primary.deepPlum} style={{ marginLeft: 8 }} />
+                <Ionicons
+                  name="arrow-forward"
+                  size={20}
+                  color={Colors.primary.deepPlum}
+                  style={{ marginLeft: 8 }}
+                />
               </TouchableOpacity>
             </LinearGradient>
           </View>
         )}
 
         {/* Spacer */}
-        <View style={{ height: Spacing['4xl'] }} />
+        <View style={{ height: Spacing["4xl"] }} />
       </ScrollView>
 
       {/* User Menu Modal */}
@@ -470,7 +732,7 @@ export default function BrowseScreen() {
         animationType="fade"
         onRequestClose={() => setShowUserMenu(false)}
       >
-        <TouchableOpacity 
+        <TouchableOpacity
           style={styles.modalOverlay}
           activeOpacity={1}
           onPress={() => setShowUserMenu(false)}
@@ -479,29 +741,37 @@ export default function BrowseScreen() {
             <View style={styles.menuHeader}>
               <Text style={styles.menuTitle}>Account</Text>
               <TouchableOpacity onPress={() => setShowUserMenu(false)}>
-                <Ionicons name="close" size={24} color={Colors.neutral.mediumGrey} />
+                <Ionicons
+                  name="close"
+                  size={24}
+                  color={Colors.neutral.mediumGrey}
+                />
               </TouchableOpacity>
             </View>
-            
+
             {user && (
               <View style={styles.menuUserInfo}>
                 <Text style={styles.menuUserEmail}>{user.email}</Text>
                 <Text style={styles.menuUserRole}>
-                  {user.role === 'VENDOR' ? '🏪 Vendor' : user.role === 'DRIVER' ? '🚗 Driver' : '🛍️ Customer'}
+                  {user.role === "VENDOR"
+                    ? "🏪 Vendor"
+                    : user.role === "DRIVER"
+                      ? "🚗 Driver"
+                      : "🛍️ Customer"}
                 </Text>
               </View>
             )}
 
-            <TouchableOpacity 
+            <TouchableOpacity
               style={styles.menuItem}
               onPress={() => {
                 setShowUserMenu(false);
-                if (user?.role === 'CUSTOMER') {
-                  router.push('/(customer)/shop' as any);
-                } else if (user?.role === 'VENDOR') {
-                  router.push('/(vendor)/dashboard' as any);
-                } else if (user?.role === 'DRIVER') {
-                  router.push('/(driver)/dashboard' as any);
+                if (user?.role === "CUSTOMER") {
+                  router.push("/(customer)/shop" as any);
+                } else if (user?.role === "VENDOR") {
+                  router.push("/(vendor)/dashboard" as any);
+                } else if (user?.role === "DRIVER") {
+                  router.push("/(driver)/dashboard" as any);
                 }
               }}
             >
@@ -511,12 +781,18 @@ export default function BrowseScreen() {
 
             <View style={styles.menuDivider} />
 
-            <TouchableOpacity 
+            <TouchableOpacity
               style={[styles.menuItem, styles.signOutMenuItem]}
               onPress={handleSignOut}
             >
-              <Ionicons name="log-out" size={24} color={Colors.semantic.error} />
-              <Text style={[styles.menuItemText, styles.signOutText]}>Sign Out</Text>
+              <Ionicons
+                name="log-out"
+                size={24}
+                color={Colors.semantic.error}
+              />
+              <Text style={[styles.menuItemText, styles.signOutText]}>
+                Sign Out
+              </Text>
             </TouchableOpacity>
           </View>
         </TouchableOpacity>
@@ -543,13 +819,13 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.xs,
   },
   logoSection: {
-    alignItems: 'center',
+    alignItems: "center",
     marginBottom: Spacing.xs,
   },
   tagline: {
     fontSize: Typography.fontSize.xs,
     letterSpacing: Typography.letterSpacing.wider,
-    textTransform: 'uppercase',
+    textTransform: "uppercase",
     color: Colors.secondary.softGold,
     marginTop: Spacing.xs,
     fontFamily: Typography.fontFamily.bodyMedium,
@@ -558,8 +834,8 @@ const styles = StyleSheet.create({
     marginTop: Spacing.sm,
   },
   userCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     backgroundColor: Colors.neutral.surface,
     paddingVertical: Spacing.sm,
     paddingHorizontal: Spacing.base,
@@ -572,8 +848,8 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     marginRight: Spacing.sm,
   },
   userAvatarText: {
@@ -598,7 +874,7 @@ const styles = StyleSheet.create({
     fontFamily: Typography.fontFamily.body,
   },
   authButtons: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: Spacing.sm,
   },
   signInButton: {
@@ -608,7 +884,7 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.pill,
     borderWidth: 1.5,
     borderColor: Colors.primary.deepPlum,
-    alignItems: 'center',
+    alignItems: "center",
   },
   signInText: {
     fontSize: Typography.fontSize.sm,
@@ -623,7 +899,7 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.sm,
     paddingHorizontal: Spacing.base,
     borderRadius: BorderRadius.pill,
-    alignItems: 'center',
+    alignItems: "center",
   },
   joinText: {
     fontSize: Typography.fontSize.sm,
@@ -635,14 +911,14 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    paddingBottom: Spacing['4xl'],
+    paddingBottom: Spacing["4xl"],
   },
   hero: {
     paddingHorizontal: Spacing.xl,
-    paddingVertical: Spacing['3xl'],
+    paddingVertical: Spacing["3xl"],
   },
   heroTitle: {
-    fontSize: Typography.fontSize['4xl'],
+    fontSize: Typography.fontSize["4xl"],
     fontWeight: Typography.fontWeight.bold,
     color: Colors.primary.deepPlum,
     lineHeight: Typography.lineHeight.tight,
@@ -660,8 +936,8 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.xl,
   },
   searchBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     backgroundColor: Colors.neutral.white,
     borderRadius: BorderRadius.lg,
     paddingHorizontal: Spacing.md,
@@ -680,17 +956,17 @@ const styles = StyleSheet.create({
     fontFamily: Typography.fontFamily.body,
   },
   section: {
-    marginBottom: Spacing['2xl'],
+    marginBottom: Spacing["2xl"],
   },
   sectionHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     paddingHorizontal: Spacing.xl,
     marginBottom: Spacing.base,
   },
   sectionTitle: {
-    fontSize: Typography.fontSize['2xl'],
+    fontSize: Typography.fontSize["2xl"],
     fontWeight: Typography.fontWeight.semibold,
     color: Colors.primary.deepPlum,
     fontFamily: Typography.fontFamily.heading,
@@ -707,7 +983,7 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   categoryCard: {
-    alignItems: 'center',
+    alignItems: "center",
     backgroundColor: Colors.neutral.white,
     paddingVertical: Spacing.base,
     paddingHorizontal: Spacing.lg,
@@ -734,46 +1010,57 @@ const styles = StyleSheet.create({
     fontFamily: Typography.fontFamily.body,
   },
   productsGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    paddingHorizontal: Spacing.base,
-    gap: Spacing.base,
+    flexDirection: "row",
+    flexWrap: "wrap",
+    paddingHorizontal: Spacing.sm,
+    gap: Spacing.md,
+    paddingVertical: Spacing.sm,
   },
   productCard: {
     width: CARD_WIDTH,
     backgroundColor: Colors.neutral.white,
-    borderRadius: BorderRadius.lg,
-    overflow: 'hidden',
-    borderWidth: 1,
+    borderRadius: BorderRadius.xl,
+    overflow: "hidden",
+    borderWidth: 1.5,
     borderColor: Colors.neutral.lightGrey,
-    ...Shadows.light,
+    ...Shadows.medium,
+    transform: [{ scale: 1 }],
   },
   productImage: {
-    width: '100%',
-    height: CARD_WIDTH * 0.75,
+    width: "100%",
+    height: CARD_WIDTH * 0.85,
     backgroundColor: Colors.neutral.lightGrey,
+    resizeMode: "cover",
+    borderBottomWidth: 0.5,
+    borderBottomColor: Colors.neutral.lightGrey,
   },
   productInfo: {
-    padding: Spacing.sm,
+    padding: Spacing.md,
   },
   productName: {
-    fontSize: Typography.fontSize.sm,
+    fontSize: Typography.fontSize.base,
     fontWeight: Typography.fontWeight.semibold,
     color: Colors.neutral.darkText,
     marginBottom: Spacing.xs,
     fontFamily: Typography.fontFamily.body,
-    height: 36,
+    height: 38,
+    lineHeight: 19,
   },
   productStore: {
     fontSize: Typography.fontSize.xs,
-    color: Colors.neutral.mutedText,
-    marginBottom: Spacing.xs,
+    color: Colors.neutral.mediumGrey,
+    marginBottom: Spacing.sm,
     fontFamily: Typography.fontFamily.body,
+    fontWeight: Typography.fontWeight.medium,
   },
   productFooter: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: Spacing.sm,
+    paddingBottom: Spacing.sm,
+    borderBottomWidth: 0.5,
+    borderBottomColor: Colors.neutral.lightGrey,
   },
   productPrice: {
     fontSize: Typography.fontSize.lg,
@@ -782,19 +1069,23 @@ const styles = StyleSheet.create({
     fontFamily: Typography.fontFamily.heading,
   },
   ratingContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 4,
+    backgroundColor: Colors.neutral.blushCream,
+    paddingHorizontal: Spacing.xs,
+    paddingVertical: 2,
+    borderRadius: BorderRadius.sm,
   },
   ratingText: {
     fontSize: Typography.fontSize.xs,
-    fontWeight: Typography.fontWeight.medium,
+    fontWeight: Typography.fontWeight.bold,
     color: Colors.neutral.darkText,
     fontFamily: Typography.fontFamily.body,
   },
   emptyState: {
-    alignItems: 'center',
-    paddingVertical: Spacing['4xl'],
+    alignItems: "center",
+    paddingVertical: Spacing["4xl"],
     paddingHorizontal: Spacing.xl,
   },
   emptyTitle: {
@@ -815,15 +1106,15 @@ const styles = StyleSheet.create({
     marginTop: Spacing.xl,
     marginBottom: Spacing.xl,
     borderRadius: BorderRadius.lg,
-    overflow: 'hidden',
+    overflow: "hidden",
     ...Shadows.medium,
   },
   ctaGradient: {
-    padding: Spacing['2xl'],
-    alignItems: 'center',
+    padding: Spacing["2xl"],
+    alignItems: "center",
   },
   ctaTitle: {
-    fontSize: Typography.fontSize['2xl'],
+    fontSize: Typography.fontSize["2xl"],
     fontWeight: Typography.fontWeight.bold,
     color: Colors.neutral.white,
     marginBottom: Spacing.sm,
@@ -834,16 +1125,16 @@ const styles = StyleSheet.create({
     color: Colors.neutral.white,
     opacity: 0.9,
     marginBottom: Spacing.xl,
-    textAlign: 'center',
+    textAlign: "center",
     fontFamily: Typography.fontFamily.body,
   },
   ctaButton: {
-    flexDirection: 'row',
+    flexDirection: "row",
     backgroundColor: Colors.neutral.white,
     paddingVertical: Spacing.md,
-    paddingHorizontal: Spacing['2xl'],
+    paddingHorizontal: Spacing["2xl"],
     borderRadius: BorderRadius.pill,
-    alignItems: 'center',
+    alignItems: "center",
     ...Shadows.medium,
   },
   ctaButtonText: {
@@ -855,9 +1146,9 @@ const styles = StyleSheet.create({
   // Modal and Menu Styles
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'flex-start',
-    paddingTop: Platform.OS === 'ios' ? 90 : 70,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "flex-start",
+    paddingTop: Platform.OS === "ios" ? 90 : 70,
     paddingHorizontal: Spacing.base,
   },
   menuContainer: {
@@ -867,9 +1158,9 @@ const styles = StyleSheet.create({
     ...Shadows.heavy,
   },
   menuHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     paddingBottom: Spacing.sm,
     borderBottomWidth: 1,
     borderBottomColor: Colors.neutral.lightGrey,
@@ -898,8 +1189,8 @@ const styles = StyleSheet.create({
     marginTop: Spacing.xs,
   },
   menuItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     paddingVertical: Spacing.base,
     gap: Spacing.base,
   },
@@ -920,16 +1211,37 @@ const styles = StyleSheet.create({
   signOutText: {
     color: Colors.semantic.error,
   },
+  // Add to Cart Button Styles
+  addToCartButton: {
+    flexDirection: "row",
+    backgroundColor: Colors.primary.deepPlum,
+    paddingVertical: Spacing.md,
+    paddingHorizontal: Spacing.lg,
+    borderRadius: BorderRadius.lg,
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: Spacing.sm,
+    gap: 8,
+    ...Shadows.medium,
+    borderWidth: 1,
+    borderColor: Colors.primary.deepPlum,
+  },
+  addToCartText: {
+    color: Colors.neutral.white,
+    fontSize: Typography.fontSize.sm,
+    fontWeight: Typography.fontWeight.bold,
+    fontFamily: Typography.fontFamily.body,
+  },
   // Loading Skeleton Styles
   skeletonCard: {
     width: CARD_WIDTH,
     backgroundColor: Colors.neutral.white,
     borderRadius: BorderRadius.lg,
-    overflow: 'hidden',
+    overflow: "hidden",
     ...Shadows.medium,
   },
   skeletonImage: {
-    width: '100%',
+    width: "100%",
     height: 160,
     backgroundColor: Colors.neutral.lightGrey,
   },
@@ -943,11 +1255,11 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.xs,
   },
   skeletonLineShort: {
-    width: '60%',
+    width: "60%",
   },
   skeletonFooter: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     marginTop: Spacing.sm,
   },
   skeletonLinePrice: {

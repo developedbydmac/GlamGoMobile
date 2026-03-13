@@ -1,8 +1,8 @@
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import {
-  DarkTheme,
-  DefaultTheme,
-  ThemeProvider,
+    DarkTheme,
+    DefaultTheme,
+    ThemeProvider,
 } from "@react-navigation/native";
 import { useFonts } from "expo-font";
 import { Stack, useRouter, useSegments } from "expo-router";
@@ -12,19 +12,19 @@ import { useColorScheme } from "react-native";
 import "react-native-get-random-values";
 import "react-native-reanimated";
 
+import { AppErrorBoundary } from "@/components/ErrorBoundary";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { getCurrentCognitoUser } from "@/services/cognitoAuth";
 import { getUserProfile } from "@/services/userProfile";
 import type { ApprovalStatus } from "@/types/user";
+import { logger } from "@/utils/logger";
 
 // Configure Amplify with amplify_outputs.json
 import "@/amplifyConfig";
 
-// NOTE: Using direct AWS Cognito SDK with Amplify configuration
-
 export {
-  // Catch any errors thrown by the Layout component.
-  ErrorBoundary
+    // Catch any errors thrown by the Layout component.
+    ErrorBoundary
 } from "expo-router";
 
 export const unstable_settings = {
@@ -59,36 +59,37 @@ export default function RootLayout() {
       const user = await getCurrentCognitoUser();
 
       if (user) {
-        console.log("✅ Session restored - User is authenticated");
-        console.log("✅ User role:", user.role);
+        logger.debug("Session restored - user authenticated");
+        logger.userDebug("User loaded", {
+          role: user.role,
+          userId: user.userId,
+        });
         setIsAuthenticated(true);
         setUserRole(
           user.role.toUpperCase() as "CUSTOMER" | "VENDOR" | "DRIVER",
         );
-        
+
         // Fetch UserProfile from DynamoDB to check approval status
         const profile = await getUserProfile(user.userId);
         if (profile) {
-          console.log("✅ UserProfile status:", profile.status);
+          logger.debug("UserProfile loaded", { status: profile.status });
           setUserStatus(profile.status);
         } else {
-          console.log("⚠️ No UserProfile found in DynamoDB");
+          logger.warn("No UserProfile found for user");
           // Default to PENDING if no profile found
-          setUserStatus('PENDING');
+          setUserStatus("PENDING");
         }
-        
+
         // Don't auto-navigate - let user explore the landing page
       } else {
-        console.log(
-          "👤 No cached session - User is not authenticated (normal for logged out state)",
-        );
+        logger.debug("No cached session - user not authenticated");
         setIsAuthenticated(false);
         setUserRole(null);
         setUserStatus(null);
       }
     } catch (error) {
       // User is not authenticated - this is normal for logged out state
-      console.log("👤 User is not authenticated (normal for logged out state)");
+      logger.debug("Auth check error (normal for logged out state)");
       setIsAuthenticated(false);
       setUserRole(null);
       setUserStatus(null);
@@ -118,18 +119,21 @@ export default function RootLayout() {
     }
 
     // CHECK 1: Block PENDING users (except customers who are auto-approved)
-    if (isAuthenticated && userRole && userStatus === 'PENDING') {
+    if (isAuthenticated && userRole && userStatus === "PENDING") {
       // Vendors and Drivers with PENDING status should see approval screen
-      if ((userRole === 'VENDOR' || userRole === 'DRIVER') && !inPendingApproval) {
-        console.log(`⏳ ${userRole} has PENDING status - redirecting to approval screen`);
+      if (
+        (userRole === "VENDOR" || userRole === "DRIVER") &&
+        !inPendingApproval
+      ) {
+        logger.debug(`User pending approval - redirecting to approval screen`);
         router.replace("/pending-approval" as any);
         return;
       }
     }
 
     // CHECK 2: Block SUSPENDED users
-    if (isAuthenticated && userStatus === 'SUSPENDED') {
-      console.log("🚫 User is SUSPENDED - redirecting to suspended screen");
+    if (isAuthenticated && userStatus === "SUSPENDED") {
+      logger.warn("User suspended - redirecting to browse");
       // TODO: Create suspended screen or redirect to browse with message
       router.replace("/browse" as any);
       return;
@@ -143,34 +147,45 @@ export default function RootLayout() {
         // Admin has no restrictions
         // But if on public pages, redirect to admin dashboard
         if ((inBrowse || inProductDetail) && !isNavigatingFromSignIn) {
-          console.log("✅ Admin on public page, redirecting to admin dashboard");
+          logger.debug("Admin redirecting to admin dashboard");
           router.replace("/(admin)/dashboard" as any);
         }
         return;
       }
-      
+
       // Vendor trying to access customer/driver/admin screens
-      if (userRole === "VENDOR" && (inCustomerGroup || inDriverGroup || inAdminGroup)) {
-        console.log("⛔ Vendor cannot access customer/driver/admin screens");
+      if (
+        userRole === "VENDOR" &&
+        (inCustomerGroup || inDriverGroup || inAdminGroup)
+      ) {
+        logger.warn("Vendor attempted cross-role access");
         router.replace("/(vendor)/dashboard" as any);
         return;
       }
       // Customer trying to access vendor/driver/admin screens
-      if (userRole === "CUSTOMER" && (inVendorGroup || inDriverGroup || inAdminGroup)) {
-        console.log("⛔ Customer cannot access vendor/driver/admin screens");
+      if (
+        userRole === "CUSTOMER" &&
+        (inVendorGroup || inDriverGroup || inAdminGroup)
+      ) {
+        logger.warn("Customer attempted cross-role access");
         router.replace("/(customer)/shop" as any);
         return;
       }
       // Driver trying to access vendor/customer/admin screens
-      if (userRole === "DRIVER" && (inVendorGroup || inCustomerGroup || inAdminGroup)) {
-        console.log("⛔ Driver cannot access vendor/customer/admin screens");
+      if (
+        userRole === "DRIVER" &&
+        (inVendorGroup || inCustomerGroup || inAdminGroup)
+      ) {
+        logger.warn("Driver attempted cross-role access");
         router.replace("/(driver)/dashboard" as any);
         return;
       }
 
       // If authenticated user is on browse or other public pages, redirect to their dashboard
       if ((inBrowse || inProductDetail) && !isNavigatingFromSignIn) {
-        console.log(`✅ Authenticated ${userRole} on public page, redirecting to dashboard`);
+        logger.debug(
+          `Authenticated user redirecting to role-specific dashboard`,
+        );
         if (userRole === "VENDOR") {
           router.replace("/(vendor)/dashboard" as any);
         } else if (userRole === "CUSTOMER") {
@@ -223,29 +238,25 @@ function RootLayoutNav() {
   const colorScheme = useColorScheme();
 
   return (
-    <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="browse" options={{ headerShown: false }} />
-        <Stack.Screen name="product-detail" options={{ headerShown: false }} />
-        <Stack.Screen
-          name="role-preview-customer"
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="role-preview-vendor"
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="role-preview-driver"
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-        <Stack.Screen name="pending-approval" options={{ headerShown: false }} />
-        <Stack.Screen name="(customer)" options={{ headerShown: false }} />
-        <Stack.Screen name="(vendor)" options={{ headerShown: false }} />
-        <Stack.Screen name="(driver)" options={{ headerShown: false }} />
-        <Stack.Screen name="(admin)" options={{ headerShown: false }} />
-      </Stack>
-    </ThemeProvider>
+    <AppErrorBoundary>
+      <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+        <Stack>
+          <Stack.Screen name="browse" options={{ headerShown: false }} />
+          <Stack.Screen
+            name="product-detail"
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+          <Stack.Screen
+            name="pending-approval"
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen name="(customer)" options={{ headerShown: false }} />
+          <Stack.Screen name="(vendor)" options={{ headerShown: false }} />
+          <Stack.Screen name="(driver)" options={{ headerShown: false }} />
+          <Stack.Screen name="(admin)" options={{ headerShown: false }} />
+        </Stack>
+      </ThemeProvider>
+    </AppErrorBoundary>
   );
 }

@@ -1,15 +1,18 @@
 # Action 2 Quick Reference 🚀
 
 ## What We Built
+
 Complete approval workflow system with pending screens, admin dashboard, and status-based navigation.
 
 ## Files Created
+
 - ✅ `app/pending-approval.tsx` - Waiting screen for vendors/drivers
 - ✅ `services/userProfile.ts` - GraphQL service for DynamoDB
 - ✅ `ACTION_2_TESTING_GUIDE.md` - Complete testing instructions
 - ✅ `ACTION_2_COMPLETE.md` - Full documentation
 
 ## Files Modified
+
 - ✅ `app/_layout.tsx` - Status check & navigation guard
 - ✅ `app/(admin)/dashboard.tsx` - Approval management UI
 - ✅ `types/user.ts` - Updated to use 'SUSPENDED'
@@ -17,6 +20,7 @@ Complete approval workflow system with pending screens, admin dashboard, and sta
 ## Quick Start Testing
 
 ### 1. Create Admin User (AWS Console)
+
 ```
 1. Go to Cognito → us-east-1_ZMKLKcE8r
 2. Create user: admin@glamgo.com / AdminPass123!
@@ -25,6 +29,7 @@ Complete approval workflow system with pending screens, admin dashboard, and sta
 ```
 
 ### 2. Test Vendor Signup
+
 ```
 1. Sign up as vendor
 2. ✅ Should see "⏳ Application Under Review" screen
@@ -32,6 +37,7 @@ Complete approval workflow system with pending screens, admin dashboard, and sta
 ```
 
 ### 3. Test Admin Approval
+
 ```
 1. Sign in as admin@glamgo.com
 2. ✅ See pending vendor in dashboard
@@ -40,6 +46,7 @@ Complete approval workflow system with pending screens, admin dashboard, and sta
 ```
 
 ### 4. Test Approved Vendor
+
 ```
 1. Sign out, sign in as vendor
 2. ✅ Can now access vendor dashboard
@@ -49,24 +56,27 @@ Complete approval workflow system with pending screens, admin dashboard, and sta
 ## Key Functions
 
 ### Check User Status
+
 ```typescript
-import { getUserProfile } from '@/services/userProfile';
+import { getUserProfile } from "@/services/userProfile";
 const profile = await getUserProfile(userId);
 console.log(profile.status); // 'PENDING' | 'APPROVED' | 'SUSPENDED'
 ```
 
 ### List Pending Users (Admin)
+
 ```typescript
-import { listPendingUsers } from '@/services/userProfile';
+import { listPendingUsers } from "@/services/userProfile";
 const pending = await listPendingUsers();
 // Returns array of UserProfileData
 ```
 
 ### Approve/Suspend User (Admin)
+
 ```typescript
-import { updateUserProfileStatus } from '@/services/userProfile';
-await updateUserProfileStatus(profileId, 'APPROVED', adminUserId);
-await updateUserProfileStatus(profileId, 'SUSPENDED', adminUserId);
+import { updateUserProfileStatus } from "@/services/userProfile";
+await updateUserProfileStatus(profileId, "APPROVED", adminUserId);
+await updateUserProfileStatus(profileId, "SUSPENDED", adminUserId);
 ```
 
 ## Navigation Flow
@@ -87,14 +97,14 @@ approval.tsx                                      │
 
 ## Status Matrix
 
-| Role | Default Status | Can Access Dashboard? | Shows Pending Screen? |
-|------|----------------|----------------------|----------------------|
-| CUSTOMER | APPROVED | ✅ Yes | ❌ No |
-| VENDOR (pending) | PENDING | ❌ No | ✅ Yes |
-| VENDOR (approved) | APPROVED | ✅ Yes | ❌ No |
-| DRIVER (pending) | PENDING | ❌ No | ✅ Yes |
-| DRIVER (approved) | APPROVED | ✅ Yes | ❌ No |
-| ADMIN | APPROVED | ✅ Always | ❌ No |
+| Role              | Default Status | Can Access Dashboard? | Shows Pending Screen? |
+| ----------------- | -------------- | --------------------- | --------------------- |
+| CUSTOMER          | APPROVED       | ✅ Yes                | ❌ No                 |
+| VENDOR (pending)  | PENDING        | ❌ No                 | ✅ Yes                |
+| VENDOR (approved) | APPROVED       | ✅ Yes                | ❌ No                 |
+| DRIVER (pending)  | PENDING        | ❌ No                 | ✅ Yes                |
+| DRIVER (approved) | APPROVED       | ✅ Yes                | ❌ No                 |
+| ADMIN             | APPROVED       | ✅ Always             | ❌ No                 |
 
 ## Troubleshooting
 
@@ -124,5 +134,6 @@ approval.tsx                                      │
 - Foundation Docs: `docs/ACTION_2_FOUNDATION_COMPLETE.md`
 
 ---
+
 **Status:** ✅ Ready to Test  
 **Created:** March 11, 2026

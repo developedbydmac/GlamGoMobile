@@ -1,44 +1,49 @@
-import React, { useState, useEffect } from 'react';
 import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
-  Switch,
-  ScrollView,
-  Alert,
-  KeyboardAvoidingView,
-  Platform,
-  ActivityIndicator,
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRouter, useLocalSearchParams } from 'expo-router';
-import { getInventory, updateProduct } from '@/services/inventoryService';
-import { Colors, Spacing, Typography, BorderRadius } from '@/constants/DesignSystem';
-import { Ionicons } from '@expo/vector-icons';
+    BorderRadius,
+    Colors,
+    Spacing,
+    Typography,
+} from "@/constants/DesignSystem";
+import { getInventory, updateProduct } from "@/services/inventoryService";
+import { Ionicons } from "@expo/vector-icons";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import React, { useEffect, useState } from "react";
+import {
+    ActivityIndicator,
+    Alert,
+    KeyboardAvoidingView,
+    Platform,
+    ScrollView,
+    StyleSheet,
+    Switch,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const CATEGORIES = [
-  'Hair Care',
-  'Nails',
-  'Skin Care',
-  'Makeup',
-  'Wigs & Extensions',
-  'Tools & Equipment',
-  'Other',
+  "Hair Care",
+  "Nails",
+  "Skin Care",
+  "Makeup",
+  "Wigs & Extensions",
+  "Tools & Equipment",
+  "Other",
 ];
 
 export default function EditProductScreen() {
   const params = useLocalSearchParams();
   const productId = params.productId as string;
-  
+
   const [product, setProduct] = useState<any>(null);
-  const [name, setName] = useState('');
-  const [price, setPrice] = useState('');
-  const [description, setDescription] = useState('');
-  const [inventoryCount, setInventoryCount] = useState('');
+  const [name, setName] = useState("");
+  const [price, setPrice] = useState("");
+  const [description, setDescription] = useState("");
+  const [inventoryCount, setInventoryCount] = useState("");
   const [isAvailable, setIsAvailable] = useState(true);
-  const [category, setCategory] = useState('Hair Care');
+  const [category, setCategory] = useState("Hair Care");
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
@@ -51,23 +56,23 @@ export default function EditProductScreen() {
     try {
       const inventory = await getInventory();
       const foundProduct = inventory.find((p: any) => p.id === productId);
-      
+
       if (foundProduct) {
         setProduct(foundProduct);
         setName(foundProduct.name);
         setPrice(String(foundProduct.price));
-        setDescription(foundProduct.description || '');
+        setDescription(foundProduct.description || "");
         setInventoryCount(String(foundProduct.inventoryCount));
         setIsAvailable(foundProduct.isAvailable ?? true);
         setCategory(foundProduct.category);
       } else {
-        Alert.alert('Error', 'Product not found', [
-          { text: 'OK', onPress: () => router.back() }
+        Alert.alert("Error", "Product not found", [
+          { text: "OK", onPress: () => router.back() },
         ]);
       }
     } catch (error) {
-      Alert.alert('Error', 'Could not load product', [
-        { text: 'OK', onPress: () => router.back() }
+      Alert.alert("Error", "Could not load product", [
+        { text: "OK", onPress: () => router.back() },
       ]);
     } finally {
       setLoading(false);
@@ -76,19 +81,19 @@ export default function EditProductScreen() {
 
   const handleUpdate = async () => {
     if (!name.trim() || !price.trim()) {
-      Alert.alert('Required Fields', 'Product name and price are required');
+      Alert.alert("Required Fields", "Product name and price are required");
       return;
     }
 
     const priceNum = parseFloat(price);
     if (isNaN(priceNum) || priceNum <= 0) {
-      Alert.alert('Invalid Price', 'Please enter a valid price');
+      Alert.alert("Invalid Price", "Please enter a valid price");
       return;
     }
 
     const inventoryNum = parseInt(inventoryCount);
     if (isNaN(inventoryNum) || inventoryNum < 0) {
-      Alert.alert('Invalid Inventory', 'Please enter a valid inventory count');
+      Alert.alert("Invalid Inventory", "Please enter a valid inventory count");
       return;
     }
 
@@ -103,13 +108,15 @@ export default function EditProductScreen() {
         isAvailable,
         category,
       });
-      
-      Alert.alert('All set! ✨', 'Your changes are live', [
-        { text: 'Perfect', onPress: () => router.back() }
+
+      Alert.alert("All set! ✨", "Your changes are live", [
+        { text: "Perfect", onPress: () => router.back() },
       ]);
     } catch (error: any) {
-      console.error('Update product error:', error);
-      Alert.alert('Error', error.message || 'Could not update product. Please try again.');
+      Alert.alert(
+        "Error",
+        error.message || "Could not update product. Please try again.",
+      );
     } finally {
       setSaving(false);
     }
@@ -117,7 +124,7 @@ export default function EditProductScreen() {
 
   if (loading) {
     return (
-      <SafeAreaView style={styles.container} edges={['top']}>
+      <SafeAreaView style={styles.container} edges={["top"]}>
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={Colors.primary.deepPlum} />
           <Text style={styles.loadingText}>Loading product...</Text>
@@ -127,15 +134,22 @@ export default function EditProductScreen() {
   }
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
+    <SafeAreaView style={styles.container} edges={["top"]}>
       <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.keyboardView}
       >
         {/* Header */}
         <View style={styles.header}>
-          <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-            <Ionicons name="arrow-back" size={24} color={Colors.primary.deepPlum} />
+          <TouchableOpacity
+            onPress={() => router.back()}
+            style={styles.backButton}
+          >
+            <Ionicons
+              name="arrow-back"
+              size={24}
+              color={Colors.primary.deepPlum}
+            />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Edit Product</Text>
           <View style={styles.headerPlaceholder} />
@@ -161,7 +175,11 @@ export default function EditProductScreen() {
             />
 
             <Text style={styles.label}>Category *</Text>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoryScroll}>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              style={styles.categoryScroll}
+            >
               {CATEGORIES.map((cat) => (
                 <TouchableOpacity
                   key={cat}
@@ -213,7 +231,10 @@ export default function EditProductScreen() {
               <Switch
                 value={isAvailable}
                 onValueChange={setIsAvailable}
-                trackColor={{ true: Colors.primary.deepPlum, false: Colors.neutral.lightGrey }}
+                trackColor={{
+                  true: Colors.primary.deepPlum,
+                  false: Colors.neutral.lightGrey,
+                }}
                 thumbColor="#fff"
               />
             </View>
@@ -246,8 +267,8 @@ const styles = StyleSheet.create({
   },
   loadingContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     gap: Spacing.md,
   },
   loadingText: {
@@ -258,9 +279,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.md,
     backgroundColor: Colors.neutral.white,
@@ -270,8 +291,8 @@ const styles = StyleSheet.create({
   backButton: {
     width: 40,
     height: 40,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   headerTitle: {
     fontSize: Typography.fontSize.lg,
@@ -330,9 +351,9 @@ const styles = StyleSheet.create({
     fontWeight: Typography.fontWeight.semibold as any,
   },
   switchRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     paddingVertical: Spacing.lg,
     borderTopWidth: 1,
     borderTopColor: Colors.neutral.lightGrey,
@@ -345,17 +366,17 @@ const styles = StyleSheet.create({
   },
   updateButton: {
     backgroundColor: Colors.primary.deepPlum,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     gap: Spacing.sm,
     padding: Spacing.lg,
     borderRadius: BorderRadius.lg,
-    marginTop: Spacing['2xl'],
+    marginTop: Spacing["2xl"],
     marginBottom: Spacing.xl,
     ...Platform.select({
       ios: {
-        shadowColor: '#000',
+        shadowColor: "#000",
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.2,
         shadowRadius: 4,

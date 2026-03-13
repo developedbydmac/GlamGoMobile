@@ -22,6 +22,7 @@ We'll test 3 different user roles to verify the approval workflow:
 ### Steps:
 
 1. **Start your app:**
+
    ```bash
    npm start
    ```
@@ -32,6 +33,7 @@ We'll test 3 different user roles to verify the approval workflow:
    - Select role → **"Customer" (✨ emoji)**
 
 3. **Fill out form:**
+
    ```
    Full Name: Test Customer
    Email: customer1@test.com
@@ -54,6 +56,7 @@ We'll test 3 different user roles to verify the approval workflow:
 ### Verify in Backend:
 
 **Check Lambda Logs:**
+
 ```bash
 # In AWS Console → CloudWatch → Logs
 # Find log group: /aws/lambda/postconfirmation-*
@@ -70,6 +73,7 @@ We'll test 3 different user roles to verify the approval workflow:
 ```
 
 **Check DynamoDB:**
+
 ```bash
 # In AWS Console → DynamoDB → Tables → UserProfile-*
 # Should see 1 item:
@@ -95,6 +99,7 @@ status: APPROVED  ← Key field
    - Select role → **"Vendor" (💅 emoji)**
 
 3. **Fill out form:**
+
    ```
    Full Name: Test Vendor
    Email: vendor1@test.com
@@ -116,6 +121,7 @@ status: APPROVED  ← Key field
 ### Verify in Backend:
 
 **Check Lambda Logs:**
+
 ```bash
 # In CloudWatch → /aws/lambda/postconfirmation-*
 # Should see:
@@ -130,6 +136,7 @@ status: APPROVED  ← Key field
 ```
 
 **Check DynamoDB:**
+
 ```bash
 # In DynamoDB → UserProfile-* table
 # Should see 2 items now:
@@ -151,6 +158,7 @@ status: APPROVED  ← Key field
    - Select role → **"Driver" (🚗 emoji)**
 
 3. **Fill out form:**
+
    ```
    Full Name: Test Driver
    Email: driver1@test.com
@@ -169,6 +177,7 @@ status: APPROVED  ← Key field
 ### Verify in Backend:
 
 **Check DynamoDB:**
+
 ```bash
 # Should see 3 items:
 1. customer1@test.com (APPROVED)
@@ -183,6 +192,7 @@ status: APPROVED  ← Key field
 ### After all 3 tests, you should see:
 
 **In Cognito User Pool (AWS Console → Cognito → Users tab):**
+
 - ✅ 3 users registered
 - ✅ All users have "Confirmed" status
 - ✅ Each user assigned to correct group:
@@ -198,6 +208,7 @@ status: APPROVED  ← Key field
 | sub-789... | driver1@test.com | Test Driver | DRIVER | ⏳ PENDING |
 
 **In CloudWatch Lambda Logs:**
+
 - ✅ 3 log entries showing UserProfile creation
 - ✅ Correct status assigned based on role
 - ✅ No errors
@@ -207,6 +218,7 @@ status: APPROVED  ← Key field
 ## 🎯 What This Proves
 
 ### ✅ Working Now:
+
 1. Post-confirmation Lambda triggers on signup
 2. Users automatically assigned to correct Cognito group
 3. UserProfile created with correct role
@@ -216,11 +228,13 @@ status: APPROVED  ← Key field
    - DRIVER → PENDING
 
 ### ⚠️ Known Limitations (Will be fixed in Action 2):
+
 1. Vendors/Drivers with PENDING status can currently access their dashboards
 2. No "Waiting for Approval" screen shown
 3. No UI to block pending users from navigating
 
 ### 🚀 Action 2 Will Add:
+
 1. Navigation guard to check UserProfile.status
 2. Redirect pending users to approval screen
 3. Block all dashboard access until admin approves
@@ -231,21 +245,25 @@ status: APPROVED  ← Key field
 ## 🔧 Troubleshooting
 
 ### If signup fails:
+
 1. Check Amplify Sandbox is running (`npx ampx sandbox`)
 2. Check `amplify_outputs.json` exists and has correct Cognito pool ID
 3. Check password meets requirements (8+ chars, uppercase, lowercase, number, special)
 
 ### If Lambda doesn't trigger:
+
 1. Go to AWS Console → Cognito → User Pool → Lambda triggers
 2. Verify "Post confirmation" trigger is assigned
 3. Check Lambda function logs for errors
 
 ### If UserProfile not created:
+
 1. Check Lambda logs for errors
 2. Lambda currently only LOGS UserProfile (doesn't persist to DynamoDB)
 3. This is expected - persistence will be added with Admin Dashboard
 
 ### If email verification code doesn't arrive:
+
 1. Check spam folder
 2. Check Cognito → User Pool → Messaging → Email settings
 3. Verify email address is valid
@@ -265,6 +283,7 @@ status: APPROVED  ← Key field
 ---
 
 **Next Steps After Testing:**
+
 1. If tests pass → Ready for Action 2 (Role-Aware Navigation)
 2. If tests fail → Debug using troubleshooting section above
 3. Take screenshots of DynamoDB table for reference

@@ -9,9 +9,11 @@
 ## ✅ What Was Built Tonight
 
 ### 1. Lambda Authorizer (JWT Validation)
+
 **File:** `amplify/functions/authorizer/handler.ts`
 
 **What it does:**
+
 - Decodes JWT from Authorization header
 - Verifies signature using Cognito JWKS
 - Extracts `cognito:groups` claim
@@ -23,6 +25,7 @@
 - Returns 403 Forbidden if role doesn't match
 
 **Security:**
+
 - ✅ JWT signature verification
 - ✅ Issuer validation (Cognito User Pool)
 - ✅ Token caching (5 min TTL)
@@ -31,9 +34,11 @@
 ---
 
 ### 2. API Gateway Infrastructure (CDK)
+
 **File:** `amplify/functions/api-gateway/stack.ts`
 
 **What it does:**
+
 - Creates REST API with 4 route prefixes
 - Attaches Lambda authorizer to all routes
 - Health check endpoints for each role
@@ -42,6 +47,7 @@
 - Rate limiting (100 req/s, burst 200)
 
 **Endpoints created:**
+
 - `GET /customer/health` - Protected by CUSTOMER role
 - `GET /vendor/health` - Protected by VENDOR role
 - `GET /driver/health` - Protected by DRIVER role
@@ -50,9 +56,11 @@
 ---
 
 ### 3. API Client Service (React Native)
+
 **File:** `services/apiClient.ts`
 
 **What it does:**
+
 - Axios-based HTTP client
 - Automatically adds JWT to all requests
 - Request/response interceptors
@@ -61,6 +69,7 @@
 - Role-specific clients: `customerApi`, `vendorApi`, `driverApi`, `adminApi`
 
 **Usage:**
+
 ```typescript
 import { customerApi } from "@/services/apiClient";
 
@@ -132,6 +141,7 @@ npx ampx sandbox --once
 ```
 
 **Expected output:**
+
 ```
 ✅ Amplify Sandbox Deployed!
 
@@ -145,6 +155,7 @@ Outputs:
 **Option A: Environment Variable (Recommended)**
 
 Create `.env` file:
+
 ```bash
 EXPO_PUBLIC_API_URL=https://abc123xyz.execute-api.us-east-1.amazonaws.com/prod
 ```
@@ -152,6 +163,7 @@ EXPO_PUBLIC_API_URL=https://abc123xyz.execute-api.us-east-1.amazonaws.com/prod
 **Option B: Programmatic (Dynamic)**
 
 Update `app/_layout.tsx`:
+
 ```typescript
 import { apiClient } from "@/services/apiClient";
 
@@ -175,6 +187,7 @@ npm start -- --clear
 ### Phase 1: Deploy & Verify Infrastructure (15 min)
 
 1. **Deploy:**
+
    ```bash
    npx ampx sandbox --once
    ```
@@ -196,6 +209,7 @@ npm start -- --clear
    - Password: Your password
 
 2. **Add test button to customer dashboard:**
+
    ```typescript
    import { customerApi } from "@/services/apiClient";
 
@@ -230,6 +244,7 @@ npm start -- --clear
 **Goal:** Verify approved vendors can access vendor API
 
 1. **Create admin user** (if not exists):
+
    ```bash
    aws cognito-idp admin-create-user \
      --user-pool-id us-east-1_ZMKLKcE8r \
@@ -286,9 +301,9 @@ Create `docs/API_GATEWAY_TEST_RESULTS.md`:
 
 ## 📊 Response Times
 
-- Customer health check: ___ ms
-- Vendor health check: ___ ms
-- Admin health check: ___ ms
+- Customer health check: \_\_\_ ms
+- Vendor health check: \_\_\_ ms
+- Admin health check: \_\_\_ ms
 
 ## 🐛 Issues Found
 
@@ -346,12 +361,14 @@ With API Gateway deployed, you can now:
 ### Option A: Deploy & Test API Gateway (Tomorrow Morning - 1 hour)
 
 **Pros:**
+
 - Validates infrastructure works
 - Tests Action 2 + API integration
 - Quick win, builds confidence
 - Foundational for everything else
 
 **Cons:**
+
 - Delays feature development by 1 hour
 
 **Recommended:** YES - Do this first thing tomorrow
@@ -426,6 +443,7 @@ You've accomplished a LOT tonight:
 **Total work:** ~3 hours, ~1,000 lines of production code
 
 **Tomorrow's plan:**
+
 1. Morning: Deploy & test API Gateway (1 hour)
 2. Afternoon: Build catalog service (3 hours)
 3. Evening: Add cart system (2 hours)
@@ -435,9 +453,11 @@ You've accomplished a LOT tonight:
 ## 🎉 Summary
 
 **What you asked for:**
+
 > "Create API Gateway with role-based routes and Lambda authorizer"
 
 **What you got:**
+
 - ✅ Production-ready API Gateway with CDK
 - ✅ Secure JWT validation with Cognito
 - ✅ Role-based access control (CUSTOMER, VENDOR, DRIVER, ADMIN)

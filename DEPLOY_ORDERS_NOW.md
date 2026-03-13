@@ -12,11 +12,13 @@
 ## 🏃 Quick Start (5 minutes)
 
 ### Step 1: Deploy Everything
+
 ```bash
 npx ampx sandbox
 ```
 
 Wait 3-5 minutes. Look for:
+
 ```
 ✅ Deployed: create-order
 ✅ Deployed: find-nearby-drivers
@@ -24,12 +26,14 @@ Wait 3-5 minutes. Look for:
 ```
 
 ### Step 2: Get API Gateway URL
+
 ```bash
 # After deployment completes, note the API Gateway URL
 # Example: https://abc123.execute-api.us-east-1.amazonaws.com/prod/
 ```
 
 ### Step 3: Test Create Order (as Customer)
+
 ```bash
 # Get your customer JWT token from Expo app
 # Then test the endpoint:
@@ -56,12 +60,13 @@ curl -X POST https://YOUR-API-URL/prod/customer/orders \
 ```
 
 **Expected Response:**
+
 ```json
 {
   "orderId": "order-xxx",
   "status": "PENDING",
   "totalAmount": 51.98,
-  "deliveryFee": 5.20,
+  "deliveryFee": 5.2,
   "grandTotal": 57.18,
   "itemCount": 2,
   "message": "Order created successfully"
@@ -69,6 +74,7 @@ curl -X POST https://YOUR-API-URL/prod/customer/orders \
 ```
 
 ### Step 4: Test Find Nearby Drivers (as Driver)
+
 ```bash
 # Sign in as driver user (driver@test.com)
 # Get JWT token, then:
@@ -78,6 +84,7 @@ curl -X GET "https://YOUR-API-URL/prod/driver/nearby?lat=34.0522&lng=-118.2437" 
 ```
 
 **Expected Response:**
+
 ```json
 {
   "deliveryLocation": {
@@ -101,19 +108,20 @@ curl -X GET "https://YOUR-API-URL/prod/driver/nearby?lat=34.0522&lng=-118.2437" 
 
 ## 🧪 Quick Test Matrix
 
-| Test | User | Endpoint | Expected |
-|------|------|----------|----------|
-| Create Order | Customer | POST /customer/orders | 200 OK ✅ |
-| Create Order | Driver | POST /customer/orders | 403 Forbidden ❌ |
-| Find Drivers | Driver | GET /driver/nearby | 200 OK ✅ |
-| Find Drivers | Customer | GET /driver/nearby | 403 Forbidden ❌ |
-| Missing JWT | Anyone | Any endpoint | 401 Unauthorized ❌ |
+| Test         | User     | Endpoint              | Expected            |
+| ------------ | -------- | --------------------- | ------------------- |
+| Create Order | Customer | POST /customer/orders | 200 OK ✅           |
+| Create Order | Driver   | POST /customer/orders | 403 Forbidden ❌    |
+| Find Drivers | Driver   | GET /driver/nearby    | 200 OK ✅           |
+| Find Drivers | Customer | GET /driver/nearby    | 403 Forbidden ❌    |
+| Missing JWT  | Anyone   | Any endpoint          | 401 Unauthorized ❌ |
 
 ---
 
 ## 🎯 What Each Endpoint Does
 
 ### POST /customer/orders
+
 - ✅ Validates customer data
 - ✅ Checks inventory (mock data currently)
 - ✅ Calculates 10% delivery fee (min $5)
@@ -121,6 +129,7 @@ curl -X GET "https://YOUR-API-URL/prod/driver/nearby?lat=34.0522&lng=-118.2437" 
 - ✅ Returns orderId and totals
 
 ### GET /driver/nearby?lat=X&lng=Y
+
 - ✅ Finds available drivers
 - ✅ Calculates haversine distance
 - ✅ Filters within 10 miles (configurable)
@@ -132,8 +141,9 @@ curl -X GET "https://YOUR-API-URL/prod/driver/nearby?lat=34.0522&lng=-118.2437" 
 ## 📱 Test from Expo App
 
 ### Create Order (Customer Screen)
+
 ```typescript
-import { customerApi } from '../services/apiClient';
+import { customerApi } from "../services/apiClient";
 
 async function createTestOrder() {
   try {
@@ -149,33 +159,34 @@ async function createTestOrder() {
           productId: "prod-1",
           productName: "Test Product",
           quantity: 2,
-          price: 25.99
-        }
-      ]
+          price: 25.99,
+        },
+      ],
     });
-    
-    console.log('Order created:', result);
+
+    console.log("Order created:", result);
   } catch (error) {
-    console.error('Order failed:', error);
+    console.error("Order failed:", error);
   }
 }
 ```
 
 ### Find Nearby Drivers (Driver Screen)
+
 ```typescript
-import { driverApi } from '../services/apiClient';
+import { driverApi } from "../services/apiClient";
 
 async function findDrivers() {
   try {
     const result = await driverApi.findNearbyDrivers(
-      34.0522,  // lat
+      34.0522, // lat
       -118.2437, // lng
-      10         // max distance in miles
+      10, // max distance in miles
     );
-    
-    console.log('Found drivers:', result.drivers);
+
+    console.log("Found drivers:", result.drivers);
   } catch (error) {
-    console.error('Driver search failed:', error);
+    console.error("Driver search failed:", error);
   }
 }
 ```
@@ -190,7 +201,7 @@ Add these methods to `services/apiClient.ts`:
 // Customer API
 export const customerApi = {
   // ...existing methods...
-  
+
   createOrder: async (orderData: any) => {
     return apiClient.post("/customer/orders", orderData);
   },
@@ -199,9 +210,15 @@ export const customerApi = {
 // Driver API
 export const driverApi = {
   // ...existing methods...
-  
-  findNearbyDrivers: async (lat: number, lng: number, maxDistance: number = 10) => {
-    return apiClient.get(`/driver/nearby?lat=${lat}&lng=${lng}&maxDistance=${maxDistance}`);
+
+  findNearbyDrivers: async (
+    lat: number,
+    lng: number,
+    maxDistance: number = 10,
+  ) => {
+    return apiClient.get(
+      `/driver/nearby?lat=${lat}&lng=${lng}&maxDistance=${maxDistance}`,
+    );
   },
 };
 ```
@@ -211,22 +228,26 @@ export const driverApi = {
 ## ⚡ Troubleshooting
 
 ### Order creation returns 400
+
 - Check all required fields present
 - Verify items array not empty
 - Check lat/lng are valid numbers
 
 ### Driver search returns 400
+
 - Verify lat/lng query parameters
 - Check coordinates valid range
 - Example: `?lat=34.0522&lng=-118.2437`
 
 ### Get 403 Forbidden
+
 - Check JWT token in Authorization header
 - Verify user in correct Cognito group
-- Customer can't access /driver/* routes
-- Driver can't access /customer/* routes
+- Customer can't access /driver/\* routes
+- Driver can't access /customer/\* routes
 
 ### Get 401 Unauthorized
+
 - JWT token missing or invalid
 - Re-authenticate and get new token
 - Check token format: `Bearer <token>`
@@ -235,15 +256,15 @@ export const driverApi = {
 
 ## 📊 Current Status
 
-| Component | Status | Notes |
-|-----------|--------|-------|
-| create-order Lambda | ✅ Complete | Using mock data |
-| find-nearby-drivers Lambda | ✅ Complete | Using mock data |
-| Driver model | ✅ Complete | In data/resource.ts |
-| Order updates | ✅ Complete | Added lat/lng/deliveryFee |
-| API Gateway routes | ✅ Complete | Integrated in backend.ts |
-| TypeScript errors | ✅ Fixed | All files clean |
-| DynamoDB integration | 🟡 Pending | Need to replace mocks |
+| Component                  | Status      | Notes                     |
+| -------------------------- | ----------- | ------------------------- |
+| create-order Lambda        | ✅ Complete | Using mock data           |
+| find-nearby-drivers Lambda | ✅ Complete | Using mock data           |
+| Driver model               | ✅ Complete | In data/resource.ts       |
+| Order updates              | ✅ Complete | Added lat/lng/deliveryFee |
+| API Gateway routes         | ✅ Complete | Integrated in backend.ts  |
+| TypeScript errors          | ✅ Fixed    | All files clean           |
+| DynamoDB integration       | 🟡 Pending  | Need to replace mocks     |
 
 ---
 
@@ -260,6 +281,7 @@ export const driverApi = {
 ## 📚 Full Documentation
 
 See [ORDERS_DISPATCH_COMPLETE.md](./ORDERS_DISPATCH_COMPLETE.md) for:
+
 - Detailed API documentation
 - Full request/response examples
 - DynamoDB integration guide
@@ -269,6 +291,7 @@ See [ORDERS_DISPATCH_COMPLETE.md](./ORDERS_DISPATCH_COMPLETE.md) for:
 ---
 
 **Ready to deploy?** 🚀
+
 ```bash
 npx ampx sandbox
 ```

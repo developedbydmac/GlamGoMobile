@@ -1,15 +1,15 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { LinearGradient } from 'expo-linear-gradient';
-import { useRouter } from 'expo-router';
-import { Colors, Typography, Spacing, Shadows } from '@/constants/DesignSystem';
-import { signOutFromCognito } from '@/services/cognitoAuth';
-import { useUserRole } from '@/hooks/useUserRole';
+import { Colors, Shadows, Spacing, Typography } from "@/constants/DesignSystem";
+import { useUserRole } from "@/hooks/useUserRole";
+import { signOutFromCognito } from "@/services/cognitoAuth";
+import { LinearGradient } from "expo-linear-gradient";
+import { useRouter } from "expo-router";
+import React from "react";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 /**
  * Pending Approval Screen
- * 
+ *
  * Shown to VENDOR and DRIVER users with PENDING status.
  * Blocks access to role dashboards until admin approves.
  */
@@ -20,15 +20,15 @@ export default function PendingApprovalScreen() {
   const handleSignOut = async () => {
     try {
       await signOutFromCognito();
-      router.replace('/');
+      router.replace("/");
     } catch (error) {
-      console.error('Sign out error:', error);
+      // Sign out error
     }
   };
 
   const getRoleDisplay = () => {
-    if (role === 'VENDOR') return 'Vendor';
-    if (role === 'DRIVER') return 'Driver';
+    if (role === "VENDOR") return "Vendor";
+    if (role === "DRIVER") return "Driver";
     return role;
   };
 
@@ -51,7 +51,8 @@ export default function PendingApprovalScreen() {
 
           {/* Subtitle */}
           <Text style={styles.subtitle}>
-            Thanks for signing up as a <Text style={styles.bold}>{getRoleDisplay()}</Text>!
+            Thanks for signing up as a{" "}
+            <Text style={styles.bold}>{getRoleDisplay()}</Text>!
           </Text>
 
           {/* Message Card */}
@@ -67,7 +68,8 @@ export default function PendingApprovalScreen() {
           {/* Timeline */}
           <View style={styles.timelineCard}>
             <Text style={styles.timelineText}>
-              ⏱️ This usually takes <Text style={styles.bold}>1-2 business days</Text>
+              ⏱️ This usually takes{" "}
+              <Text style={styles.bold}>1-2 business days</Text>
             </Text>
           </View>
 
@@ -108,17 +110,17 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     paddingHorizontal: Spacing.xl,
   },
   iconContainer: {
     width: 120,
     height: 120,
     borderRadius: 60,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
+    alignItems: "center",
+    justifyContent: "center",
     marginBottom: Spacing.xl,
     ...Shadows.heavy,
   },
@@ -129,13 +131,13 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontWeight: "700",
     color: Colors.neutral.white,
-    textAlign: 'center',
+    textAlign: "center",
     marginBottom: Spacing.base,
   },
   subtitle: {
     fontSize: Typography.fontSize["lg"],
     color: Colors.neutral.white,
-    textAlign: 'center',
+    textAlign: "center",
     marginBottom: Spacing.xl,
     opacity: 0.9,
   },
@@ -143,34 +145,34 @@ const styles = StyleSheet.create({
     fontWeight: "700",
   },
   messageCard: {
-    backgroundColor: 'rgba(255, 255, 255, 0.15)',
+    backgroundColor: "rgba(255, 255, 255, 0.15)",
     borderRadius: 16,
     padding: Spacing.lg,
     marginBottom: Spacing.base,
-    width: '100%',
+    width: "100%",
     ...Shadows.medium,
   },
   message: {
     fontSize: Typography.fontSize["base"],
     color: Colors.neutral.white,
-    textAlign: 'center',
+    textAlign: "center",
     lineHeight: 24,
   },
   timelineCard: {
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    backgroundColor: "rgba(255, 255, 255, 0.1)",
     borderRadius: 12,
     padding: Spacing.base,
     marginBottom: Spacing.xl,
-    width: '100%',
+    width: "100%",
   },
   timelineText: {
     fontSize: Typography.fontSize["base"],
     color: Colors.neutral.white,
-    textAlign: 'center',
+    textAlign: "center",
   },
   userInfo: {
     marginBottom: Spacing.xl,
-    alignItems: 'center',
+    alignItems: "center",
   },
   userInfoText: {
     fontSize: Typography.fontSize["sm"],
@@ -200,6 +202,6 @@ const styles = StyleSheet.create({
     fontSize: Typography.fontSize["sm"],
     color: Colors.neutral.white,
     opacity: 0.6,
-    textAlign: 'center',
+    textAlign: "center",
   },
 });

@@ -3,34 +3,40 @@
  * Auto-dismissing notifications with animations
  */
 
-import React, { useEffect, useRef } from 'react';
 import {
-  Animated,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  useColorScheme,
-} from 'react-native';
-import { Colors, Typography, Spacing, BorderRadius, Shadows } from '@/constants/DesignSystem';
-import { Ionicons } from '@expo/vector-icons';
+    BorderRadius,
+    Colors,
+    Shadows,
+    Spacing,
+    Typography,
+} from "@/constants/DesignSystem";
+import { Ionicons } from "@expo/vector-icons";
+import React, { useEffect, useRef } from "react";
+import {
+    Animated,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    useColorScheme,
+} from "react-native";
 
 interface ToastProps {
   message: string;
-  type?: 'success' | 'error' | 'info' | 'warning';
+  type?: "success" | "error" | "info" | "warning";
   duration?: number;
   onDismiss: () => void;
 }
 
 export default function Toast({
   message,
-  type = 'info',
+  type = "info",
   duration = 3000,
   onDismiss,
 }: ToastProps) {
   const opacity = useRef(new Animated.Value(0)).current;
   const translateY = useRef(new Animated.Value(-100)).current;
   const colorScheme = useColorScheme();
-  const isDark = colorScheme === 'dark';
+  const isDark = colorScheme === "dark";
 
   useEffect(() => {
     // Slide in animation
@@ -74,13 +80,13 @@ export default function Toast({
 
   const getBackgroundColor = () => {
     switch (type) {
-      case 'success':
+      case "success":
         return Colors.semantic.success;
-      case 'error':
+      case "error":
         return Colors.semantic.error;
-      case 'warning':
+      case "warning":
         return Colors.semantic.warning;
-      case 'info':
+      case "info":
       default:
         return Colors.semantic.info;
     }
@@ -88,15 +94,15 @@ export default function Toast({
 
   const getIcon = () => {
     switch (type) {
-      case 'success':
-        return 'checkmark-circle';
-      case 'error':
-        return 'close-circle';
-      case 'warning':
-        return 'warning';
-      case 'info':
+      case "success":
+        return "checkmark-circle";
+      case "error":
+        return "close-circle";
+      case "warning":
+        return "warning";
+      case "info":
       default:
-        return 'information-circle';
+        return "information-circle";
     }
   };
 
@@ -125,7 +131,10 @@ export default function Toast({
         <Text style={styles.message} numberOfLines={2}>
           {message}
         </Text>
-        <TouchableOpacity onPress={dismissToast} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
+        <TouchableOpacity
+          onPress={dismissToast}
+          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+        >
           <Ionicons name="close" size={20} color={Colors.neutral.white} />
         </TouchableOpacity>
       </TouchableOpacity>
@@ -135,7 +144,7 @@ export default function Toast({
 
 const styles = StyleSheet.create({
   container: {
-    position: 'absolute',
+    position: "absolute",
     top: 60, // Below status bar
     left: Spacing.base,
     right: Spacing.base,
@@ -143,17 +152,17 @@ const styles = StyleSheet.create({
     ...Shadows.medium,
     zIndex: 9999,
   },
-  
+
   content: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     padding: Spacing.base,
   },
-  
+
   icon: {
     marginRight: Spacing.sm,
   },
-  
+
   message: {
     flex: 1,
     color: Colors.neutral.white,

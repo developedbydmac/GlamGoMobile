@@ -1,35 +1,49 @@
-import React, { useState } from 'react';
 import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
-  ScrollView,
-  KeyboardAvoidingView,
-  Platform,
-  Alert,
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRouter } from 'expo-router';
-import { createStore } from '@/services/storeService';
-import { Colors, Spacing, Typography, BorderRadius } from '@/constants/DesignSystem';
-import { Ionicons } from '@expo/vector-icons';
+    BorderRadius,
+    Colors,
+    Spacing,
+    Typography,
+} from "@/constants/DesignSystem";
+import { createStore } from "@/services/storeService";
+import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
+import React, { useState } from "react";
+import {
+    Alert,
+    KeyboardAvoidingView,
+    Platform,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function CreateStoreScreen() {
-  const [storeName, setStoreName] = useState('');
-  const [description, setDescription] = useState('');
-  const [address, setAddress] = useState('');
-  const [city, setCity] = useState('');
-  const [state, setState] = useState('');
-  const [zipCode, setZipCode] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('');
+  const [storeName, setStoreName] = useState("");
+  const [description, setDescription] = useState("");
+  const [address, setAddress] = useState("");
+  const [city, setCity] = useState("");
+  const [state, setState] = useState("");
+  const [zipCode, setZipCode] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
   const [saving, setSaving] = useState(false);
   const router = useRouter();
 
   const handleCreate = async () => {
-    if (!storeName.trim() || !address.trim() || !city.trim() || !state.trim() || !zipCode.trim()) {
-      Alert.alert('Hold up! 👋', 'We need at least your store name and address to get started');
+    if (
+      !storeName.trim() ||
+      !address.trim() ||
+      !city.trim() ||
+      !state.trim() ||
+      !zipCode.trim()
+    ) {
+      Alert.alert(
+        "Hold up! 👋",
+        "We need at least your store name and address to get started",
+      );
       return;
     }
 
@@ -46,28 +60,31 @@ export default function CreateStoreScreen() {
       });
 
       Alert.alert(
-        'Welcome to GlamGo! 🎉',
+        "Welcome to GlamGo! 🎉",
         `${storeName} is now live. Ready to add some products?`,
-        [{ text: "Let's go!", onPress: () => router.back() }]
+        [{ text: "Let's go!", onPress: () => router.back() }],
       );
     } catch (error: any) {
-      console.error('Create store error:', error);
-      Alert.alert('Oops!', 'Something went wrong. Mind trying again?');
+      Alert.alert("Oops!", "Something went wrong. Mind trying again?");
     } finally {
       setSaving(false);
     }
   };
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
+    <SafeAreaView style={styles.container} edges={["top"]}>
       <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.keyboardView}
       >
         {/* Header */}
         <View style={styles.header}>
           <View style={styles.headerContent}>
-            <Ionicons name="storefront" size={32} color={Colors.primary.deepPlum} />
+            <Ionicons
+              name="storefront"
+              size={32}
+              color={Colors.primary.deepPlum}
+            />
             <View style={styles.headerText}>
               <Text style={styles.headerTitle}>Set up your store</Text>
               <Text style={styles.headerSubtitle}>
@@ -81,7 +98,7 @@ export default function CreateStoreScreen() {
           <View style={styles.form}>
             <View style={styles.section}>
               <Text style={styles.sectionTitle}>The basics</Text>
-              
+
               <Text style={styles.label}>What's your store called? *</Text>
               <TextInput
                 style={styles.input}
@@ -106,7 +123,7 @@ export default function CreateStoreScreen() {
 
             <View style={styles.section}>
               <Text style={styles.sectionTitle}>Where are you?</Text>
-              
+
               <Text style={styles.label}>Street address *</Text>
               <TextInput
                 style={styles.input}
@@ -169,7 +186,9 @@ export default function CreateStoreScreen() {
               disabled={saving}
             >
               {saving ? (
-                <Text style={styles.createButtonText}>Setting up your store...</Text>
+                <Text style={styles.createButtonText}>
+                  Setting up your store...
+                </Text>
               ) : (
                 <>
                   <Ionicons name="checkmark-circle" size={20} color="#fff" />
@@ -197,22 +216,22 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    backgroundColor: '#F3E8FF',
+    backgroundColor: "#F3E8FF",
     paddingHorizontal: Spacing.xl,
     paddingVertical: Spacing.xl,
     borderBottomLeftRadius: BorderRadius.lg,
     borderBottomRightRadius: BorderRadius.lg,
   },
   headerContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: Spacing.md,
   },
   headerText: {
     flex: 1,
   },
   headerTitle: {
-    fontSize: Typography.fontSize['2xl'],
+    fontSize: Typography.fontSize["2xl"],
     fontWeight: Typography.fontWeight.bold as any,
     color: Colors.primary.deepPlum,
     marginBottom: Spacing.xs,
@@ -229,7 +248,7 @@ const styles = StyleSheet.create({
     padding: Spacing.xl,
   },
   section: {
-    marginBottom: Spacing['2xl'],
+    marginBottom: Spacing["2xl"],
   },
   sectionTitle: {
     fontSize: Typography.fontSize.lg,
@@ -256,7 +275,7 @@ const styles = StyleSheet.create({
     height: 80,
   },
   row: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: Spacing.md,
   },
   halfWidth: {
@@ -267,16 +286,16 @@ const styles = StyleSheet.create({
   },
   createButton: {
     backgroundColor: Colors.primary.deepPlum,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     gap: Spacing.sm,
     padding: Spacing.lg,
     borderRadius: BorderRadius.lg,
     marginTop: Spacing.xl,
     ...Platform.select({
       ios: {
-        shadowColor: '#000',
+        shadowColor: "#000",
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.2,
         shadowRadius: 4,
@@ -297,7 +316,7 @@ const styles = StyleSheet.create({
   disclaimer: {
     fontSize: Typography.fontSize.sm,
     color: Colors.neutral.mediumGrey,
-    textAlign: 'center',
+    textAlign: "center",
     marginTop: Spacing.lg,
     lineHeight: 20,
   },

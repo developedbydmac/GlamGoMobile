@@ -9,11 +9,13 @@
 ## 🎯 What We're Testing
 
 ### Action 2: User Approval Workflow
+
 - Pending approval screen for vendors/drivers
 - Admin dashboard for approvals
 - Status-based navigation guards
 
 ### API Gateway: Role-Based APIs
+
 - JWT authentication with Cognito
 - Role enforcement (CUSTOMER, VENDOR, DRIVER, ADMIN)
 - Health check endpoints
@@ -39,6 +41,7 @@ npm start
 ### Step 2: Verify Everything is Running
 
 **Check Amplify Sandbox:**
+
 ```
 ✅ Sandbox deployed and watching for changes...
 ✅ Auth resources deployed
@@ -46,6 +49,7 @@ npm start
 ```
 
 **Check Expo:**
+
 ```
 ✅ Metro bundling complete
 ✅ Scan QR code to open in Expo Go
@@ -66,8 +70,9 @@ npm start
    - Password: [Your password]
 
 2. **Add test button to customer dashboard:**
-   
+
    Update `app/(customer)/dashboard.tsx`:
+
    ```typescript
    import { Alert, Button } from "react-native";
    import { customerApi } from "@/services/apiClient";
@@ -95,6 +100,7 @@ npm start
 3. **Tap "Test API" button**
 
 **Expected Result:**
+
 ```
 ✅ Success!
 API Working!
@@ -103,6 +109,7 @@ Time: 2026-03-12T...
 ```
 
 **If it fails:**
+
 - Check terminal logs for errors
 - Verify API Gateway URL is set: Look for "✅ API Gateway configured" log
 - Check Amplify sandbox is running
@@ -119,6 +126,7 @@ Time: 2026-03-12T...
 1. **Still signed in as customer**
 
 2. **Add this test:**
+
    ```typescript
    import { apiClient } from "@/services/apiClient";
 
@@ -143,6 +151,7 @@ Time: 2026-03-12T...
 3. **Tap "Test Role Enforcement"**
 
 **Expected Result:**
+
 ```
 ✅ Security Working
 403 Forbidden - Correct!
@@ -197,6 +206,7 @@ aws cognito-idp admin-set-user-password \
 ```
 
 **Verify:**
+
 - Admin user appears in Cognito Users
 - User is in ADMIN group
 
@@ -218,8 +228,9 @@ aws cognito-idp admin-set-user-password \
 3. **Should see Admin Dashboard** ✅
 
 4. **Test admin API:**
-   
+
    Add to `app/(admin)/dashboard.tsx`:
+
    ```typescript
    import { adminApi } from "@/services/apiClient";
 
@@ -239,6 +250,7 @@ aws cognito-idp admin-set-user-password \
 5. **Tap "Test Admin API"**
 
 **Expected Result:**
+
 ```
 ✅ Admin API Working!
 {
@@ -270,12 +282,14 @@ aws cognito-idp admin-set-user-password \
 4. **Sign in**
 
 **Expected Result:**
+
 - ✅ See **Pending Approval Screen** ⏳
 - ✅ Shows "Thanks for signing up as a Vendor!"
 - ✅ Shows "Your application is under review"
 - ✅ Cannot access vendor dashboard
 
 **If you see vendor dashboard instead:**
+
 - Action 2 navigation guard isn't working
 - Check terminal logs for "⏳ VENDOR has PENDING status"
 - Check that `getUserProfile` is being called
@@ -305,11 +319,13 @@ aws cognito-idp admin-set-user-password \
 6. **Confirm in dialog**
 
 **Expected Result:**
+
 - ✅ Success alert
 - ✅ Vendor disappears from pending list
 - ✅ See "All Caught Up!" if no more pending users
 
 **Check DynamoDB:**
+
 - Go to DynamoDB → UserProfile table
 - Find vendor2@test.com record
 - Verify `status` changed from `PENDING` to `APPROVED`
@@ -327,6 +343,7 @@ aws cognito-idp admin-set-user-password \
 2. **Sign in as vendor2@test.com**
 
 **Expected Result:**
+
 - ✅ **NO pending screen** (because status is APPROVED)
 - ✅ Redirected to Vendor Dashboard
 - ✅ Can see Dashboard and Products tabs
@@ -334,6 +351,7 @@ aws cognito-idp admin-set-user-password \
 3. **Test vendor API:**
 
    Add to `app/(vendor)/dashboard.tsx`:
+
    ```typescript
    import { vendorApi } from "@/services/apiClient";
 
@@ -353,6 +371,7 @@ aws cognito-idp admin-set-user-password \
 4. **Tap "Test Vendor API"**
 
 **Expected Result:**
+
 ```
 ✅ Vendor API Working!
 {
@@ -376,12 +395,14 @@ aws cognito-idp admin-set-user-password \
 After all tests, you should have:
 
 ### Action 2 Working:
+
 - [x] Customer: Auto-approved, immediate access
 - [x] Vendor: Pending screen shown
 - [x] Admin: Can approve vendors
 - [x] Approved vendor: Can access dashboard
 
 ### API Gateway Working:
+
 - [x] Customer can call `/customer/health`
 - [x] Customer CANNOT call `/vendor/health` (403)
 - [x] Admin can call `/admin/health`
@@ -390,6 +411,7 @@ After all tests, you should have:
 - [x] Role enforcement working
 
 ### Integration Working:
+
 - [x] Approval workflow + API access linked
 - [x] Status checking happens on sign-in
 - [x] Navigation guards work
@@ -417,6 +439,7 @@ Take screenshots of:
 ### Issue: "Cannot find API Gateway URL"
 
 **Solution:**
+
 1. Check `amplify_outputs.json` → Look for `custom.apiGatewayUrl`
 2. If missing, redeploy: `npx ampx sandbox --once`
 3. Check terminal output for API Gateway URL
@@ -425,11 +448,13 @@ Take screenshots of:
 ### Issue: API returns 401 Unauthorized
 
 **Causes:**
+
 - JWT token expired
 - User not signed in
 - Token not being added to request
 
 **Solution:**
+
 ```typescript
 // Check if user is authenticated
 import { fetchAuthSession } from "aws-amplify/auth";
@@ -442,11 +467,13 @@ console.log("Token:", session.tokens?.idToken?.toString().substring(0, 50));
 ### Issue: API returns 403 Forbidden (when it shouldn't)
 
 **Causes:**
+
 - User doesn't have correct Cognito group
 - Trying to access wrong route
 - Authorizer not extracting groups correctly
 
 **Solution:**
+
 1. Check user's groups in Cognito Console
 2. Check terminal logs for authorizer output
 3. Look for: `"groups": ["CUSTOMER"]` in logs
@@ -454,11 +481,13 @@ console.log("Token:", session.tokens?.idToken?.toString().substring(0, 50));
 ### Issue: Pending screen not showing
 
 **Causes:**
+
 - Navigation guard not checking status
 - UserProfile not being fetched
 - Status not set correctly in DynamoDB
 
 **Solution:**
+
 1. Check terminal logs: Should see "⏳ VENDOR has PENDING status"
 2. Check DynamoDB: Verify vendor has `status: PENDING`
 3. Sign out completely and back in (refreshes status)
@@ -485,13 +514,14 @@ Once all tests pass, create:
 ### Test Results Document
 
 `docs/API_GATEWAY_TEST_RESULTS.md`:
+
 ```markdown
 # Test Results - March 12, 2026
 
 ## ✅ All Tests Passed
 
 - Customer API: PASS ✅
-- Vendor API: PASS ✅  
+- Vendor API: PASS ✅
 - Admin API: PASS ✅
 - Role enforcement: PASS ✅
 - Action 2 approval flow: PASS ✅
@@ -503,6 +533,7 @@ Once all tests pass, create:
 ## Next Steps
 
 Ready to build:
+
 1. Catalog service (stores, products, search)
 2. Cart system (Zustand state management)
 3. Order creation (inventory validation, delivery fees)
@@ -515,14 +546,16 @@ Ready to build:
 ### Option 1: Build Catalog Service (3 hours)
 
 Create real product browsing:
+
 - `GET /customer/stores` - List stores
-- `GET /customer/stores/{id}/products` - Store products  
+- `GET /customer/stores/{id}/products` - Store products
 - `GET /customer/products/search` - Product search
 - Update `browse.tsx` with real data
 
 ### Option 2: Build Admin Endpoints (2 hours)
 
 Replace GraphQL with REST APIs:
+
 - `GET /admin/users/pending` - List pending users
 - `POST /admin/users/{id}/approve` - Approve user
 - `POST /admin/users/{id}/suspend` - Suspend user
@@ -547,6 +580,7 @@ Do catalog service first (customers can shop), then admin endpoints (better UX f
 ## ✨ You've Got This!
 
 Everything is set up and ready. Just follow the steps above and you'll have:
+
 - ✅ Working approval workflow
 - ✅ Secure role-based APIs
 - ✅ Foundation for all future features

@@ -85,6 +85,7 @@ TEXT COLORS:
 ## **Component Specifications**
 
 ### **Hero Section:**
+
 ```typescript
 {
   paddingHorizontal: 32px,
@@ -95,6 +96,7 @@ TEXT COLORS:
 ```
 
 ### **Main Tagline:**
+
 ```typescript
 {
   fontSize: 42px,
@@ -106,6 +108,7 @@ TEXT COLORS:
 ```
 
 ### **Feature Cards:**
+
 ```typescript
 {
   backgroundColor: "#FFFFFF",
@@ -119,6 +122,7 @@ TEXT COLORS:
 ```
 
 ### **Feature Icons:**
+
 ```typescript
 {
   width: 64px,
@@ -131,6 +135,7 @@ TEXT COLORS:
 ```
 
 ### **Primary Button (Gold):**
+
 ```typescript
 {
   gradient: ["#C8A870", "#B8985A"],
@@ -144,6 +149,7 @@ TEXT COLORS:
 ```
 
 ### **Secondary Button (Purple Outline):**
+
 ```typescript
 {
   backgroundColor: "#FFFFFF",
@@ -214,16 +220,19 @@ XL:          24px
 ## **Responsive Behavior**
 
 ### **Small Screens (< 375px):**
+
 - Reduce padding to 24px
 - Logo size: "medium" (120px)
 - Headline: 36px
 
 ### **Medium Screens (375px - 414px):**
+
 - Standard padding: 32px
 - Logo size: "large" (160px)
 - Headline: 42px
 
 ### **Large Screens (> 414px):**
+
 - Increased padding: 40px
 - Logo size: "large" (160px)
 - Headline: 48px
@@ -243,6 +252,7 @@ XL:          24px
 ## **Design Inspiration**
 
 This design draws from:
+
 - 💅 **Sephora**: Clean, luxury aesthetic
 - 💎 **Ulta Beauty**: Accessible yet premium
 - 🏨 **Luxury Spas**: Soft colors, spacious layout
