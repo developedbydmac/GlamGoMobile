@@ -1,29 +1,28 @@
 import GlamGoLogo from "@/components/GlamGoLogo";
-import GradientButton from "@/components/GradientButton";
 import {
-  BorderRadius,
-  Colors,
-  Shadows,
-  Spacing,
-  Typography,
+    BorderRadius,
+    Colors,
+    Shadows,
+    Spacing,
+    Typography,
 } from "@/constants/DesignSystem";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
 import {
-  Animated,
-  ActivityIndicator,
-  Dimensions,
-  Platform,
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-  useColorScheme,
+    ActivityIndicator,
+    Animated,
+    Dimensions,
+    Platform,
+    SafeAreaView,
+    ScrollView,
+    StatusBar,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
+    useColorScheme,
 } from "react-native";
 
 const { width } = Dimensions.get("window");
@@ -78,7 +77,7 @@ export default function RoleSelectionScreen() {
 
   // Animation refs for card cascade
   const cardAnims = useRef(
-    roleOptions.map(() => new Animated.Value(0))
+    roleOptions.map(() => new Animated.Value(0)),
   ).current;
 
   useEffect(() => {
@@ -106,7 +105,7 @@ export default function RoleSelectionScreen() {
 
     try {
       // Brief delay for smooth UX transition
-      await new Promise(resolve => setTimeout(resolve, 300));
+      await new Promise((resolve) => setTimeout(resolve, 300));
 
       // Navigate to sign-up with role parameter
       router.push({
@@ -266,7 +265,10 @@ export default function RoleSelectionScreen() {
 
                       <View style={styles.featuresContainer as any}>
                         {role.features.map((feature, featureIndex) => (
-                          <View key={featureIndex} style={styles.featureRow as any}>
+                          <View
+                            key={featureIndex}
+                            style={styles.featureRow as any}
+                          >
                             <Ionicons
                               name="checkmark-circle"
                               size={16}
