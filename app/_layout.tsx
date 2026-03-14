@@ -14,7 +14,7 @@ import "react-native-reanimated";
 
 import { AppErrorBoundary } from "@/components/ErrorBoundary";
 import { AuthProvider } from "@/contexts/AuthContext";
-import { getCurrentCognitoUser } from "@/services/cognitoAuth";
+import { getCurrentCognitoUser, getGroupsFromIdToken } from "@/services/cognitoAuth";
 import { getUserProfile } from "@/services/userProfile";
 import type { ApprovalStatus } from "@/types/user";
 import { logger } from "@/utils/logger";
@@ -43,6 +43,7 @@ export default function RootLayout() {
 
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
   const [userRole, setUserRole] = useState<string | null>(null);
+  const [userGroups, setUserGroups] = useState<string[]>([]);
   const [userStatus, setUserStatus] = useState<ApprovalStatus | null>(null);
   const [isNavigatingFromSignIn, setIsNavigatingFromSignIn] = useState(false);
   const router = useRouter();
@@ -69,6 +70,11 @@ export default function RootLayout() {
           user.role.toUpperCase() as "CUSTOMER" | "VENDOR" | "DRIVER",
         );
 
+        // Extract groups from ID token (source of truth for group-based authorization)
+        const groups = await getGroupsFromIdToken();
+        logger.debug("User groups verified from ID token", { groups });
+        setUserGroups(groups);
+
         // Fetch UserProfile from DynamoDB to check approval status
         const profile = await getUserProfile(user.userId);
         if (profile) {
@@ -85,6 +91,7 @@ export default function RootLayout() {
         logger.debug("No cached session - user not authenticated");
         setIsAuthenticated(false);
         setUserRole(null);
+        setUserGroups([]);
         setUserStatus(null);
       }
     } catch (error) {
@@ -92,11 +99,12 @@ export default function RootLayout() {
       logger.debug("Auth check error (normal for logged out state)");
       setIsAuthenticated(false);
       setUserRole(null);
+      setUserGroups([]);
       setUserStatus(null);
     }
   };
 
-  // Handle navigation based on auth state
+  // Handle navigation based on auth state and GROUP VERIFICATION
   useEffect(() => {
     if (isAuthenticated === null || !loaded) return;
 
@@ -116,6 +124,21 @@ export default function RootLayout() {
       // Clear the flag after a short delay
       setTimeout(() => setIsNavigatingFromSignIn(false), 500);
       return;
+    }
+
+    // CHECK 0: Verify group membership matches user role (GROUP-BASED RBAC)
+    // This ensures users can't bypass the system by manually manipulating routes
+    if (isAuthenticated && userRole && userGroups.length > 0) {
+      const hasRequiredGroup = userGroups.includes(userRole);
+      if (!hasRequiredGroup) {
+        logger.warn("User group mismatch - group not found in token", {
+          userRole,
+          userGroups,
+        });
+        // Redirect to browse if group doesn't match
+        router.replace("/browse" as any);
+        return;
+      }
     }
 
     // CHECK 1: Block PENDING users (except customers who are auto-approved)
@@ -210,7 +233,7 @@ export default function RootLayout() {
       router.replace("/browse" as any);
       return;
     }
-  }, [isAuthenticated, userRole, segments, loaded, isNavigatingFromSignIn]);
+  }, [isAuthenticated, userRole, userGroups, segments, loaded, isNavigatingFromSignIn]);
 
   // Expo Router uses Error Boundaries to catch errors in the navigation tree.
   useEffect(() => {

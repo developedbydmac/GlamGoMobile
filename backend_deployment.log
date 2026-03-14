@@ -1,0 +1,32 @@
+(node:83925) ExperimentalWarning: CommonJS module /Users/daquanmcdaniel/.nvm/versions/node/v23.1.0/lib/node_modules/npm/node_modules/debug/src/node.js is loading ES Module /Users/daquanmcdaniel/.nvm/versions/node/v23.1.0/lib/node_modules/npm/node_modules/supports-color/index.js using require().
+Support for loading ES Module in require() is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+  
+  Amplify Sandbox
+  
+  Identifier: 	daquanmcdaniel
+  Stack: 	amplify-glamgomobile-daquanmcdaniel-sandbox-dcb6f50055
+  Region: 	us-east-1
+  
+  To specify a different sandbox identifier, use --identifier
+
+3:08:35 AM Synthesizing backend...
+3:08:36 AM ✔ Backend synthesized in 0.55 seconds
+3:08:36 AM Running type checks...
+3:08:50 AM ✔ Type checks completed in 14.02 seconds
+3:08:50 AM [ERROR] [BackendBuildError] Unable to deploy due to CDK Assembly Error
+  ∟ Caused by: [AssemblyError] Assembly builder failed
+    ∟ Caused by: [SyntaxError] The requested module './functions/post-confirmation/resource' does not provide an export named 'postConfirmation'
+Resolution: Check the Caused by error and fix any issues in your backend code
+
+Notices:
+
+3127	Amplify Function is dropping support of Node 16 Lambda Functions
+
+	If you have Node 16 Lambda functions defined with Amplify Function, we highly
+	recommend updating your function's runtime to newer Node LTS versions (Node 20+).
+
+	More information at: https://github.com/aws-amplify/amplify-backend/issues/3127
+
+
+If you don't want to see a notice anymore, use npx ampx notices acknowledge <notice-id>

@@ -69,7 +69,30 @@ import {
 } from "react-native";
 
 const { width } = Dimensions.get("window");
-const CARD_WIDTH = (width - Spacing.xl * 3) / 2;
+
+/**
+ * Responsive Card Width Calculation
+ * iPhone SE (375px):   ~163px per card (2 columns)
+ * iPhone 14 (390px):   ~171px per card (2 columns)
+ * iPhone 14 Pro Max:   ~195px per card (2 columns)
+ * iPad Mini (768px):   ~354px per card (2-3 columns)
+ * iPad (1024px):       ~490px per card (3+ columns)
+ */
+const getResponsiveLayout = (screenWidth: number) => {
+  if (screenWidth < 500) {
+    // Mobile: 2-column layout
+    return { columns: 2, cardWidth: (screenWidth - Spacing.xl * 3) / 2, gap: Spacing.md };
+  } else if (screenWidth < 800) {
+    // Tablet: 3-column layout
+    return { columns: 3, cardWidth: (screenWidth - Spacing.xl * 4) / 3, gap: Spacing.lg };
+  } else {
+    // Large tablet/desktop: 4-column layout
+    return { columns: 4, cardWidth: (screenWidth - Spacing.xl * 5) / 4, gap: Spacing.lg };
+  }
+};
+
+const layout = getResponsiveLayout(width);
+const CARD_WIDTH = layout.cardWidth;
 
 // Type Definitions - Enterprise Grade
 interface Category {
@@ -916,62 +939,68 @@ const styles = StyleSheet.create({
   hero: {
     paddingHorizontal: Spacing.xl,
     paddingVertical: Spacing["3xl"],
+    paddingTop: Spacing["2xl"],
   },
   heroTitle: {
     fontSize: Typography.fontSize["4xl"],
     fontWeight: Typography.fontWeight.bold,
     color: Colors.primary.deepPlum,
     lineHeight: Typography.lineHeight.tight,
-    marginBottom: Spacing.base,
+    marginBottom: Spacing.md,
     fontFamily: Typography.fontFamily.heading,
+    letterSpacing: -0.5,
   },
   heroSubtitle: {
     fontSize: Typography.fontSize.base,
     color: Colors.neutral.mutedText,
     lineHeight: Typography.lineHeight.relaxed,
     fontFamily: Typography.fontFamily.body,
+    letterSpacing: 0.3,
   },
   searchSection: {
     paddingHorizontal: Spacing.xl,
     marginBottom: Spacing.xl,
+    marginTop: Spacing.base,
   },
   searchBar: {
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: Colors.neutral.white,
     borderRadius: BorderRadius.lg,
-    paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.sm,
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.md,
     borderWidth: 1,
     borderColor: Colors.neutral.lightGrey,
-    ...Shadows.subtle,
+    ...Shadows.light,
   },
   searchIcon: {
-    marginRight: Spacing.sm,
+    marginRight: Spacing.md,
   },
   searchInput: {
     flex: 1,
     fontSize: Typography.fontSize.base,
     color: Colors.neutral.darkText,
     fontFamily: Typography.fontFamily.body,
+    letterSpacing: 0.2,
   },
   section: {
-    marginBottom: Spacing["2xl"],
+    marginBottom: Spacing["3xl"],
   },
   sectionHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     paddingHorizontal: Spacing.xl,
-    marginBottom: Spacing.base,
+    marginBottom: Spacing.lg,
   },
   sectionTitle: {
     fontSize: Typography.fontSize["2xl"],
-    fontWeight: Typography.fontWeight.semibold,
+    fontWeight: Typography.fontWeight.bold,
     color: Colors.primary.deepPlum,
     fontFamily: Typography.fontFamily.heading,
     paddingHorizontal: Spacing.xl,
-    marginBottom: Spacing.base,
+    marginBottom: Spacing.lg,
+    letterSpacing: -0.3,
   },
   resultCount: {
     fontSize: Typography.fontSize.sm,
@@ -979,35 +1008,37 @@ const styles = StyleSheet.create({
     fontFamily: Typography.fontFamily.body,
   },
   categoriesContainer: {
-    paddingHorizontal: Spacing.xl,
-    gap: Spacing.sm,
+    paddingHorizontal: Spacing.lg,
+    gap: Spacing.md,
   },
   categoryCard: {
     alignItems: "center",
     backgroundColor: Colors.neutral.white,
-    paddingVertical: Spacing.base,
+    paddingVertical: Spacing.md,
     paddingHorizontal: Spacing.lg,
     borderRadius: BorderRadius.lg,
-    borderWidth: 1,
+    borderWidth: 1.5,
     borderColor: Colors.neutral.lightGrey,
-    marginRight: Spacing.sm,
-    minWidth: 100,
+    marginRight: Spacing.md,
+    minWidth: 110,
     ...Shadows.subtle,
   },
   categoryIconContainer: {
-    marginBottom: Spacing.xs,
+    marginBottom: Spacing.sm,
   },
   categoryName: {
     fontSize: Typography.fontSize.xs,
     fontWeight: Typography.fontWeight.semibold,
     color: Colors.primary.deepPlum,
     fontFamily: Typography.fontFamily.body,
+    letterSpacing: 0.3,
   },
   categoryNameSelected: {
     fontSize: Typography.fontSize.xs,
-    fontWeight: Typography.fontWeight.semibold,
+    fontWeight: Typography.fontWeight.bold,
     color: Colors.neutral.white,
     fontFamily: Typography.fontFamily.body,
+    letterSpacing: 0.5,
   },
   productsGrid: {
     flexDirection: "row",
@@ -1021,9 +1052,9 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.neutral.white,
     borderRadius: BorderRadius.xl,
     overflow: "hidden",
-    borderWidth: 1.5,
+    borderWidth: 1,
     borderColor: Colors.neutral.lightGrey,
-    ...Shadows.medium,
+    ...Shadows.light,
     transform: [{ scale: 1 }],
   },
   productImage: {
@@ -1031,11 +1062,12 @@ const styles = StyleSheet.create({
     height: CARD_WIDTH * 0.85,
     backgroundColor: Colors.neutral.lightGrey,
     resizeMode: "cover",
-    borderBottomWidth: 0.5,
+    borderBottomWidth: 1,
     borderBottomColor: Colors.neutral.lightGrey,
   },
   productInfo: {
-    padding: Spacing.md,
+    padding: Spacing.lg,
+    backgroundColor: Colors.neutral.white,
   },
   productName: {
     fontSize: Typography.fontSize.base,
@@ -1043,8 +1075,9 @@ const styles = StyleSheet.create({
     color: Colors.neutral.darkText,
     marginBottom: Spacing.xs,
     fontFamily: Typography.fontFamily.body,
-    height: 38,
-    lineHeight: 19,
+    height: 40,
+    lineHeight: 20,
+    letterSpacing: Typography.letterSpacing.normal,
   },
   productStore: {
     fontSize: Typography.fontSize.xs,
@@ -1052,21 +1085,23 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.sm,
     fontFamily: Typography.fontFamily.body,
     fontWeight: Typography.fontWeight.medium,
+    letterSpacing: 0.3,
   },
   productFooter: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: Spacing.sm,
-    paddingBottom: Spacing.sm,
-    borderBottomWidth: 0.5,
+    marginBottom: Spacing.md,
+    paddingBottom: Spacing.md,
+    borderBottomWidth: 1,
     borderBottomColor: Colors.neutral.lightGrey,
   },
   productPrice: {
     fontSize: Typography.fontSize.lg,
     fontWeight: Typography.fontWeight.bold,
-    color: Colors.primary.deepPlum,
+    color: Colors.secondary.softGold,
     fontFamily: Typography.fontFamily.heading,
+    letterSpacing: 0.5,
   },
   ratingContainer: {
     flexDirection: "row",
@@ -1220,17 +1255,17 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.lg,
     alignItems: "center",
     justifyContent: "center",
-    marginTop: Spacing.sm,
+    marginTop: Spacing.md,
     gap: 8,
-    ...Shadows.medium,
-    borderWidth: 1,
-    borderColor: Colors.primary.deepPlum,
+    ...Shadows.light,
+    borderWidth: 0,
   },
   addToCartText: {
     color: Colors.neutral.white,
     fontSize: Typography.fontSize.sm,
     fontWeight: Typography.fontWeight.bold,
     fontFamily: Typography.fontFamily.body,
+    letterSpacing: 0.5,
   },
   // Loading Skeleton Styles
   skeletonCard: {

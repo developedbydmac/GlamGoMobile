@@ -38,8 +38,8 @@ const schema = a.schema({
     .authorization((allow) => [
       // Users can read their own profile
       allow.owner().identityClaim("sub").to(["read"]),
-      // Only admins can update status, approvedBy, and approvedAt fields
-      allow.group("ADMIN"),
+      // Admins can read and update all profiles
+      allow.group("ADMIN").to(["read", "update"]),
       // All authenticated users can read profiles (for display purposes)
       allow.authenticated().to(["read"]),
     ]),
@@ -70,8 +70,10 @@ const schema = a.schema({
       products: a.hasMany("Product", "storeId"),
     })
     .authorization((allow) => [
-      // Vendors can only manage their own stores (owner field defaults to 'owner')
-      allow.owner().identityClaim("sub"),
+      // Vendors can manage their own stores
+      allow.owner().identityClaim("sub").to(["create", "read", "update", "delete"]),
+      // Only VENDOR group can create stores
+      allow.group("VENDOR").to(["create"]),
       // All authenticated users can read stores
       allow.authenticated().to(["read"]),
     ]),
@@ -105,8 +107,10 @@ const schema = a.schema({
       orderProducts: a.hasMany("OrderProduct", "productId"),
     })
     .authorization((allow) => [
-      // Vendors can only manage their own products (owner field defaults to 'owner')
-      allow.owner().identityClaim("sub"),
+      // Vendors can manage their own products
+      allow.owner().identityClaim("sub").to(["create", "read", "update", "delete"]),
+      // Only VENDOR group can create products
+      allow.group("VENDOR").to(["create"]),
       // All authenticated users can read products
       allow.authenticated().to(["read"]),
     ]),
@@ -184,10 +188,15 @@ const schema = a.schema({
     })
     .authorization((allow) => [
       // Customers can manage their own orders
-      allow.owner().identityClaim("sub"),
-      // Drivers can read and update orders assigned to them
-      allow.authenticated().to(["read"]),
-      // Additional custom logic for drivers would go in Lambda
+      allow.owner().identityClaim("sub").to(["create", "read", "update", "delete"]),
+      // Only CUSTOMER group can create orders
+      allow.group("CUSTOMER").to(["create"]),
+      // Drivers can read orders and update them (for delivery status)
+      allow.group("DRIVER").to(["read", "update"]),
+      // Vendors can read orders (to see their product orders)
+      allow.group("VENDOR").to(["read"]),
+      // Admins can read all orders
+      allow.group("ADMIN").to(["read"]),
     ]),
 
   // Driver Model - Driver profiles with location and availability
@@ -222,7 +231,9 @@ const schema = a.schema({
     })
     .authorization((allow) => [
       // Drivers can manage their own profile
-      allow.owner().identityClaim("sub"),
+      allow.owner().identityClaim("sub").to(["create", "read", "update", "delete"]),
+      // Only DRIVER group can create driver profiles
+      allow.group("DRIVER").to(["create"]),
       // Authenticated users can read driver info (for dispatching)
       allow.authenticated().to(["read"]),
     ])

@@ -186,6 +186,62 @@ export const isSessionValid = (): Promise<boolean> => {
 };
 
 /**
+ * Decode JWT token to extract claims
+ * @param token JWT token string
+ * @returns Decoded token payload
+ */
+const decodeToken = (token: string): Record<string, any> => {
+  try {
+    const base64Url = token.split(".")[1];
+    const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+    const jsonPayload = decodeURIComponent(
+      atob(base64)
+        .split("")
+        .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
+        .join("")
+    );
+    return JSON.parse(jsonPayload);
+  } catch (error) {
+    logger.error("Error decoding token", error);
+    return {};
+  }
+};
+
+/**
+ * Extract Cognito groups from ID token
+ * Groups are assigned by post-confirmation Lambda and stored in token claims
+ * @returns Array of group names (e.g., ["CUSTOMER"], ["VENDOR", "APPROVED"])
+ */
+export const getGroupsFromIdToken = async (): Promise<string[]> => {
+  try {
+    const idToken = await AsyncStorage.getItem("idToken");
+    if (!idToken) {
+      logger.debug("No ID token found");
+      return [];
+    }
+
+    const decoded = decodeToken(idToken);
+    const groups = decoded["cognito:groups"] || [];
+    
+    logger.authDebug("Groups extracted from ID token", { groups });
+    return groups;
+  } catch (error) {
+    logger.error("Error extracting groups from token", error);
+    return [];
+  }
+};
+
+/**
+ * Check if user has a specific group membership
+ * @param groupName Group name to check (e.g., "VENDOR", "ADMIN")
+ * @returns true if user is in the group
+ */
+export const hasGroup = async (groupName: string): Promise<boolean> => {
+  const groups = await getGroupsFromIdToken();
+  return groups.includes(groupName);
+};
+
+/**
  * Get current session tokens
  */
 export const getSessionTokens = async () => {
