@@ -1,23 +1,30 @@
 import React from 'react';
-import { VendorNavbar } from '@/components/VendorNavbar';
+import { useNavigate } from 'react-router-dom';
+import { DashboardLayout } from '@/components/DashboardLayout';
 import { VendorLoadingSpinner } from '@/components/VendorLoadingSpinner';
 import { useVendorProfile } from '@/hooks/useVendorProfile';
 
 const VendorProfile: React.FC = () => {
+  const navigate = useNavigate();
   const { profile, loading, error } = useVendorProfile();
+
+  const sidebarItems = [
+    { label: 'Dashboard', path: '/', icon: '📊' },
+    { label: 'Products', path: '/products', icon: '📦' },
+    { label: 'Orders', path: '/orders', icon: '🛒' },
+    { label: 'Analytics', path: '/analytics', icon: '📈' },
+    { label: 'Profile', path: '/profile', icon: '👤' },
+  ];
 
   if (loading) return <VendorLoadingSpinner />;
 
   return (
-    <>
-      <VendorNavbar />
-      <div className="bg-gray-50 min-h-screen">
-        <div className="max-w-4xl mx-auto py-6 sm:px-6 lg:px-8">
-          {/* Header */}
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900">Vendor Profile</h1>
-            <p className="text-gray-600 mt-2">Manage your business information</p>
-          </div>
+    <DashboardLayout sidebarItems={sidebarItems} title="Vendor Profile">
+      <div className="max-w-4xl mx-auto py-6 sm:px-6 lg:px-8">
+        {/* Header */}
+        <div className="mb-8">
+          <p className="text-gray-600 mt-2">Manage your business information</p>
+        </div>
 
           {error && <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-700 mb-6">{error}</div>}
 
@@ -148,9 +155,8 @@ const VendorProfile: React.FC = () => {
               </div>
             </div>
           )}
-        </div>
       </div>
-    </>
+    </DashboardLayout>
   );
 };
 

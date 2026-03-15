@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import VendorLogin from './pages/VendorLogin';
+import VendorRegister from './pages/VendorRegister';
 import VendorDashboard from './pages/VendorDashboard';
 import Products from './pages/Products';
 import Orders from './pages/Orders';
@@ -25,6 +26,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/login" element={<VendorLogin />} />
+        <Route path="/register" element={<VendorRegister />} />
         <Route
           path="/"
           element={

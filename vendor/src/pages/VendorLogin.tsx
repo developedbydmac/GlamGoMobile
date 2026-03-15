@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 const VendorLogin: React.FC = () => {
   const [email, setEmail] = useState('vendor@glamgo.com');
@@ -74,7 +74,14 @@ const VendorLogin: React.FC = () => {
           </button>
         </form>
 
-        <p className="text-center text-gray-600 text-sm mt-6">Demo credentials: vendor@glamgo.com / any password</p>
+        <p className="text-center text-gray-600 text-sm mt-6">
+          Don't have an account?{' '}
+          <Link to="/register" className="text-purple-600 font-semibold hover:underline">
+            Sign Up
+          </Link>
+        </p>
+
+        <p className="text-center text-gray-600 text-sm mt-4">Demo credentials: vendor@glamgo.com / any password</p>
       </div>
     </div>
   );
