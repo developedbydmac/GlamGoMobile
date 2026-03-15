@@ -1,0 +1,20 @@
+(node:46702) ExperimentalWarning: CommonJS module /Users/daquanmcdaniel/.nvm/versions/node/v23.1.0/lib/node_modules/npm/node_modules/debug/src/node.js is loading ES Module /Users/daquanmcdaniel/.nvm/versions/node/v23.1.0/lib/node_modules/npm/node_modules/supports-color/index.js using require().
+Support for loading ES Module in require() is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+node:internal/modules/esm/resolve:857
+  throw new ERR_MODULE_NOT_FOUND(packageName, fileURLToPath(base), null);
+        ^
+
+Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'yargs' imported from /Users/daquanmcdaniel/Documents/2026/GlamGoMobile/GlamGoMobile/node_modules/@aws-amplify/backend-cli/lib/ampx.js
+    at packageResolve (node:internal/modules/esm/resolve:857:9)
+    at moduleResolve (node:internal/modules/esm/resolve:926:18)
+    at defaultResolve (node:internal/modules/esm/resolve:1056:11)
+    at ModuleLoader.defaultResolve (node:internal/modules/esm/loader:650:12)
+    at #cachedDefaultResolve (node:internal/modules/esm/loader:599:25)
+    at ModuleLoader.resolve (node:internal/modules/esm/loader:582:38)
+    at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:241:38)
+    at ModuleJob._link (node:internal/modules/esm/module_job:132:49) {
+  code: 'ERR_MODULE_NOT_FOUND'
+}
+
+Node.js v23.1.0

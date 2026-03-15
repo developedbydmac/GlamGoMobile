@@ -34,7 +34,7 @@ async function verifyToken(token: string): Promise<jwt.JwtPayload> {
         issuer: `https://cognito-idp.${process.env.AWS_REGION}.amazonaws.com/${process.env.USER_POOL_ID}`,
         algorithms: ["RS256"],
       },
-      (err, decoded) => {
+      (err: jwt.VerifyErrors | null, decoded: any) => {
         if (err) {
           reject(err);
         } else {
